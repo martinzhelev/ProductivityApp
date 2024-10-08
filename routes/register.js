@@ -9,7 +9,7 @@ router.use(bodyParser.json());
 // Connect to MongoDB using Mongoose
 const url = "mongodb://localhost:27017/ProductivityApp"; // Make sure to include the database name
 
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(url)
     .then(() => console.log("MongoDB connected successfully"))
     .catch(err => console.error("MongoDB connection error:", err));
 
@@ -25,6 +25,7 @@ const User = mongoose.model("User", userSchema);
 
 // Render the registration form
 router.get("/", (req, res) => {
+    
     res.render("register");  // Ensure that 'register' is a valid template
 });
 

@@ -1,4 +1,24 @@
-window.onload = function() {
+
+    console.log("kole poluchi li")
+    function validatePassword(password) {
+        // Regular expression for validation
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~!@#\$%\^&\*\_\-\+\(\)\[\]\{\}><\/\\\|\"\'\.,:;])[\w~!@#\$%\^&\*\_\-\+\(\)\[\]\{\}><\/\\\|\"\'\.,:;]{8,128}$/;
+    
+        // Check if the password contains spaces
+        if (/\s/.test(password)) {
+            return "Password should not contain any spaces.";
+        }
+    
+        // Validate the password using the regex
+        if (!passwordRegex.test(password)) {
+            return "Password must be 8-128 characters long, contain at least one uppercase letter, one lowercase letter, one numeral, and one special character from the allowed set.";
+        }
+    
+        return "Password is valid!"
+    }
+
+
+
     let registerButton = document.getElementById("registerButton");
     
     // Ensure the button exists before adding an event listener
@@ -11,19 +31,22 @@ window.onload = function() {
             let emailAddress = document.getElementById("email").value;
             let password = document.getElementById("password").value;
             let confirmPassword = document.getElementById("confirm-password").value;
+            console.log(username, password)
 
             // Check if passwords match
             if (password !== confirmPassword) {
                 alert("Passwords do not match");
                 return;
             }
-
-            // Check if all fields are filled
             if (!username || !emailAddress || !password) {
                 alert("Please fill in all fields");
                 return;
             }
-
+            if (validatePassword(password) !== "Password is valid!") {
+                alert(validatePassword(password));  
+                return;
+            }
+            
             // Create user object
             let userObject = {
                 username: username,
@@ -54,8 +77,10 @@ window.onload = function() {
                 console.error('Error:', error);
                 alert("An error occurred: " + error.message);
             });
+            
         };
     } else {
         console.error("Register button not found");
     }
-};
+
+ 
