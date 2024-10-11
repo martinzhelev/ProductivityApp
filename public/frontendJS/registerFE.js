@@ -1,5 +1,4 @@
 
-    console.log("kole poluchi li")
     function validatePassword(password) {
         // Regular expression for validation
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~!@#\$%\^&\*\_\-\+\(\)\[\]\{\}><\/\\\|\"\'\.,:;])[\w~!@#\$%\^&\*\_\-\+\(\)\[\]\{\}><\/\\\|\"\'\.,:;]{8,128}$/;
@@ -70,8 +69,12 @@
                 return response.json();
             })
             .then(data => {
-                // Provide feedback to the user
-                alert(data.message);  // You can display this on the page instead of using an alert
+                if (data.message === 'User registered successfully') {
+                    alert(data.message)
+                    window.location.href = data.redirectUrl;
+                } else {
+                    alert(data.message);
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
