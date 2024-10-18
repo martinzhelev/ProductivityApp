@@ -54,51 +54,143 @@ const modal = document.getElementById('modal');
         });
     }
 
-    function addTask(event){
-        event.preventDefault();
-        let task = document.getElementById('task-input').value
+    // function addTask(event){
+    //     event.preventDefault();
+    //     let task = document.getElementById('task-input').value
 
-        let taskObject = {
-            task: task
-        };
+    //     let taskObject = {
+    //         task: task
+    //     };
 
-        if (task.trim() !== '') {
-            const newTaskItem = document.createElement('li');
-            newTaskItem.innerHTML = `<input type="checkbox" class="checkbox"> ${task}`;
-            tasksList.appendChild(newTaskItem);
-        }
+    //     if (task.trim() !== '') {
+    //         const newTaskItem = document.createElement('li');
+    //         newTaskItem.innerHTML = `<input type="checkbox" class="checkbox"> ${task}`;
+    //         tasksList.appendChild(newTaskItem);
+    //     }
 
        
 
-        fetch('/home', {
-            method: 'POST',
+    //     fetch('/home', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify(taskObject)
+    //     })
+    //     .then(response => {
+    //         // Check for non-200 responses
+    //         if (!response.ok) {
+    //             return response.json().then(errData => { throw new Error(errData.message); });
+    //         }
+    //         return response.json();
+    //     })
+    //     .then(data => {
+    //         console.log("task registered")
+    //         if (data.message === 'Task added successfully') {
+    //             alert(data.message)
+    //         } else {
+    //             alert(data.message);
+    //         }
+    //     })
+    //     .catch(error => {
+    //         console.error('Error:', error);
+    //     });
+
+    //     closeModal();
+    // }
+
+
+
+
+
+
+
+    function updateTaskStatus(taskId, isChecked) {
+        // Send a PATCH request to update the task's completion status in the database
+        fetch(`/home/${taskId}`, {
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(taskObject)
+            body: JSON.stringify({ completed: isChecked }) // Send the updated status
         })
         .then(response => {
-            // Check for non-200 responses
             if (!response.ok) {
                 return response.json().then(errData => { throw new Error(errData.message); });
             }
             return response.json();
         })
         .then(data => {
-            console.log("task registered")
-            if (data.message === 'Task added successfully') {
-                alert(data.message)
-            } else {
-                alert(data.message);
-            }
+            console.log(`Task ${taskId} updated successfully`);
         })
         .catch(error => {
             console.error('Error:', error);
         });
-
-        closeModal();
     }
+    
+    // Add event listeners to all checkboxes associated with tasks
+    function addCheckboxEventListeners() {
+        const checkboxes = document.querySelectorAll('.checkbox');
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const taskId = this.closest('li').getAttribute('data-task-id');
+                const isChecked = this.checked;
+                
+                updateTaskStatus(taskId, isChecked); // Send PATCH request to update task status
+            });
+        });
+    }
+    
+    // Example: Modify the addTask function to include the checkbox change event listener
+    function addTask(event) {
+        event.preventDefault();
 
+        let task = document.getElementById('task-input').value;
+
+        if (task.trim() !== '') {
+            const newTaskItem = document.createElement('li');
+            newTaskItem.innerHTML = `<input type="checkbox" class="checkbox"> ${task}`;
+            tasksList.appendChild(newTaskItem);
+        }
+    
+        if (task.trim() !== '') {
+            fetch('/home', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ task: task })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errData => { throw new Error(errData.message); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                
+                if (data.message === 'Task added successfully') {
+                        alert(data.message)
+                    } else {
+                        alert(data.message);
+                    }
+    
+    
+                document.getElementById('task-input').value = '';
+    
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        closeModal();
+
+    }
+    
+
+
+    addCheckboxEventListeners();
     // Event listeners
     addTaskButton.addEventListener('click', openModal);
     closeButton.addEventListener('click', closeModal);
