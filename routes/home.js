@@ -30,21 +30,21 @@ router.get('/:userId', async (req, res) => {
     }
 });
 
-
-
-
-
 router.post('/:userId', async (req, res) => {
     const { task } = req.body;
 
     try {
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(404).json({ message: 'User not found' });
-        console.log(user)
+
         // Add the new task to the user's tasks array
-        user.tasks.push({ task });
-        await user.save(); // Save the user to update the task list
-        res.status(201).json({ message: 'Task added successfully' });
+        const newTask = { task, completed: false };
+        user.tasks.push(newTask);
+        await user.save();
+
+        const addedTask = user.tasks[user.tasks.length - 1]; // Get the last added task
+        console.log('New Task:', addedTask);  // Log the task being returned
+        res.status(201).json({ message: 'Task added successfully', task: addedTask });
     } catch (err) {
         console.error("Error adding task:", err);
         res.status(500).json({ message: 'Error adding task' });
@@ -74,13 +74,16 @@ router.post('/:userId', async (req, res) => {
 
 
 
-router.delete('/:userId/:taskId', async (req, res) => {
+router.delete('/:userId', async (req, res) => {
     try {
+        const taskId = req.params.id;
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(404).json({ message: 'User not found' });
-
+        const task = user.tasks.id(taskId);
+        if (!task) return res.status(404).json({ message: 'Task not found' });
         // Remove the task from the user's tasks array
-        user.tasks.id(req.params.taskId).remove();
+        
+        task.remove();
         await user.save();
         res.status(200).json({ message: 'Task deleted successfully' });
     } catch (err) {
@@ -92,42 +95,18 @@ router.delete('/:userId/:taskId', async (req, res) => {
 
 
 
-
-
-// // PATCH route to update task completion status
-// router.patch('/:id', async (req, res) => {
-//     const taskId = req.params.id;
-//     const { completed } = req.body; // Completed status from the request body
-
-//     try {
-//         // Find the task by ID and update its 'completed' status
-//         const updatedTask = await Task.findByIdAndUpdate(taskId, { completed: completed }, { new: true });
-        
-//         if (!updatedTask) {
-//             return res.status(404).json({ message: 'Task not found' });
-//         }
-
-//         res.json({ message: 'Task updated successfully', task: updatedTask });
-//     } catch (err) {
-//         console.error("Error updating task:", err);
-//         res.status(500).json({ message: 'Error updating task' });
-//     }
-// });
-
-
-
-router.patch('/:userId/:taskId', async (req, res) => {
-    const { completed } = req.body;
+router.patch('/:userId', async (req, res) => {
+    const { taskId } = req.body;  // Get taskId from the body
 
     try {
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(404).json({ message: 'User not found' });
 
-        // Find the task within the user's tasks array and update it
-        const task = user.tasks.id(req.params.taskId);
+        // Find the task within the user's tasks array
+        const task = user.tasks.id(taskId);  // Use taskId from req.body
         if (!task) return res.status(404).json({ message: 'Task not found' });
 
-        task.completed = completed;
+        user.tasks.pull(taskId);
         await user.save();
         res.json({ message: 'Task updated successfully', task });
     } catch (err) {
@@ -135,6 +114,7 @@ router.patch('/:userId/:taskId', async (req, res) => {
         res.status(500).json({ message: 'Error updating task' });
     }
 });
+
 
 
 module.exports = router
