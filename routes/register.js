@@ -1,20 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
+
 const bodyParser = require("body-parser");
-const User = require('../models/user');
+const db = require("../server");
+
 
 // Middleware to parse JSON bodies
 router.use(bodyParser.json());
 
-// Connect to MongoDB using Mongoose
-const url = "mongodb://localhost:27017/ProductivityApp"; // Make sure to include the database name
-
-mongoose.connect(url)
-    .then(() => console.log("MongoDB connected successfully"))
-    .catch(err => console.error("MongoDB connection error:", err));
-
-// Define a User schema
 
 
 // Render the registration form
@@ -38,15 +31,15 @@ router.post('/', async (req, res) => {
     console.log(userObject);
 
     try {
-        // Create a new user document
-        const newUser = new User(userObject);
-        await newUser.save(); // Save the user to the database
-        console.log("User registered successfully");
-        //return res.redirect('/login');
+        // Insert the new user into the users table
+        await db.execute(
+            'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
+            [username, email, password]
+        );
         res.status(200).json({ message: 'User registered successfully', redirectUrl: '/login' });
-    } catch (err) {
-        console.error("Error inserting user:", err);
-        res.status(500).json({ message: 'Error inserting user' });
+        //console.log('User registered successfully with ID:', result.insertId);
+    } catch (error) {
+        //console.error('Error registering user:', error);
     }
 });
 

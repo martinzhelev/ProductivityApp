@@ -52,7 +52,7 @@
                 <ul class="tasks list-unstyled" id="tasks-list">
                     <% if (tasks.length > 0) { %>
                         <% tasks.forEach(function(task) { %>
-                            <li data-task-id="<%= task._id %>">
+                            <li data-task-id="<%= task.task_id %>">
                                 <input type="checkbox" class="checkbox" <%= task.completed ? 'checked' : '' %> >
                                 <%= task.task %>
                             </li>
@@ -60,6 +60,7 @@
                     <% } else { %>
                         <li>No tasks found</li>
                     <% } %>
+                    
                 </ul>
                 
                 <button class="btn btn-primary mt-2" id="addTask">Add Task</button>

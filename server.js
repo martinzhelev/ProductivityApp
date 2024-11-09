@@ -1,34 +1,5 @@
-// const express = require('express');
-// // const mongoose = require('mongoose');
-// const bodyParser = require('body-parser');  // Import body-parser
-// const app = express();
-
-// // Set EJS as the view engine
-// app.set('view engine', 'ejs');
-
-
-// // Use body-parser globally for parsing JSON bodies
-// app.use(bodyParser.json());  // Parse JSON bodies
-// app.use(bodyParser.urlencoded({ extended: true }));  // Parse URL-encoded bodies
-// app.use(express.static('public'));
-
-// // Routes
-// const loginRouter = require("./routes/login")
-// const registerRouter = require("./routes/register");
-// const homeRouter = require("./routes/home");
-// app.use("/register", registerRouter);  // Mounts the register route at /register
-// app.use("/login", loginRouter);  
-// app.use("/home", homeRouter);
-
-// // Start the server
-// const port = 3000;
-// app.listen(port, () => {
-//     console.log(`Server is running on port ${port}`);
-// });
-
-
-
 const express = require('express');
+const mysql = require('mysql2/promise')
 const bodyParser = require('body-parser');  
 const app = express();
 
@@ -39,6 +10,27 @@ app.use(express.static('public'));
 
 // Set EJS as the view engine
 app.set('view engine', 'ejs');
+
+const db = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    password:null,
+    database: 'productivityapp',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+});
+
+  // Connect to MySQL
+//   db.connect((err) => {
+//     if (err) {
+//       console.error('Error connecting to MySQL: ' + err.stack);
+//       return;
+//     }
+//     console.log('Connected to MySQL as ID ' + db.threadId);
+//   });
+
+  module.exports = db;
 
 // Route Imports
 const loginRouter = require("./routes/login");

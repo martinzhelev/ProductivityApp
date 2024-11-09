@@ -1,17 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const User = require('../models/user');
-
-
-// Connect to MongoDB using Mongoose
-const url = "mongodb://localhost:27017/ProductivityApp"; // Make sure to include the database name
-
-mongoose.connect(url)
-    .then(() => console.log("MongoDB connected successfully"))
-    .catch(err => console.error("MongoDB connection error:", err));
-
+const db = require("../server");
+const User = require("../models/user")
+const mongoose = require("mongoose");
 
 
 
@@ -19,16 +11,27 @@ mongoose.connect(url)
 
 router.get('/:userId', async (req, res) => {
     try {
-        const user = await User.findById(req.params.userId);
-        if (!user) return res.status(404).json({ message: 'User not found' });
+        const userId = req.params.userId;
 
-        // Render the "home" view, passing the user's tasks to it
-        res.render("home", { tasks: user.tasks, username: user.username, userId: req.params.userId });
+        // Query to get the user by ID
+        const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [userId]);
+        if (userRows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Query to get the tasks associated with the user
+        const [taskRows] = await db.execute('SELECT * FROM tasks WHERE user_id = ?', [userId]);
+
+        const user = userRows[0];
+
+        // Render the "home" view, passing the user's tasks and username
+        res.render("home", { tasks: taskRows, username: user.username, userId: user.user_id });
     } catch (err) {
         console.error("Error fetching tasks:", err);
         res.status(500).json({ message: 'Error fetching tasks' });
     }
 });
+
 
 router.post('/:userId', async (req, res) => {
     const { task } = req.body;

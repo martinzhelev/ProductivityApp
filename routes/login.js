@@ -1,19 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
+
 const bodyParser = require("body-parser");
-const User = require('../models/user');
+const db = require("../server");
+
 
 
 router.use(bodyParser.json());
-
-const url = "mongodb://localhost:27017/ProductivityApp"; 
-
-mongoose.connect(url)
-    .then(() => console.log("MongoDB connected successfully"))
-    .catch(err => console.error("MongoDB connection error:", err));  
-
-
 
 
 router.get('/', (req, res)=>{
@@ -25,31 +18,30 @@ router.post('/', async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        console.log("post trying");
-        // Find the user by their username
-        const user = await User.findOne({ username });
-        console.log(user);
-
-        if (!user) {
-            return res.status(400).json({ message: 'User not found' });
-        }
-
-        // Compare the provided password with the stored password
-        if (user.password !== password) {
-            return res.status(400).json({ message: 'Incorrect password' });
-        }
-
-        // If passwords match, send a success response with user-specific redirect
-        res.status(200).json({ 
-            message: 'Login successful', 
-            redirectUrl: `/home/${user._id}` // Redirects to user's unique home page
-        });
-
+        // Query to find the user by username
+        const [rows] = await db.execute('SELECT * FROM users WHERE username = ?', [username]);
+       
+        if (rows.length > 0) {
+            const user = rows[0];
+            console.log('User found:', user);
+            res.status(200).json({ 
+                message: 'Login successful', 
+                redirectUrl: `/home/${user.user_id}` // Redirects to user's unique home page
+            });
+           // return user;
+        } else {
+            console.log('User not found');
+            return res.status(404).json({ message: 'User not found' });
+            }
+        
     } catch (error) {
-        return res.status(500).json({ message: 'An error occurred during login', error: error.message });
+        console.error('Error finding user by username:', error);
+        return res.status(500).json({ message: 'Server error' });
     }
 });
 
 
 
 module.exports = router;
+
+
