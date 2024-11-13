@@ -2,11 +2,13 @@ const express = require('express');
 const mysql = require('mysql2/promise')
 const bodyParser = require('body-parser');  
 const app = express();
+const cookieParser = require('cookie-parser');
 
 // Middleware for JSON and URL-encoded form data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
+app.use(cookieParser());
 
 // Set EJS as the view engine
 app.set('view engine', 'ejs');
@@ -20,15 +22,6 @@ const db = mysql.createPool({
     connectionLimit: 10,
     queueLimit: 0
 });
-
-  // Connect to MySQL
-//   db.connect((err) => {
-//     if (err) {
-//       console.error('Error connecting to MySQL: ' + err.stack);
-//       return;
-//     }
-//     console.log('Connected to MySQL as ID ' + db.threadId);
-//   });
 
   module.exports = db;
 

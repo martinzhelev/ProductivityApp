@@ -20,14 +20,21 @@ router.post('/', async (req, res) => {
     try {
         // Query to find the user by username
         const [rows] = await db.execute('SELECT * FROM users WHERE username = ?', [username]);
-       
+        const userSavedPassword = await db.execute('SELECT password FROM users WHERE username = ?', [username]);
+       console.log(userSavedPassword)
         if (rows.length > 0) {
             const user = rows[0];
             console.log('User found:', user);
-            res.status(200).json({ 
-                message: 'Login successful', 
-                redirectUrl: `/home/${user.user_id}` // Redirects to user's unique home page
-            });
+            if(password!=userSavedPassword){
+                res.cookie('userId', user.user_Id, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true });
+                console.log(user.user_id)
+                
+                res.status(200).json({ 
+                    message: 'Login successful', 
+                    redirectUrl: `/home/${user.user_id}` // Redirects to user's unique home page
+                });
+            }
+           
            // return user;
         } else {
             console.log('User not found');

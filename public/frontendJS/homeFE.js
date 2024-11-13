@@ -1,25 +1,34 @@
-const modal = document.getElementById('modal');
+const taskModal = document.getElementById('task-modal');
+const habitModal = document.getElementById('habit-modal');
 const overlay = document.getElementById('overlay');
 const addTaskButton = document.getElementById('addTask');
 const closeButton = document.querySelector('.close-button');
 const modalAddTask = document.getElementById('modal-add-task');
+const modalAddHabit = document.getElementById('modal-add-habit');
+
 const tasksList = document.getElementById("tasks-list");
 const removeTaskButton = document.getElementById('removeTask');
 
-const userId = document.getElementById('user-info').getAttribute('data-user-id');
-
 
 // Functions for Modal
-function openModal() {
-    modal.style.display = 'block';
+function openTaskModal() {
+    taskModal.style.display = 'block';
     overlay.style.display = 'block';
 }
 
-function closeModal() {
-    modal.style.display = 'none';
+function closeTaskModal() {
+    taskModalodal.style.display = 'none';
     overlay.style.display = 'none';
 }
+function openHabitModal() {
+    habitModal.style.display = 'block';
+    overlay.style.display = 'block';
+}
 
+function closeHabitModal() {
+    habitModal.style.display = 'none';
+    overlay.style.display = 'none';
+}
 
 function addTask(event) {
     event.preventDefault();
@@ -43,22 +52,22 @@ function addTask(event) {
         })
         .catch(error => console.error('Error:', error));
     }
-    closeModal();
+    closeTaskModal();
 }
 
 function appendTaskToDOM(task) {
-    if (!task || !task._id) {
+    if (!task || !task.task_id) {
         console.error('Task object is missing or incomplete:', task);
         return;
     }
 
     const newTaskItem = document.createElement('li');
-    newTaskItem.setAttribute('data-task-id', task._id);
+    newTaskItem.setAttribute('data-task-id', task.task_id);
     newTaskItem.innerHTML = `<input type="checkbox" class="checkbox" ${task.completed ? 'checked' : ''}> ${task.task}`;
     
     // Add event listener to the checkbox for task status updates
     const checkbox = newTaskItem.querySelector('.checkbox');
-    checkbox.addEventListener('change', () => updateTaskStatus(task._id, checkbox.checked));
+    checkbox.addEventListener('change', () => updateTaskStatus(task.task_id, checkbox.checked));
 
     tasksList.appendChild(newTaskItem);
 }
@@ -117,9 +126,9 @@ function addCheckboxEventListeners() {
 
 // Add event listeners for interactive elements
 function addEventListeners() {
-    addTaskButton.addEventListener('click', openModal);
-    closeButton.addEventListener('click', closeModal);
-    overlay.addEventListener('click', closeModal);
+    addTaskButton.addEventListener('click', openTaskModal);
+    closeButton.addEventListener('click', closeTaskModal);
+    overlay.addEventListener('click', closeTaskModal);
     modalAddTask.addEventListener('click', addTask);
     removeTaskButton.addEventListener('click', removeDoneTasks);
 }
@@ -127,3 +136,6 @@ function addEventListeners() {
 // Initialize app
 addCheckboxEventListeners();
 addEventListeners();
+
+
+

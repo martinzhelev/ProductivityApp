@@ -72,11 +72,19 @@
         <div class="col-md-4">
             <div class="column">
                 <h2>Habits</h2>
-                <ul class="habits list-unstyled">
-                    <li><input type="checkbox" class="checkbox"> Habit 1</li>
-                    <li><input type="checkbox" class="checkbox"> Habit 2</li>
-                    <li><input type="checkbox" class="checkbox"> Habit 3</li>
+                <ul class="habits list-unstyled" id="habits-list">
+                    <% if (habits.length > 0) { %>
+                        <% habits.forEach(function(habit) { %>
+                            <li data-habit-id="<%= habit.habit_id %>">
+                                <input type="checkbox" class="checkbox" <%= habit.completed ? 'checked' : '' %> >
+                                <%= habit.name %>
+                            </li>
+                        <% }); %>
+                    <% } else { %>
+                        <li>No habits found</li>
+                    <% } %>
                 </ul>
+                
                 <button class="btn btn-primary mt-2" id="addHabit">Add Habit</button>
                 <button class="btn btn-danger mt-2" id="removeHabit">Remove Habit</button>
             </div>
@@ -95,7 +103,7 @@
         </div>
     </div>
 
-    <div class="modal" id="modal">
+    <div class="modal" id="task-modal">
         <div class="modal-header">
             <div class="title">Add task</div>
             <div class="close-button">&times;</div>
@@ -103,6 +111,16 @@
         <div class="modal-body">
             <input type="text" name="task" id="task-input">
             <button id="modal-add-task">Add</button>
+        </div>
+    </div>
+    <div class="modal" id="habit-modal">
+        <div class="modal-header">
+            <div class="title">Add task</div>
+            <div class="close-button">&times;</div>
+        </div>
+        <div class="modal-body">
+            <input type="text" name="task" id="task-input">
+            <button id="modal-add-habit">Add</button>
         </div>
     </div>
     <div id="overlay"></div>
