@@ -1,9 +1,10 @@
-const taskModal = document.getElementById('task-modal');
+document.addEventListener("DOMContentLoaded", function(event) {
+    const taskModal = document.getElementById('task-modal');
 const habitModal = document.getElementById('habit-modal');
 const overlay = document.getElementById('overlay');
 const addTaskButton = document.getElementById('addTask');
 const addHabitButton = document.getElementById('addHabit')
-const closeButton = document.querySelector('.close-button');
+const closeButton = document.querySelectorAll('.close-button');
 const modalAddTask = document.getElementById('modal-add-task');
 const modalAddHabit = document.getElementById('modal-add-habit');
 
@@ -112,13 +113,16 @@ function appendHabitToDOM(habit) {
 
     const newHabitItem = document.createElement('li');
     newHabitItem.setAttribute('data-habit-id', habit.habit_id);
+    //console.log(habit)
+    console.log(habit.habitId)
+
     newHabitItem.innerHTML = `<input type="checkbox" class="checkbox" ${habit.completed ? 'checked' : ''}> ${habit.habit}`;
     
     // Add event listener to the checkbox for habit status updates
     const checkbox = newHabitItem.querySelector('.checkbox');
     checkbox.addEventListener('change', () => updateHabitStatus(habit.habit_id, checkbox.checked));
 
-    habitsList.appendChild(newHabitItem); // Make sure `habitsList` is defined
+    habitsList.appendChild(newHabitItem); // Make sure `habitsList` is definedldddlllldlll
 }
 
 
@@ -211,6 +215,8 @@ function addEventListeners() {
 // Initialize app
 addCheckboxEventListeners();
 addEventListeners();
+});
+
 
 
 

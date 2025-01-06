@@ -65,7 +65,6 @@ router.get('/:userId', async (req, res) => {
 //         res.status(500).json({ message: 'Error adding task' });
 //     }
 // });
-
 router.post('/:userId', async (req, res) => {
     const { task, habit } = req.body; // Expect either 'task' or 'habit' in the request body
     const user_id = req.cookies.userId;
@@ -80,7 +79,7 @@ router.post('/:userId', async (req, res) => {
 
         let newItem;
         let message;
-
+        console.log(task)
         if (task) {
             // Insert the new task for the user
             const [result] = await db.execute('INSERT INTO tasks (user_id, task, completed) VALUES (?, ?, ?)', [user_id, task, false]);
@@ -88,6 +87,7 @@ router.post('/:userId', async (req, res) => {
             // Fetch the newly inserted task
             [newItem] = await db.execute('SELECT * FROM tasks WHERE task_id = ?', [result.insertId]);
             message = 'Task added successfully';
+            
         } else if (habit) {
             // Insert the new habit for the user
             const [result] = await db.execute('INSERT INTO habits (user_id, habit, completed) VALUES (?, ?, ?)', [user_id, habit, false]);
@@ -111,6 +111,7 @@ router.post('/:userId', async (req, res) => {
         res.status(500).json({ message: 'Error adding item' });
     }
 });
+
 
 
 router.delete('/:userId', async (req, res) => {

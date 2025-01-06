@@ -77,7 +77,7 @@
                         <% habits.forEach(function(habit) { %>
                             <li data-habit-id="<%= habit.habit_id %>">
                                 <input type="checkbox" class="checkbox" <%= habit.completed ? 'checked' : '' %> >
-                                <%= habit.name %>
+                                <%= habit.habit %>
                             </li>
                         <% }); %>
                     <% } else { %>
