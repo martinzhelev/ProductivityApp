@@ -66,51 +66,42 @@ router.get('/:userId', async (req, res) => {
 //     }
 // });
 router.post('/:userId', async (req, res) => {
-    const { task, habit } = req.body; // Expect either 'task' or 'habit' in the request body
+    const { task, habit } = req.body;
     const user_id = req.cookies.userId;
 
-    try {
-        // Check if the user exists (using SQL query)
-        const [user] = await db.execute('SELECT * FROM users WHERE user_id = ?', [user_id]);
+    if (!user_id) {
+        return res.status(401).json({ message: 'User ID is not available in cookies' });
+    }
 
-        if (user.length === 0) {
+    if (!task && !habit) {
+        return res.status(400).json({ message: 'Please provide either a task or a habit' });
+    }
+
+    try {
+        const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [user_id]);
+        if (userRows.length === 0) {
             return res.status(404).json({ message: 'User not found' });
         }
 
         let newItem;
         let message;
-        console.log(task)
         if (task) {
-            // Insert the new task for the user
             const [result] = await db.execute('INSERT INTO tasks (user_id, task, completed) VALUES (?, ?, ?)', [user_id, task, false]);
-
-            // Fetch the newly inserted task
             [newItem] = await db.execute('SELECT * FROM tasks WHERE task_id = ?', [result.insertId]);
             message = 'Task added successfully';
-            
         } else if (habit) {
-            // Insert the new habit for the user
             const [result] = await db.execute('INSERT INTO habits (user_id, habit, completed) VALUES (?, ?, ?)', [user_id, habit, false]);
-
-            // Fetch the newly inserted habit
             [newItem] = await db.execute('SELECT * FROM habits WHERE habit_id = ?', [result.insertId]);
             message = 'Habit added successfully';
-        } else {
-            return res.status(400).json({ message: 'Please provide either a task or a habit' });
         }
 
-        console.log('New Item:', newItem);  // Log the item being returned
-
-        // Respond with the new item data
-        res.status(201).json({
-            message,
-            item: newItem[0]  // Return the inserted item object
-        });
+        res.status(201).json({ message, item: newItem[0] });
     } catch (err) {
         console.error('Error adding item:', err);
         res.status(500).json({ message: 'Error adding item' });
     }
 });
+
 
 
 
@@ -151,39 +142,36 @@ router.delete('/:userId', async (req, res) => {
 
 
 router.patch('/:userId', async (req, res) => {
-    const { taskId, completed } = req.body;  // Get taskId and completed status from the body
+    const { taskId, completed } = req.body; // Validate this input
     const user_id = req.cookies.userId;
 
-    try {
-        // Step 1: Find the user
-        const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [user_id]);
+    if (!taskId || typeof completed === 'undefined') {
+        return res.status(400).json({ message: 'Invalid input: taskId and completed are required' });
+    }
 
+    if (!user_id) {
+        return res.status(401).json({ message: 'User ID is not available in cookies' });
+    }
+
+    try {
+        const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [user_id]);
         if (userRows.length === 0) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        const user = userRows[0];  // Get the user data (SQL result will be an array)
-
-        // Step 2: Check if the task exists for this user
         const [taskRows] = await db.execute('SELECT * FROM tasks WHERE user_id = ? AND task_id = ?', [user_id, taskId]);
-
         if (taskRows.length === 0) {
             return res.status(404).json({ message: 'Task not found' });
         }
 
-        const task = taskRows[0];  // Get the task data
-
-        // Step 3: Update the task's completion status
         await db.execute('UPDATE tasks SET completed = ? WHERE task_id = ? AND user_id = ?', [completed, taskId, user_id]);
-
-        // Step 4: Return the updated task data
-        res.json({ message: 'Task updated successfully', task: { ...task, completed } });
-
+        res.json({ message: 'Task updated successfully', task: { ...taskRows[0], completed } });
     } catch (err) {
         console.error('Error updating task:', err);
         res.status(500).json({ message: 'Error updating task' });
     }
 });
+
 
 
 
