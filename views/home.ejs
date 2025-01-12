@@ -91,17 +91,21 @@
         </div>
 
         <!-- Right Column: Stats -->
-        <div class="col-md-4">
-            <div class="column">
-                <h2>Player Stats</h2>
-                <div class="stats">
-                    <p>Strength: 10</p>
-                    <p>Agility: 8</p>
-                    <p>Intelligence: 12</p>
-                </div>
-            </div>
+<div class="col-md-4">
+    <div class="column">
+        <h2>Player Stats</h2>
+        <div class="stats">
+            <% if (stats) { %>
+                <p>Strength: <%= stats.strength %></p>
+                <p>Agility: <%= stats.agility %></p>
+                <p>Mental: <%= stats.mental %></p>
+            <% } else { %>
+                <p>No stats available</p>
+            <% } %>
         </div>
     </div>
+</div>
+
 
     <div class="modal" id="task-modal">
         <div class="modal-header">

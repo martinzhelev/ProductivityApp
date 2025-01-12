@@ -7,9 +7,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
     const closeButtons = document.querySelectorAll('.close-button'); // Renamed to closeButtons
     const modalAddTask = document.getElementById('modal-add-task');
     const modalAddHabit = document.getElementById('modal-add-habit');
-
+    const habitsList = document.getElementById('habits-list');
     const tasksList = document.getElementById("tasks-list");
     const removeTaskButton = document.getElementById('removeTask');
+    const removeDoneHabitsButton = document.getElementById('removeHabit'); // Renamed to removeDoneHabitsButton
     const userId = getCookie('userId');
 
     function getCookie(name) {
@@ -51,9 +52,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
             .then(response => response.json())
             .then(data => {
                 console.log('Response Data:', data);  // Log the data to verify contents
-                if (data.message === 'Task added successfully' && data.task) {
-                    appendTaskToDOM(data.task);  // Pass the task object directly
-                } else {
+                if (data.message === 'Task added successfully' && data.item) {
+                    appendTaskToDOM(data.item); // Ensure the response's `item` matches your structure
+                }
+                 else {
                     alert('Failed to add task');
                 }
                 document.getElementById('task-input').value = '';
@@ -75,9 +77,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
             .then(response => response.json())
             .then(data => {
                 console.log('Response Data:', data);  // Log the data to verify contents
-                if (data.message === 'Habit added successfully' && data.habit) { // Updated message and check for 'habit'
-                    appendHabitToDOM(data.habit);  // Updated to 'appendHabitToDOM'
-                } else {
+                if (data.message === 'Habit added successfully' && data.item) {
+                    appendHabitToDOM(data.item);
+                }
+                 else {
                     alert('Failed to add habit');
                 }
                 document.getElementById('habit-input').value = ''; // Updated to 'habit-input'
@@ -129,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         fetch(`/home/${userId}`, {  // Only userId in the URL
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ taskId, completed: isChecked })  // Send taskId in the body
+            body: JSON.stringify({ type: 'task', id: taskId, completed: isChecked })
         })
         .then(response => response.json())
         .then(data => console.log(`Task ${taskId} updated successfully`))
@@ -140,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         fetch(`/home/${userId}`, {  // Only userId in the URL
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ habitId, completed: isChecked })  // Send habitId in the body
+            body: JSON.stringify({ type: 'habit', id: habitId, completed: isChecked })
         })
         .then(response => response.json())
         .then(data => console.log(`Habit ${habitId} updated successfully`))
@@ -158,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 fetch(`/home/${userId}`, {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ taskId })
+                    body: JSON.stringify({ type: 'task', id: taskId })
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -171,6 +174,30 @@ document.addEventListener("DOMContentLoaded", function(event) {
             }
         });
     }
+    function removeDoneHabits() {
+        const habits = habitsList.querySelectorAll('li'); // Select all habit items
+    
+        habits.forEach(habitItem => {
+            const checkbox = habitItem.querySelector('.checkbox'); // Find checkbox for each habit
+            if (checkbox && checkbox.checked) {
+                const habitId = habitItem.getAttribute('data-habit-id'); // Get habit ID
+                fetch(`/home/${userId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: 'habit', id: habitId }) // Send type as 'habit'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Habit deleted successfully') {
+                        habitsList.removeChild(habitItem); // Remove the habit from DOM
+                        console.log(`Habit ${habitId} deleted`);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
+    }
+    
 
     function addCheckboxEventListeners() {
         const checkboxes = document.querySelectorAll('.checkbox');
@@ -203,6 +230,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
         // Habit event listeners
         addHabitButton.addEventListener('click', openHabitModal);
+        removeDoneHabitsButton.addEventListener('click', removeDoneHabits); // Add event listener to removeDoneHabitsButton
         closeButtons.forEach(button => button.addEventListener('click', closeHabitModal)); // Loop through closeButtons
         modalAddHabit.addEventListener('click', addHabit);
     }

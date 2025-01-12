@@ -11,60 +11,46 @@ const mongoose = require("mongoose");
 
 router.get('/:userId', async (req, res) => {
     try {
-        const userId = req.cookies.userId;
+        const userId = req.cookies.userId; // Assuming userId is stored in cookies
 
-        // Query to get the user by ID
+        // Fetch user details
         const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [userId]);
         if (userRows.length === 0) {
             return res.status(404).json({ message: 'User not found' });
         }
-       
 
-        // Query to get the tasks associated with the user
+        // Fetch tasks and habits for the user
         const [taskRows] = await db.execute('SELECT * FROM tasks WHERE user_id = ?', [userId]);
         const [habitRows] = await db.execute('SELECT * FROM habits WHERE user_id = ?', [userId]);
 
-        const user = userRows[0];
+        // Fetch stats for the user
+        const [statRows] = await db.execute(
+            'SELECT stat_name, stat_value FROM user_stats WHERE user_id = ?',
+            [userId]
+        );
 
-        // Render the "home" view, passing the user's tasks and username
-        res.render("home", { tasks: taskRows, habits: habitRows,  username: user.username, userId: user.user_id });
+        // Transform stats into an object
+        const stats = statRows.reduce((acc, stat) => {
+            acc[stat.stat_name] = stat.stat_value;
+            return acc;
+        }, {});
+
+        // Render the EJS template with all data
+        res.render('home', {
+            username: userRows[0].username,
+            tasks: taskRows,
+            habits: habitRows,
+            stats,
+            userId
+        });
     } catch (err) {
-        console.error("Error fetching tasks:", err);
-        res.status(500).json({ message: 'Error fetching tasks' });
+        console.error('Error fetching user dashboard data:', err);
+        res.status(500).json({ message: 'Error fetching user dashboard data' });
     }
 });
 
 
-// router.post('/:userId', async (req, res) => {
-//     const { task } = req.body;
-//     const user_id = req.cookies.userId;
 
-//     try {
-//         // Check if the user exists (using SQL query)
-//         const [user] = await db.execute('SELECT * FROM users WHERE user_id = ?', [user_id]);
-
-//         if (user.length === 0) {
-//             return res.status(404).json({ message: 'User not found' });
-//         }
-
-//         // Insert the new task for the user
-//         const [result] = await db.execute('INSERT INTO tasks (user_id, task, completed) VALUES (?, ?, ?)', [user_id, task, false]);
-
-//         // Fetch the newly inserted task (assuming the task ID is auto-incremented)
-//         const [newTask] = await db.execute('SELECT * FROM tasks WHERE task_id = ?', [result.insertId]);
-
-//         console.log('New Task:', newTask);  // Log the task being returned
-
-//         // Respond with the task data
-//         res.status(201).json({
-//             message: 'Task added successfully',
-//             task: newTask[0]  // Return the task object
-//         });
-//     } catch (err) {
-//         console.error('Error adding task:', err);
-//         res.status(500).json({ message: 'Error adding task' });
-//     }
-// });
 router.post('/:userId', async (req, res) => {
     const { task, habit } = req.body;
     const user_id = req.cookies.userId;
@@ -103,76 +89,86 @@ router.post('/:userId', async (req, res) => {
 });
 
 
-
-
 router.delete('/:userId', async (req, res) => {
-    const { taskId } = req.body;  // Assume taskId is passed in the body of the request
+    const { type, id } = req.body; // Expect `type` ("task" or "habit") and `id` (taskId or habitId)
     const user_id = req.cookies.userId;
 
-    try {
-        // Query to find the user by userId
-        const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [user_id]);
+    if (!type || !id) {
+        return res.status(400).json({ message: 'Invalid input: "type" and "id" are required' });
+    }
 
+    if (!['task', 'habit'].includes(type)) {
+        return res.status(400).json({ message: 'Invalid "type". Must be "task" or "habit"' });
+    }
+
+    try {
+        const table = type === 'task' ? 'tasks' : 'habits'; // Determine table based on type
+        const idColumn = `${type}_id`; // Determine ID column based on type
+
+        // Check if the user exists
+        const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [user_id]);
         if (userRows.length === 0) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        const user = userRows[0]; // Get the user data (SQL result will be an array)
-        
-        // Query to find the task by taskId associated with this user
-        const [taskRows] = await db.execute('SELECT * FROM tasks WHERE user_id = ? AND task_id = ?', [user_id, taskId]);
-
-        if (taskRows.length === 0) {
-            return res.status(404).json({ message: 'Task not found' });
+        // Check if the entity exists for this user
+        const [entityRows] = await db.execute(`SELECT * FROM ${table} WHERE user_id = ? AND ${idColumn} = ?`, [user_id, id]);
+        if (entityRows.length === 0) {
+            return res.status(404).json({ message: `${type.charAt(0).toUpperCase() + type.slice(1)} not found` });
         }
 
-        // Task exists, now proceed to delete it
-        await db.execute('DELETE FROM tasks WHERE task_id = ? AND user_id = ?', [taskId, user_id]);
-
-        res.status(200).json({ message: 'Task deleted successfully' });
-
+        // Delete the entity
+        await db.execute(`DELETE FROM ${table} WHERE ${idColumn} = ? AND user_id = ?`, [id, user_id]);
+        res.status(200).json({ message: `${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully` });
     } catch (err) {
-        console.error('Error deleting task:', err);
-        res.status(500).json({ message: 'Error deleting task' });
+        console.error(`Error deleting ${type}:`, err);
+        res.status(500).json({ message: `Error deleting ${type}` });
     }
 });
 
-
-
-
-
+/**
+ * PATCH Route - Works for both tasks and habits
+ * Accepts `type` (task or habit), `id` (taskId or habitId), and `completed` in the request body
+ */
 router.patch('/:userId', async (req, res) => {
-    const { taskId, completed } = req.body; // Validate this input
+    const { type, id, completed } = req.body; // Expect `type`, `id`, and `completed`
     const user_id = req.cookies.userId;
 
-    if (!taskId || typeof completed === 'undefined') {
-        return res.status(400).json({ message: 'Invalid input: taskId and completed are required' });
+    if (!type || !id || typeof completed === 'undefined') {
+        return res.status(400).json({ message: 'Invalid input: "type", "id", and "completed" are required' });
     }
 
-    if (!user_id) {
-        return res.status(401).json({ message: 'User ID is not available in cookies' });
+    if (!['task', 'habit'].includes(type)) {
+        return res.status(400).json({ message: 'Invalid "type". Must be "task" or "habit"' });
     }
 
     try {
+        const table = type === 'task' ? 'tasks' : 'habits'; // Determine table based on type
+        const idColumn = `${type}_id`; // Determine ID column based on type
+
+        // Check if the user exists
         const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [user_id]);
         if (userRows.length === 0) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        const [taskRows] = await db.execute('SELECT * FROM tasks WHERE user_id = ? AND task_id = ?', [user_id, taskId]);
-        if (taskRows.length === 0) {
-            return res.status(404).json({ message: 'Task not found' });
+        // Check if the entity exists for this user
+        const [entityRows] = await db.execute(`SELECT * FROM ${table} WHERE user_id = ? AND ${idColumn} = ?`, [user_id, id]);
+        if (entityRows.length === 0) {
+            return res.status(404).json({ message: `${type.charAt(0).toUpperCase() + type.slice(1)} not found` });
         }
 
-        await db.execute('UPDATE tasks SET completed = ? WHERE task_id = ? AND user_id = ?', [completed, taskId, user_id]);
-        res.json({ message: 'Task updated successfully', task: { ...taskRows[0], completed } });
+        // Update the entity's completion status
+        await db.execute(`UPDATE ${table} SET completed = ? WHERE ${idColumn} = ? AND user_id = ?`, [completed, id, user_id]);
+        res.status(200).json({
+            message: `${type.charAt(0).toUpperCase() + type.slice(1)} updated successfully`,
+            [type]: { ...entityRows[0], completed }
+        });
     } catch (err) {
-        console.error('Error updating task:', err);
-        res.status(500).json({ message: 'Error updating task' });
+        console.error(`Error updating ${type}:`, err);
+        res.status(500).json({ message: `Error updating ${type}` });
     }
 });
-
-
 
 
 
