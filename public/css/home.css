@@ -28,14 +28,15 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: white;
-    width: 400px; /* Increased width */
-    max-width: 80%;
-    height: 200px; /* Decreased height */
+    width: 400px; /* Set to 100% for full width */
+    max-width: 80%; /* Avoid exceeding screen size */
+    height: auto; /* Set to auto to adjust based on content */
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     display: none; /* Hidden by default */
     font-family: Arial, sans-serif;
+    padding: 0; /* Remove any extra padding */
 }
 
 /* Modal header */
@@ -62,11 +63,14 @@ body {
 }
 
 /* Modal body */
+/* Modal body */
 .modal-body {
     padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    width: 100%; /* Ensure modal body takes full width */
+    box-sizing: border-box; /* Prevent padding from causing overflow */
 }
 
 /* Input field */

@@ -90,15 +90,19 @@
             </div>
         </div>
 
-        <!-- Right Column: Stats -->
+<!-- Right Column: Stats -->
 <div class="col-md-4">
     <div class="column">
         <h2>Player Stats</h2>
         <div class="stats">
             <% if (stats) { %>
-                <p>Strength: <%= stats.strength %></p>
-                <p>Agility: <%= stats.agility %></p>
-                <p>Mental: <%= stats.mental %></p>
+                <p>Strength: <%= stats.strength || 0 %></p>
+                <p>Agility: <%= stats.agility || 0 %></p>
+                <p>Mental: <%= stats.mental || 0 %></p>
+                <p>Work: <%= stats.work || 0 %></p>
+                <p>Social: <%= stats.social || 0 %></p>
+                <p>Financial: <%= stats.financial || 0 %></p>
+                <p>Speed: <%= stats.speed || 0 %></p>
             <% } else { %>
                 <p>No stats available</p>
             <% } %>
@@ -107,27 +111,49 @@
 </div>
 
 
-    <div class="modal" id="task-modal">
-        <div class="modal-header">
-            <div class="title">Add task</div>
-            <div class="close-button">&times;</div>
-        </div>
-        <div class="modal-body">
-            <input type="text" name="task" id="task-input">
-            <button id="modal-add-task">Add</button>
-        </div>
+<div class="modal" id="task-modal">
+    <div class="modal-header">
+        <span class="title">Add Task</span>
+        <span class="close-button" id="close-task-modal">&times;</span>
     </div>
-    <div class="modal" id="habit-modal">
-        <div class="modal-header">
-            <div class="title">Add Habit</div>
-            <div class="close-button">&times;</div>
-        </div>
-        <div class="modal-body">
-            <input type="text" name="habit" id="habit-input">
-            <button id="modal-add-habit">Add</button>
-        </div>
+    <div class="modal-body">
+        <input type="text" name="task" id="task-input" placeholder="Enter your task" />
+        <select id="task-category" class="form-select">
+            <option value="" disabled selected>Select Category</option>
+            <option value="Strength">Strength</option>
+            <option value="Agility">Agility</option>
+            <option value="Mental">Mental</option>
+            <option value="Work">Work</option>
+            <option value="Social">Social</option>
+            <option value="Financial">Financial</option>
+            <option value="Speed">Speed</option>
+        </select>
+        <button id="modal-add-task">Add Task</button>
     </div>
-    <div id="overlay"></div>
+</div>
+<div class="modal" id="habit-modal">
+    <div class="modal-header">
+        <span class="title">Add Habit</span>
+        <span class="close-button" id="close-habit-modal">&times;</span>
+    </div>
+    <div class="modal-body">
+        <input type="text" name="habit" id="habit-input" placeholder="Enter your habit" />
+        <select id="habit-category" class="form-select">
+            <option value="" disabled selected>Select Category</option>
+            <option value="Strength">Strength</option>
+            <option value="Agility">Agility</option>
+            <option value="Mental">Mental</option>
+            <option value="Work">Work</option>
+            <option value="Social">Social</option>
+            <option value="Financial">Financial</option>
+            <option value="Speed">Speed</option>
+        </select>
+        <button id="modal-add-habit">Add Habit</button>
+    </div>
+</div>
+<div id="overlay"></div>
+
+
 </main>
 
 <div id="user-info" data-user-id="<%= userId %>"></div>

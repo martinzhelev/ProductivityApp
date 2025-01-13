@@ -11,6 +11,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
     const tasksList = document.getElementById("tasks-list");
     const removeTaskButton = document.getElementById('removeTask');
     const removeDoneHabitsButton = document.getElementById('removeHabit'); // Renamed to removeDoneHabitsButton
+    
+    var taskCategory;
+    var habitCategory;
+
     const userId = getCookie('userId');
 
     function getCookie(name) {
@@ -42,12 +46,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
     function addTask(event) {
         event.preventDefault();
         const taskInput = document.getElementById('task-input').value.trim();
+         taskCategory = document.getElementById('task-category').value
+        console.log("taskCategory: "+taskCategory)
 
         if (taskInput) {
             fetch(`/home/${userId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ task: taskInput })
+                body: JSON.stringify({ task: taskInput, taskCategory: taskCategory })
             })
             .then(response => response.json())
             .then(data => {
@@ -64,15 +70,17 @@ document.addEventListener("DOMContentLoaded", function(event) {
         }
         closeTaskModal();
     }
+
     function addHabit(event) {
         event.preventDefault();
         const habitInput = document.getElementById('habit-input').value.trim(); // Updated to 'habit-input'
+        habitCategory = document.getElementById('habit-category').value
         console.log(habitInput)
         if (habitInput) {
             fetch(`/home/${userId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ habit: habitInput }) // Updated to send 'habit'
+                body: JSON.stringify({ habit: habitInput, habitCategory: habitCategory }) // Updated to send 'habit'
             })
             .then(response => response.json())
             .then(data => {
@@ -128,11 +136,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }
 
     // Function to update task completion status
-    function updateTaskStatus(taskId, isChecked) {
+    function updateTaskStatus(taskId, isChecked ) {
+        event.preventDefault();
+        const taskCategory = document.getElementById('task-category').value
+        console.log("task category: "+taskCategory)
         fetch(`/home/${userId}`, {  // Only userId in the URL
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ type: 'task', id: taskId, completed: isChecked })
+            body: JSON.stringify({ type: 'task', id: taskId, completed: isChecked, taskCategory: taskCategory })
         })
         .then(response => response.json())
         .then(data => console.log(`Task ${taskId} updated successfully`))
@@ -140,10 +151,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }
 
     function updateHabitStatus(habitId, isChecked) {
+        event.preventDefault();
+        habitCategory = document.getElementById('habit-category').value
+
         fetch(`/home/${userId}`, {  // Only userId in the URL
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ type: 'habit', id: habitId, completed: isChecked })
+            body: JSON.stringify({ type: 'habit', id: habitId, completed: isChecked, habitCategory: habitCategory })
         })
         .then(response => response.json())
         .then(data => console.log(`Habit ${habitId} updated successfully`))
@@ -206,13 +220,17 @@ document.addEventListener("DOMContentLoaded", function(event) {
             checkbox.addEventListener('change', function() {
                 const listItem = this.closest('li');
                 const isChecked = this.checked;
+                const taskCategory = document.getElementById('task-category').value
+                const habitCategory = document.getElementById('habit-category').value
 
                 // Determine if it's a task or a habit based on data attributes
                 if (listItem.hasAttribute('data-task-id')) {
                     const taskId = listItem.getAttribute('data-task-id');
+                     const taskCategory = document.getElementById('task-category').value
                     updateTaskStatus(taskId, isChecked); // Send PATCH request to update task status
                 } else if (listItem.hasAttribute('data-habit-id')) {
                     const habitId = listItem.getAttribute('data-habit-id');
+                     const habitCategory = document.getElementById('habit-category').value
                     updateHabitStatus(habitId, isChecked); // Send PATCH request to update habit status
                 }
             });
