@@ -2,10 +2,6 @@ const express = require("express");
 const router = express.Router();
 const bodyParser = require("body-parser");
 const db = require("../server");
-const User = require("../models/user")
-const mongoose = require("mongoose");
-
-
 
 
 
@@ -210,26 +206,22 @@ router.patch('/:userId', async (req, res) => {
                 console.error(`Error updating stats for task ID ${id}:`, err);
                 return res.status(500).json({ message: 'Error updating stats' });
             }
-        }
-        
-
-        // For habits, update the stat if habitCategory is provided
-        if (type === 'habit' && completed) {
+        } else if (type === 'task' && !completed) {
             try {
-                // Fetch the habit category (stat name) for the completed habit
-                const [habitCategoryRows] = await db.execute(
-                    `SELECT habit_category FROM habits WHERE user_id = ? AND ${idColumn} = ?`,
+                // Fetch the task category (stat name) for the completed task
+                const [taskCategoryRows] = await db.execute(
+                    `SELECT task_category FROM tasks WHERE user_id = ? AND ${idColumn} = ?`,
                     [user_id, id]
                 );
         
                 // Ensure the category exists
-                if (habitCategoryRows.length === 0) {
-                    console.error(`Habit category not found for habit ID: ${id}`);
-                    return res.status(404).json({ message: 'Habit category not found' });
+                if (taskCategoryRows.length === 0) {
+                    console.error(`Task category not found for task ID: ${id}`);
+                    return res.status(404).json({ message: 'Task category not found' });
                 }
         
-                const statName = habitCategoryRows[0].habit_category; // Extract the habit category
-                console.log(`Stat Name for Habit: ${statName}`); // Debugging
+                const statName = taskCategoryRows[0].task_category; // Extract the task category
+                console.log(`Stat Name for Task: ${statName}`); // Debugging
         
                 // Check if the stat exists for this user
                 const [statRows] = await db.execute(
@@ -238,38 +230,115 @@ router.patch('/:userId', async (req, res) => {
                 );
         
                 if (statRows.length > 0) {
-                    console.log(`Stat found, incrementing value for stat: ${statName}`); // Debugging
+                    console.log(`Stat found, decrementing value for stat: ${statName}`); // Debugging
                     const statId = statRows[0].stat_id;
         
-                    // Increment the stat value
+                    // Decrement the stat value (optional logic for "un-completing")
                     await db.execute(
-                        'UPDATE user_stats SET stat_value = stat_value + 1 WHERE stat_id = ?',
+                        'UPDATE user_stats SET stat_value = GREATEST(stat_value - 1, 0) WHERE stat_id = ?',
                         [statId]
-                    );
-                } else {
-                    console.log(`Stat not found, creating new stat for: ${statName}`); // Debugging
-        
-                    // Insert a new stat record
-                    await db.execute(
-                        'INSERT INTO user_stats (user_id, stat_name, stat_value) VALUES (?, ?, ?)',
-                        [user_id, statName, 1]
                     );
                 }
             } catch (err) {
-                console.error(`Error updating stats for habit ID ${id}:`, err);
+                console.error(`Error updating stats for task ID ${id}:`, err);
                 return res.status(500).json({ message: 'Error updating stats' });
             }
         }
+        
+        // For habits, update the stat if habitCategory is provided
+        if (type === 'habit' && completed) {
+                try {
+                    // Fetch the habit category (stat name) for the completed habit
+                    const [habitCategoryRows] = await db.execute(
+                        `SELECT habit_category FROM habits WHERE user_id = ? AND ${idColumn} = ?`,
+                        [user_id, id]
+                    );
 
-        res.status(200).json({
-            message: `${type.charAt(0).toUpperCase() + type.slice(1)} updated successfully`,
-            [type]: { ...entityRows[0], completed }
-        });
-    } catch (err) {
-        console.error(`Error updating ${type}:`, err);
-        res.status(500).json({ message: `Error updating ${type}` });
-    }
-});
+                    // Ensure the category exists
+                    if (habitCategoryRows.length === 0) {
+                        console.error(`Habit category not found for habit ID: ${id}`);
+                        return res.status(404).json({ message: 'Habit category not found' });
+                    }
+
+                    const statName = habitCategoryRows[0].habit_category; // Extract the habit category
+                    console.log(`Stat Name for Habit: ${statName}`); // Debugging
+
+                    // Check if the stat exists for this user
+                    const [statRows] = await db.execute(
+                        'SELECT * FROM user_stats WHERE user_id = ? AND stat_name = ?',
+                        [user_id, statName]
+                    );
+
+                    if (statRows.length > 0) {
+                        console.log(`Stat found, incrementing value for stat: ${statName}`); // Debugging
+                        const statId = statRows[0].stat_id;
+
+                        // Increment the stat value
+                        await db.execute(
+                            'UPDATE user_stats SET stat_value = stat_value + 1 WHERE stat_id = ?',
+                            [statId]
+                        );
+                    } else {
+                        console.log(`Stat not found, creating new stat for: ${statName}`); // Debugging
+
+                        // Insert a new stat record
+                        await db.execute(
+                            'INSERT INTO user_stats (user_id, stat_name, stat_value) VALUES (?, ?, ?)',
+                            [user_id, statName, 1]
+                        );
+                    }
+                } catch (err) {
+                    console.error(`Error updating stats for habit ID ${id}:`, err);
+                    return res.status(500).json({ message: 'Error updating stats' });
+                }
+            }else if (type === 'habit' && !completed) {
+                try {
+                    // Fetch the habit category (stat name) for the completed habit
+                    const [habitCategoryRows] = await db.execute(
+                        `SELECT habit_category FROM habits WHERE user_id = ? AND ${idColumn} = ?`,
+                        [user_id, id]
+                    );
+
+                    // Ensure the category exists
+                    if (habitCategoryRows.length === 0) {
+                        console.error(`Habit category not found for habit ID: ${id}`);
+                        return res.status(404).json({ message: 'Habit category not found' });
+                    }
+
+                    const statName = habitCategoryRows[0].habit_category; // Extract the habit category
+                    console.log(`Stat Name for Habit: ${statName}`); // Debugging
+
+                    // Check if the stat exists for this user
+                    const [statRows] = await db.execute(
+                        'SELECT * FROM user_stats WHERE user_id = ? AND stat_name = ?',
+                        [user_id, statName]
+                    );
+
+                    if (statRows.length > 0) {
+                        console.log(`Stat found, incrementing value for stat: ${statName}`); // Debugging
+                        const statId = statRows[0].stat_id;
+
+                        // Increment the stat value
+                        await db.execute(
+                            'UPDATE user_stats SET stat_value = stat_value - 1 WHERE stat_id = ?',
+                            [statId]
+                        );
+                    }
+                } catch (err) {
+                    console.error(`Error updating stats for habit ID ${id}:`, err);
+                    return res.status(500).json({ message: 'Error updating stats' });
+                }
+            }
+
+            res.status(200).json({
+                message: `${type.charAt(0).toUpperCase() + type.slice(1)} updated successfully`,
+                [type]: { ...entityRows[0], completed }
+            });
+        } catch (err) {
+            console.error(`Error updating ${type}:`, err);
+            res.status(500).json({ message: `Error updating ${type}` });
+        }
+    });
 
 
 

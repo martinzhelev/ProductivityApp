@@ -29,11 +29,13 @@ const db = mysql.createPool({
 const loginRouter = require("./routes/login");
 const registerRouter = require("./routes/register");
 const homeRouter = require("./routes/home");
+const bodyRouter = require("./routes/body");
 
 // Mount Routes
 app.use("/register", registerRouter);
 app.use("/login", loginRouter);  
 app.use("/home", homeRouter);
+app.use("/body", bodyRouter)
 
 // Handle 404 errors
 app.use((req, res) => {

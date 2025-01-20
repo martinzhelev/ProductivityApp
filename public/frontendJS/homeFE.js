@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function(event) {
+document.addEventListener("DOMContentLoaded", function (event) {
     const taskModal = document.getElementById('task-modal');
     const habitModal = document.getElementById('habit-modal');
     const overlay = document.getElementById('overlay');
@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     const tasksList = document.getElementById("tasks-list");
     const removeTaskButton = document.getElementById('removeTask');
     const removeDoneHabitsButton = document.getElementById('removeHabit'); // Renamed to removeDoneHabitsButton
-    
+
     var taskCategory;
     var habitCategory;
 
@@ -46,8 +46,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
     function addTask(event) {
         event.preventDefault();
         const taskInput = document.getElementById('task-input').value.trim();
-         taskCategory = document.getElementById('task-category').value
-        console.log("taskCategory: "+taskCategory)
+        taskCategory = document.getElementById('task-category').value
+        console.log("taskCategory: " + taskCategory)
 
         if (taskInput) {
             fetch(`/home/${userId}`, {
@@ -55,18 +55,18 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ task: taskInput, taskCategory: taskCategory })
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Response Data:', data);  // Log the data to verify contents
-                if (data.message === 'Task added successfully' && data.item) {
-                    appendTaskToDOM(data.item); // Ensure the response's `item` matches your structure
-                }
-                 else {
-                    alert('Failed to add task');
-                }
-                document.getElementById('task-input').value = '';
-            })
-            .catch(error => console.error('Error:', error));
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Response Data:', data);  // Log the data to verify contents
+                    if (data.message === 'Task added successfully' && data.item) {
+                        appendTaskToDOM(data.item); // Ensure the response's `item` matches your structure
+                    }
+                    else {
+                        alert('Failed to add task');
+                    }
+                    document.getElementById('task-input').value = '';
+                })
+                .catch(error => console.error('Error:', error));
         }
         closeTaskModal();
     }
@@ -82,18 +82,18 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ habit: habitInput, habitCategory: habitCategory }) // Updated to send 'habit'
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Response Data:', data);  // Log the data to verify contents
-                if (data.message === 'Habit added successfully' && data.item) {
-                    appendHabitToDOM(data.item);
-                }
-                 else {
-                    alert('Failed to add habit');
-                }
-                document.getElementById('habit-input').value = ''; // Updated to 'habit-input'
-            })
-            .catch(error => console.error('Error:', error));
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Response Data:', data);  // Log the data to verify contents
+                    if (data.message === 'Habit added successfully' && data.item) {
+                        appendHabitToDOM(data.item);
+                    }
+                    else {
+                        alert('Failed to add habit');
+                    }
+                    document.getElementById('habit-input').value = ''; // Updated to 'habit-input'
+                })
+                .catch(error => console.error('Error:', error));
         }
         closeHabitModal(); // Updated to 'closeHabitModal'
     }
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         const newTaskItem = document.createElement('li');
         newTaskItem.setAttribute('data-task-id', task.task_id);
         newTaskItem.innerHTML = `<input type="checkbox" class="checkbox" ${task.completed ? 'checked' : ''}> ${task.task}`;
-        
+
         // Add event listener to the checkbox for task status updates
         const checkbox = newTaskItem.querySelector('.checkbox');
         checkbox.addEventListener('change', () => updateTaskStatus(task.task_id, checkbox.checked));
@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         console.log(habit.habitId)
 
         newHabitItem.innerHTML = `<input type="checkbox" class="checkbox" ${habit.completed ? 'checked' : ''}> ${habit.habit}`;
-        
+
         // Add event listener to the checkbox for habit status updates
         const checkbox = newHabitItem.querySelector('.checkbox');
         checkbox.addEventListener('change', () => updateHabitStatus(habit.habit_id, checkbox.checked));
@@ -136,18 +136,18 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }
 
     // Function to update task completion status
-    function updateTaskStatus(taskId, isChecked ) {
+    function updateTaskStatus(taskId, isChecked) {
         event.preventDefault();
         const taskCategory = document.getElementById('task-category').value
-        console.log("task category: "+taskCategory)
+        console.log("task category: " + taskCategory)
         fetch(`/home/${userId}`, {  // Only userId in the URL
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ type: 'task', id: taskId, completed: isChecked, taskCategory: taskCategory })
         })
-        .then(response => response.json())
-        .then(data => console.log(`Task ${taskId} updated successfully`))
-        .catch(error => console.error('Error:', error));
+            .then(response => response.json())
+            .then(data => console.log(`Task ${taskId} updated successfully`))
+            .catch(error => console.error('Error:', error));
     }
 
     function updateHabitStatus(habitId, isChecked) {
@@ -159,9 +159,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ type: 'habit', id: habitId, completed: isChecked, habitCategory: habitCategory })
         })
-        .then(response => response.json())
-        .then(data => console.log(`Habit ${habitId} updated successfully`))
-        .catch(error => console.error('Error:', error));
+            .then(response => response.json())
+            .then(data => console.log(`Habit ${habitId} updated successfully`))
+            .catch(error => console.error('Error:', error));
     }
 
     // Function to remove all completed tasks
@@ -177,20 +177,20 @@ document.addEventListener("DOMContentLoaded", function(event) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ type: 'task', id: taskId })
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message === 'Task deleted successfully') {
-                        tasksList.removeChild(taskItem);
-                        console.log(`Task ${taskId} deleted`);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message === 'Task deleted successfully') {
+                            tasksList.removeChild(taskItem);
+                            console.log(`Task ${taskId} deleted`);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
             }
         });
     }
     function removeDoneHabits() {
         const habits = habitsList.querySelectorAll('li'); // Select all habit items
-    
+
         habits.forEach(habitItem => {
             const checkbox = habitItem.querySelector('.checkbox'); // Find checkbox for each habit
             if (checkbox && checkbox.checked) {
@@ -200,38 +200,35 @@ document.addEventListener("DOMContentLoaded", function(event) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ type: 'habit', id: habitId }) // Send type as 'habit'
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message === 'Habit deleted successfully') {
-                        habitsList.removeChild(habitItem); // Remove the habit from DOM
-                        console.log(`Habit ${habitId} deleted`);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message === 'Habit deleted successfully') {
+                            habitsList.removeChild(habitItem); // Remove the habit from DOM
+                            console.log(`Habit ${habitId} deleted`);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
             }
         });
     }
-    
+
 
     function addCheckboxEventListeners() {
         const checkboxes = document.querySelectorAll('.checkbox');
-        
+
         checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
+            checkbox.addEventListener('change', async function () {
                 const listItem = this.closest('li');
                 const isChecked = this.checked;
-                const taskCategory = document.getElementById('task-category').value
-                const habitCategory = document.getElementById('habit-category').value
+                
 
                 // Determine if it's a task or a habit based on data attributes
                 if (listItem.hasAttribute('data-task-id')) {
                     const taskId = listItem.getAttribute('data-task-id');
-                     const taskCategory = document.getElementById('task-category').value
-                    updateTaskStatus(taskId, isChecked); // Send PATCH request to update task status
+                    await updateTaskStatus(taskId, isChecked); // Send PATCH request to update task status
                 } else if (listItem.hasAttribute('data-habit-id')) {
                     const habitId = listItem.getAttribute('data-habit-id');
-                     const habitCategory = document.getElementById('habit-category').value
-                    updateHabitStatus(habitId, isChecked); // Send PATCH request to update habit status
+                    await updateHabitStatus(habitId, isChecked); // Send PATCH request to update habit status
                 }
             });
         });
