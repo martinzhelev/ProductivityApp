@@ -37,22 +37,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Add Set
-    document.getElementById('addSetForm').addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        const workoutId = document.getElementById('data-exercise-id').value;
-        const reps = document.getElementById('reps').value;
-        const minutes = document.getElementById('minutes').value;
-
-        const response = await fetch(`/body/${userId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'addSet', workoutId, reps, minutes })
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.add-set-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const workoutId = this.getAttribute('data-exercise-id');
+                document.getElementById('data-exercise-id').value = workoutId;
+            });
         });
-
-        if (response.ok) location.reload();
-        else console.error('Failed to add set');
+    
+        document.getElementById('addSetForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+    
+            const workoutId = document.getElementById('data-exercise-id').value;
+            const reps = document.getElementById('reps').value;
+            const minutes = document.getElementById('minutes').value;
+    
+            if (!workoutId || !reps || !minutes) {
+                console.error("Missing required fields");
+                return;
+            }
+    
+            const response = await fetch(`/body/${userId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'addSet', workoutId, reps, minutes })
+            });
+    
+            if (response.ok) location.reload();
+            else console.error('Failed to add set');
+        });
     });
+    
 
     // Mark Workout as Complete
     document.querySelectorAll('.workout-checkbox').forEach(checkbox => {

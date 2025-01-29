@@ -5,7 +5,7 @@ const db = require("../server"); // Import database connection
 // GET /:userId - Fetch user, exercises, and completed workouts
 router.get('/:userId', async (req, res) => {
     try {
-        const userId = req.cookies.userId; // Get userId from URL parameter
+        const userId = req.params.userId; // Correct way to get userId from URL
 
         if (!userId) {
             return res.status(400).json({ message: "User ID is missing" });
@@ -23,23 +23,34 @@ router.get('/:userId', async (req, res) => {
             [userId]
         );
 
-        // Fetch all exercises
-        const [exercises] = await db.execute(
-            'SELECT workout_id, exercise_name AS name, sets, reps, category FROM workouts WHERE user_id = ?', 
-            [userId]
+        // Get today's date
+        const today = new Date().toISOString().split('T')[0];
+
+        // Fetch today's workouts
+        const [workouts] = await db.execute(
+            'SELECT workout_id FROM workouts_calendar WHERE user_id = ? AND date = ?',
+            [userId, today]
         );
 
-        // Format the date field to 'YYYY-MM-DD'
-        const formattedCompletedWorkouts = completedWorkouts.map(workout => {
-            const date = new Date(workout.date);
-            const formattedDate = date.toISOString().split('T')[0]; // Get the date part only (YYYY-MM-DD)
-            return {
-                ...workout,
-                date: formattedDate
-            };
-        });
+        if (workouts.length === 0) {
+            return res.status(404).json({ message: "No workouts found for today" });
+        }
 
-        // Render template with fetched data
+        const workoutId = workouts[0].workout_id; // Assuming only one workout per day
+
+        // Fetch exercises for today's workout
+        const [exercises] = await db.execute(
+            'SELECT exercise_name AS name FROM exercises WHERE user_id = ? AND workout_id = ?', 
+            [userId, workoutId]
+        );
+
+        // Format completed workout dates
+        const formattedCompletedWorkouts = completedWorkouts.map(workout => ({
+            ...workout,
+            date: new Date(workout.date).toISOString().split('T')[0]
+        }));
+
+        // Render template
         res.render('body', {
             exercises,
             completedWorkouts: formattedCompletedWorkouts,
@@ -51,6 +62,7 @@ router.get('/:userId', async (req, res) => {
         res.status(500).json({ message: "An error occurred while fetching workouts" });
     }
 });
+
 
 // POST /:userId - Handle various workout actions
 router.post('/:userId', async (req, res) => {
