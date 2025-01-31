@@ -138,37 +138,40 @@
       </thead>
       <tbody>
         <% if (exercises && exercises.length > 0) { %>
-          <% exercises.forEach((exercise, index) => { %>
-          <tr>
-            <td><%= exercise.name %></td>
-            <% for (let i = 0; i < 5; i++) { %> <!-- Render up to 5 sets for each exercise -->
+          <% exercises.forEach((exercise) => { %>
+            <tr>
+              <td data-id="<%= exercise.exercise_id %>"><%= exercise.name %></td>
+              <% for (let i = 1; i <= 5; i++) { %> <!-- Loop over 5 possible sets -->
+                <td>
+                  <% const set = exercise.sets[`set${i}`]; %> <!-- Access the set dynamically -->
+                  <% if (set && set !== 0) { %> <!-- If set is not null or zero -->
+                    <%= set %> reps
+                  <% } else { %>
+                    <span class="text-muted">-</span> <!-- Placeholder when no set data is available -->
+                  <% } %>
+                </td>
+              <% } %>
               <td>
-                <% if (exercise.sets && exercise.sets[i]) { %>
-                  <%= exercise.sets[i].reps %> reps / <%= exercise.sets[i].minutes %> min
-                <% } else { %>
-                  <span class="text-muted">-</span>
-                <% } %>
+                <button 
+                  class="btn btn-sm btn-primary add-set-btn" 
+                  data-bs-toggle="modal" 
+                  data-bs-target="#addSetModal" 
+                  data-exercise-id="<%= exercise.exercise_id %>">
+                  Add Set
+                </button>
               </td>
-            <% } %>
-            <td>
-              <button 
-              class="btn btn-sm btn-primary add-set-btn" 
-              data-bs-toggle="modal" 
-              data-bs-target="#addSetModal" 
-              data-exercise-id="<%= exercise.workout_id %>">
-              Add Set
-            </button>
-            
-            </td>
-          </tr>
+            </tr>
           <% }) %>
         <% } else { %>
-        <tr>
-          <td colspan="7" class="text-center">No exercises added yet</td>
-        </tr>
+          <tr>
+            <td colspan="7" class="text-center">No exercises added yet</td>
+          </tr>
         <% } %>
       </tbody>
     </table>
+    
+    
+    
 
     <!-- Category Picker and Finish Button -->
     <div class="d-flex justify-content-between align-items-center mt-4">
@@ -226,11 +229,6 @@
           <div class="mb-3">
             <label for="reps" class="form-label">Reps</label>
             <input type="number" class="form-control" id="reps" required>
-          </div>
-
-          <div class="mb-3">
-            <label for="minutes" class="form-label">Minutes</label>
-            <input type="number" class="form-control" id="minutes" required>
           </div>
 
           <button type="submit" class="btn btn-primary">Add Set</button>

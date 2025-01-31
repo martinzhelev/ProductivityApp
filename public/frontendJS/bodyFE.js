@@ -1,102 +1,116 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const userId = getCookie('userId');
-
+    // Parse userId from cookies
     function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-    }
-
-    // Fetch and display workouts
-    async function fetchWorkouts() {
-        const response = await fetch(`/body/${userId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'fetchWorkouts' })
-        });
-
-        const data = await response.json();
-        console.log('Fetched workouts:', data);
-    }
-
-    // Add Exercise
-    document.getElementById('addExerciseForm').addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        const exerciseName = document.getElementById('exerciseName').value;
-        const category = document.getElementById('categoryPicker').value;
-        
-        const response = await fetch(`/body/${userId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'addExercise', exerciseName, category, workoutDate: new Date().toISOString().split('T')[0] })
-        });
-
-        if (response.ok) location.reload();
-        else console.error('Failed to add exercise');
-    });
-
-    // Add Set
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.add-set-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const workoutId = this.getAttribute('data-exercise-id');
-                document.getElementById('data-exercise-id').value = workoutId;
-            });
-        });
-    
-        document.getElementById('addSetForm').addEventListener('submit', async (event) => {
-            event.preventDefault();
-    
-            const workoutId = document.getElementById('data-exercise-id').value;
-            const reps = document.getElementById('reps').value;
-            const minutes = document.getElementById('minutes').value;
-    
-            if (!workoutId || !reps || !minutes) {
-                console.error("Missing required fields");
-                return;
+        const cookies = document.cookie.split("; ");
+        for (let cookie of cookies) {
+            const [cookieName, cookieValue] = cookie.split("=");
+            if (cookieName === name) {
+                return decodeURIComponent(cookieValue);
             }
-    
+        }
+        return null; // Return null if not found
+    }
+    const userId = getCookie("userId");
+    console.log("userId:", userId);
+
+    // Fetch workouts for the user
+    async function fetchWorkouts() {
+        try {
             const response = await fetch(`/body/${userId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'addSet', workoutId, reps, minutes })
+                body: JSON.stringify({ action: 'fetchWorkouts' })
             });
-    
-            if (response.ok) location.reload();
-            else console.error('Failed to add set');
+            if (!response.ok) throw new Error('Failed to fetch workouts');
+            const data = await response.json();
+            console.log('Fetched workouts:', data);
+        } catch (error) {
+            console.error('Error fetching workouts:', error);
+        }
+    }
+
+    // Add exercise form submission
+    document.getElementById('addExerciseForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const exerciseName = document.getElementById('exerciseName').value;
+        const category = document.getElementById('categoryPicker').value;
+        const workoutDate = new Date().toISOString().split('T')[0]; // Allow custom date input
+
+        try {
+            const response = await fetch(`/body/${userId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'addExercise', exerciseName, category, workoutDate })
+            });
+            if (!response.ok) throw new Error('Failed to add exercise');
+            location.reload(); // Reload the page to reflect changes
+        } catch (error) {
+            console.error('Error adding exercise:', error);
+        }
+    });
+
+    //Add set form submission
+    document.querySelectorAll('[data-bs-target="#addSetModal"]').forEach(button => {
+        button.addEventListener('click', () => {
+            const exerciseId = button.getAttribute('data-exercise-id');
+            console.log("Clicked button exerciseId:", exerciseId); // Debugging
+            document.getElementById('data-exercise-id').value = exerciseId;
+            console.log("Hidden input value:", exerciseId); // Debugging
         });
     });
     
+    
+    document.getElementById('addSetForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+    
+        const exercise_id = document.getElementById('data-exercise-id').value;
+        const reps = document.getElementById('reps').value;
+    
+        console.log("Submitting:", { exercise_id, reps }); // Debugging
+    
+        if (!exercise_id) {
+            console.error("Error: exercise_id is missing!");
+            return;
+        }
+    
+        try {
+            const response = await fetch(`/body/${userId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    action: 'addSet', 
+                    reps, 
+                    exercise_id
+                })
+            });
+            if (!response.ok) throw new Error('Failed to add set');
+            location.reload();
+        } catch (error) {
+            console.error('Error adding set:', error);
+        }
+    });
+    
 
-    // Mark Workout as Complete
+    // Mark workout as complete/incomplete
     document.querySelectorAll('.workout-checkbox').forEach(checkbox => {
         checkbox.addEventListener('change', async (event) => {
             const isCompleted = event.target.checked;
             const date = event.target.getAttribute('data-date');
+            if (!date) return;
 
-            if (!date) {
-                console.error('Invalid date');
-                return;
+            try {
+                const response = await fetch(`/body/${userId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'markWorkoutComplete', date, isCompleted })
+                });
+                if (!response.ok) throw new Error('Failed to update workout status');
+            } catch (error) {
+                console.error('Error updating workout status:', error);
             }
-
-            const response = await fetch(`/body/${userId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'markWorkoutComplete', date, isCompleted })
-            });
-
-            if (!response.ok) console.error('Failed to update workout status');
         });
     });
 
-    // Store exercise ID when opening "Add Set" modal
-    document.querySelectorAll('[data-bs-target="#addSetModal"]').forEach(button => {
-        button.addEventListener('click', () => {
-            const exerciseId = button.getAttribute('data-exercise-id');
-            document.getElementById('exerciseId').value = exerciseId;
-        });
-    });
-
-    fetchWorkouts(); // Fetch workouts on page load
+    // Initial fetch of workouts
+    fetchWorkouts();
 });

@@ -26,7 +26,7 @@ router.post('/', async (req, res) => {
             const user = rows[0];
             console.log('User found:', user);
             if(password!=userSavedPassword){
-                res.cookie('userId', user.user_id, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true });
+                res.cookie('userId', user.user_id, { maxAge: 24 * 60 * 60 * 1000, httpOnly: false });
                 console.log(user.user_id)
                 
                 res.status(200).json({ 
