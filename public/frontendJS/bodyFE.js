@@ -13,22 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const userId = getCookie("userId");
     console.log("userId:", userId);
 
-    // Fetch workouts for the user
-    async function fetchWorkouts() {
-        try {
-            const response = await fetch(`/body/${userId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'fetchWorkouts' })
-            });
-            if (!response.ok) throw new Error('Failed to fetch workouts');
-            const data = await response.json();
-            console.log('Fetched workouts:', data);
-        } catch (error) {
-            console.error('Error fetching workouts:', error);
-        }
-    }
-
     // Add exercise form submission
     document.getElementById('addExerciseForm').addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -111,6 +95,70 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Initial fetch of workouts
-    fetchWorkouts();
+    document.getElementById('finishWorkoutButton').addEventListener('click', async (event)=>{
+        event.preventDefault();
+
+        let category = document.getElementById('categoryPicker').value;
+        const today = new Date().toISOString().split('T')[0];       
+        console.log("date: "+today)
+        console.log(category)
+        try {
+            const response = await fetch(`/body/${userId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'finishWorkout', category, date: today })
+            });
+            if (!response.ok) throw new Error('Failed to update workout status');
+        } catch (error) {
+            console.error('Error updating workout status:', error);
+        }
+
+        try{
+            const response = await fetch(`/body/${userId}`,{
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({action: 'finishWorkout', category})
+            })
+            if (!response.ok) throw new Error('Failed to update category point');
+        } catch(error){
+            console.error("Error updating category point: ", error)
+        }
+        location.reload();
+    })
+
+
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    let currentYear = parseInt(urlParams.get("year")) || new Date().getFullYear();
+    let currentMonth = parseInt(urlParams.get("month")); // Get month directly from URL
+
+    // If no month parameter is found, default to current month
+    if (isNaN(currentMonth)) {
+        currentMonth = new Date().getMonth();
+    }
+
+    function updateCalendar() {
+        window.location.href = `?year=${currentYear}&month=${currentMonth}`;
+    }
+
+    document.getElementById("prevMonth").addEventListener("click", () => {
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        updateCalendar();
+    });
+
+    document.getElementById("nextMonth").addEventListener("click", () => {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        updateCalendar();
+    });
+
+   
+
 });

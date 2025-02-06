@@ -4,6 +4,15 @@ const db = require("../server"); // Import database connection
 
 // GET /:userId - Fetch user, exercises, and completed workouts
 router.get('/:userId', async (req, res) => {
+    let year = parseInt(req.query.year);
+    let month = parseInt(req.query.month);
+
+    if (isNaN(year) || isNaN(month)) {
+        const today = new Date();
+        year = today.getFullYear();
+        month = today.getMonth();
+    }
+
     try {
         const userId = req.cookies.userId;
         if (!userId) {
@@ -16,7 +25,7 @@ router.get('/:userId', async (req, res) => {
 
         // Fetch completed workouts
         const [completedWorkouts] = await db.execute(
-            'SELECT workout_id, is_completed, date FROM workouts_calendar WHERE user_id = ?', 
+            'SELECT workout_id, is_completed, date FROM workouts_calendar WHERE user_id = ?',
             [userId]
         );
 
@@ -30,54 +39,82 @@ router.get('/:userId', async (req, res) => {
         );
 
         // Fetch exercises (if workout exists)
-        let exercises = [];
-[exercises] = await db.execute(
-    'SELECT exercise_name AS name, exercise_id FROM exercises WHERE user_id = ? AND date = ?',
-    [userId, today]
-);
+        let [exercises] = await db.execute(
+            'SELECT exercise_name AS name, exercise_id, active FROM exercises WHERE user_id = ? AND date = ?',
+            [userId, today]
+        );
 
-// Now we need to fetch sets for each exercise
-let setsPromises = exercises.map(exercise => {
-    return db.execute(
-        'SELECT set1, set2, set3, set4, set5 FROM sets WHERE user_id = ? AND exercise_id = ? AND date = ?',
-        [userId, exercise.exercise_id, today]
-    );
-});
+        // Ensure exercises is an array
+        if (Array.isArray(exercises) && exercises.length > 0) {
+            // Keep only exercises where active == 1
+            exercises = exercises.filter(exercise => exercise.active === 1);
+        }
 
-// Wait for all set fetch operations to complete
-let setsResults = await Promise.all(setsPromises);
 
-// Log the sets results to debug
-console.log("Sets Results:", setsResults);
 
-// Merge the sets with exercises
-// Merge the sets with exercises
-exercises = exercises.map((exercise, index) => {
-    const sets = setsResults[index][0] && setsResults[index][0][0] ? setsResults[index][0][0] : {}; // Access the first object in the array
-    return {
-        ...exercise,
-        sets: sets // Merge sets with exercises
-    };
-});
+        // Now we need to fetch sets for each exercise
+        let setsPromises = exercises.map(exercise => {
+            return db.execute(
+                'SELECT set1, set2, set3, set4, set5 FROM sets WHERE user_id = ? AND exercise_id = ? AND date = ?',
+                [userId, exercise.exercise_id, today]
+            );
+        });
+
+        // Wait for all set fetch operations to complete
+        let setsResults = await Promise.all(setsPromises);
+
+        // Log the sets results to debug
+
+        // Merge the sets with exercises
+        // Merge the sets with exercises
+        exercises = exercises.map((exercise, index) => {
+            const sets = setsResults[index][0] && setsResults[index][0][0] ? setsResults[index][0][0] : {}; // Access the first object in the array
+            return {
+                ...exercise,
+                sets: sets // Merge sets with exercises
+            };
+        });
+
+        let [allExercises] = await db.execute(
+            'SELECT exercise_name AS name, exercise_id, active, date FROM exercises WHERE user_id = ? ORDER BY date ASC',
+            [userId]
+        );
+
+        let allSetsPromises = allExercises.map(exercise => {
+            return db.execute(
+                'SELECT set1, set2, set3, set4, set5 FROM sets WHERE user_id = ? AND exercise_id = ? AND date = ?',
+                [userId, exercise.exercise_id, exercise.date]
+            );
+        });
+
+        let allSetsResults = await Promise.all(allSetsPromises);
+
+        allExercises = allExercises.map((exercise, index) => {
+            const sets = allSetsResults[index][0] && allSetsResults[index][0][0] ? allSetsResults[index][0][0] : {};
+            return { ...exercise, sets };
+        });
 
         // Format completed workouts
         const formattedCompletedWorkouts = completedWorkouts.map(workout => {
             const workoutDate = new Date(workout.date);
-            
+
             // Adjust for the time zone offset
             workoutDate.setMinutes(workoutDate.getMinutes() - workoutDate.getTimezoneOffset());
-        
+
             // Return the formatted date as YYYY-MM-DD
             return {
                 ...workout,
                 date: workoutDate.toISOString().split('T')[0]
             };
         });
-        
+
 
         // Render template
         res.render('body', {
+            month,
+            year,
             exercises: exercises || [],
+            allExercises,
             completedWorkouts: formattedCompletedWorkouts || [],
             username
         });
@@ -89,34 +126,16 @@ exercises = exercises.map((exercise, index) => {
 
 
 
+
 // POST /:userId - Handle various workout actions
 router.post('/:userId', async (req, res) => {
     try {
         const userId = req.cookies.userId;
-        const { action, exerciseName, workoutDate, category, workoutId, reps, minutes, date, isCompleted, exercise_id: exerciseId } = req.body;
+        const { action, exerciseName, workoutDate, category, workoutId, reps, date, isCompleted, exercise_id: exerciseId } = req.body;
+
+
         if (!userId) return res.status(400).json({ message: 'User ID is required' });
-
         switch (action) {
-            case 'fetchWorkouts': {
-                const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [userId]);
-                const username = userRows.length > 0 ? userRows[0].username : "Guest";
-
-                const [completedWorkouts] = await db.execute(
-                    'SELECT workout_id, is_completed, date FROM workouts_calendar WHERE user_id = ?',
-                    [userId]
-                );
-
-                const [exercises] = await db.execute(
-                    'SELECT exercise_name AS name FROM exercises WHERE user_id = ?',
-                    [userId]
-                );
-
-                return res.json({
-                    exercises: exercises || [],
-                    completedWorkouts: completedWorkouts || [],
-                    username
-                });
-            }
             case 'addExercise': {
                 if (!exerciseName || !category) {
                     return res.status(400).json({ message: 'Exercise name and category are required' });
@@ -130,27 +149,27 @@ router.post('/:userId', async (req, res) => {
             case 'addSet': {
                 // Now exerciseId is defined!
                 if (!exerciseId || reps === undefined) {
-                  return res.status(400).json({ message: 'Exercise ID and reps are required' });
+                    return res.status(400).json({ message: 'Exercise ID and reps are required' });
                 }
-              
+
                 // Fetch existing sets
                 const [setsResult] = await db.execute(
-                  'SELECT set1, set2, set3, set4, set5 FROM sets WHERE exercise_id = ?',
-                  [exerciseId]
+                    'SELECT set1, set2, set3, set4, set5 FROM sets WHERE exercise_id = ?',
+                    [exerciseId]
                 );
-              
+
                 if (setsResult.length === 0) {
-                  // Insert new record if none exists
-                  await db.execute(
-                    'INSERT INTO sets (exercise_id, user_id, date, set1, set2, set3, set4, set5) VALUES (?, ?, ?, 0, 0, 0, 0, 0)',
-                    [exerciseId, userId, new Date().toISOString().split('T')[0]]
-                  );
-                  const [newSetsResult] = await db.execute('SELECT set1, set2, set3, set4, set5 FROM sets WHERE exercise_id = ?', [exerciseId]);
-                  var sets = newSetsResult[0]; // Use `var` to ensure scope is correct
+                    // Insert new record if none exists
+                    await db.execute(
+                        'INSERT INTO sets (exercise_id, user_id, date, set1, set2, set3, set4, set5) VALUES (?, ?, ?, 0, 0, 0, 0, 0)',
+                        [exerciseId, userId, new Date().toISOString().split('T')[0]]
+                    );
+                    const [newSetsResult] = await db.execute('SELECT set1, set2, set3, set4, set5 FROM sets WHERE exercise_id = ?', [exerciseId]);
+                    var sets = newSetsResult[0]; // Use `var` to ensure scope is correct
                 } else {
-                  var sets = setsResult[0];
+                    var sets = setsResult[0];
                 }
-              
+
                 // Determine which set to update
                 let setToUpdate = null;
                 if (sets.set1 === 0) setToUpdate = 'set1';
@@ -159,15 +178,15 @@ router.post('/:userId', async (req, res) => {
                 else if (sets.set4 === 0) setToUpdate = 'set4';
                 else if (sets.set5 === 0) setToUpdate = 'set5';
                 else return res.status(400).json({ message: 'All sets filled' });
-              
+
                 // Update the set
                 await db.execute(
-                  `UPDATE sets SET ${setToUpdate} = ? WHERE exercise_id = ?`,
-                  [reps, exerciseId]
+                    `UPDATE sets SET ${setToUpdate} = ? WHERE exercise_id = ?`,
+                    [reps, exerciseId]
                 );
-              
+
                 return res.json({ success: true, message: 'Set added successfully' });
-              }
+            }
             case 'markWorkoutComplete': {
                 if (!date) return res.status(400).json({ message: 'Workout date is required' });
                 const [existing] = await db.execute(
@@ -187,6 +206,40 @@ router.post('/:userId', async (req, res) => {
                 }
                 return res.json({ success: true, message: 'Workout status updated' });
             }
+            case "finishWorkout": {
+                console.log("category: " + category)
+                console.log("date: " + date)
+                const [existing] = await db.execute(
+                    'SELECT * FROM workouts_calendar WHERE user_id = ? AND date = ?',
+                    [userId, date]
+                );
+
+                if (!userId || !date || !category) {
+                    return res.status(400).json({ success: false, message: "Missing required parameters" });
+                }
+
+                if (existing.length > 0) {
+                    await db.execute(
+                        'UPDATE workouts_calendar SET is_completed = ?, category = ? WHERE user_id = ? AND date = ?',
+                        [1, category, userId, date]
+                    );
+                } else {
+                    await db.execute(
+                        'INSERT INTO workouts_calendar (user_id, date, category, is_completed) VALUES (?, ?, ?, ?)',
+                        [userId, date, category, 1]
+                    );
+                }
+
+                await db.execute(
+                    'UPDATE exercises SET active = ? WHERE user_id = ? AND date = ?',
+                    [0, userId, date]
+                )
+
+
+                return res.json({ success: true, message: 'Workout status updated' });
+            }
+
+
             default:
                 return res.status(400).json({ message: 'Invalid action' });
         }
@@ -196,4 +249,30 @@ router.post('/:userId', async (req, res) => {
     }
 });
 
+router.patch('/:userId', async (req, res) => {
+    const { category, action } = req.body;
+    const userId = req.cookies.userId
+    switch (action) {
+        case "finishWorkout": {
+            const [statRows] = await db.execute(
+                'SELECT * FROM user_stats WHERE user_id = ? AND stat_name = ?',
+                [userId, category]
+            );
+
+            if (statRows.length > 0) {
+                console.log(`Stat found, incrementing value for stat: ${category}`); // Debugging
+                const statId = statRows[0].stat_id;
+
+                // Decrement the stat value (optional logic for "un-completing")
+                await db.execute(
+                    'UPDATE user_stats SET stat_value = GREATEST(stat_value + 1, 0) WHERE stat_id = ?',
+                    [statId]
+                );
+            }
+            return res.json({ success: true, message: 'Workout status updated' });
+        }
+        default:
+            return res.status(400).json({ message: 'Invalid action' });
+    }
+});
 module.exports = router;
