@@ -13,39 +13,21 @@ router.use((req, res, next) => {
 
 // Fetch books, reading progress, and meditation progress
 router.get('/:userId', async (req, res) => {
-    const userId = req.userId;  // Ensure you're getting userId from the URL
-    const { page = 1, limit = 5 } = req.query;  // Set default values for pagination if not provided
-
+    const userId = req.userId;
     try {
-        // Fetch books with pagination
-        const [books] = await db.execute(
-            'SELECT * FROM books WHERE user_id = ? LIMIT ? OFFSET ?',
-            [userId, limit, (page - 1) * limit]
-        );
-
-        // Fetch total number of books for pagination
-        const [totalBooks] = await db.execute('SELECT COUNT(*) AS total FROM books WHERE user_id = ?', [userId]);
-        const totalPages = Math.ceil(totalBooks[0].total / limit);  // Calculate total pages
-
-        // Fetch reading progress for the user today
+        const [books] = await db.execute('SELECT * FROM books WHERE user_id = ?', [userId]);
         const [readingProgress] = await db.execute(
             'SELECT COALESCE(SUM(pages_read), 0) AS pages, COALESCE(SUM(minutes_read), 0) AS minutes FROM reading_progress WHERE user_id = ? AND date = CURDATE()',
             [userId]
         );
-
-        // Fetch meditation progress for the user today
         const [meditation] = await db.execute(
             'SELECT COALESCE(SUM(minutes), 0) AS total FROM meditation WHERE user_id = ? AND date = CURDATE()',
             [userId]
         );
-
-        // Render the 'mental' template with the fetched data and pagination info
         res.render('mental', {
             books,
-            readingProgress: readingProgress[0],  // Ensure we are passing the first row of data
-            meditationCounter: meditation[0].total,
-            currentPage: page,
-            totalPages: totalPages
+            readingProgress: readingProgress[0],
+            meditationProgress: meditation[0]
         });
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -53,7 +35,37 @@ router.get('/:userId', async (req, res) => {
     }
 });
 
+// Assume you are using Express.js and MySQL
+router.get('/:userId/getBooks', async (req, res) => {
+    const userId = req.params.userId;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const offset = (page - 1) * limit;
 
+    try {
+        const booksQuery = `
+            SELECT * FROM books
+            WHERE user_id = ?
+            ORDER BY book_id DESC  -- ✅ Reverse order
+            LIMIT ? OFFSET ?;
+        `;
+        const [books] = await db.execute(booksQuery, [userId, limit, offset]);
+
+        const countQuery = `
+            SELECT COUNT(*) AS totalBooks FROM books WHERE user_id = ?;
+        `;
+        const [[totalResult]] = await db.execute(countQuery, [userId]);
+        const totalBooks = totalResult.totalBooks;
+
+        res.json({
+            books: books,
+            totalBooks: totalBooks
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error fetching books' });
+    }
+});
 
 
 
@@ -135,18 +147,39 @@ router.post('/:userId/saveProgress', async (req, res) => {
 });
 
 // Add meditation progress
-router.post('/:userId/addMeditation', async (req, res) => {
+router.post('/:userId/saveMeditationProgress', async (req, res) => {
     const userId = req.userId;
-    const { minutes } = req.body;
+    let { amount } = req.body;
     const date = new Date().toISOString().split('T')[0];
-    if (!minutes || isNaN(minutes) || minutes <= 0) return res.status(400).json({ error: "Invalid meditation minutes." });
+
+    if (!amount || isNaN(amount) || amount <= 0) {
+        return res.status(400).json({ error: "Invalid meditation minutes." });
+    }
+
     try {
-        await db.execute('INSERT INTO meditation (user_id, date, minutes) VALUES (?, ?, ?)', [userId, date, minutes]);
-        res.status(201).json({ success: true, message: "Meditation progress saved." });
+        // Check if there is an existing record for today
+        const [existing] = await db.execute('SELECT * FROM meditation WHERE user_id = ? AND date = ?', [userId, date]);
+
+        if (existing.length > 0) {
+            // Update existing record
+            await db.execute(
+                'UPDATE meditation SET minutes = minutes + ? WHERE user_id = ? AND date = ?',
+                [amount, userId, date]
+            );
+        } else {
+            // Insert new record
+            await db.execute(
+                'INSERT INTO meditation (user_id, date, minutes) VALUES (?, ?, ?)',
+                [userId, date, amount]
+            );
+        }
+
+        res.json({ success: true, message: "Meditation progress saved." });
     } catch (error) {
         console.error("Error saving meditation progress:", error);
         res.status(500).json({ error: "An error occurred while saving meditation progress." });
     }
 });
+
 
 module.exports = router;

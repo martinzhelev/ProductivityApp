@@ -35,10 +35,20 @@ document.addEventListener("DOMContentLoaded", function () {
     // Function to render pagination
     function renderPagination(totalBooks) {
         const totalPages = Math.ceil(totalBooks / booksPerPage);
-        const paginationContainer = document.getElementById("pagination");
 
+        let paginationContainer = document.getElementById("pagination");
+    
+        if (!paginationContainer) {
+            console.error("Pagination container not found!");
+            return;
+        }
+    
+        console.log("Total Books:", totalBooks);
+        console.log("Total Pages:", totalPages);
+        console.log("Current Page:", currentPage);
+    
         paginationContainer.innerHTML = ""; // Clear current pagination
-
+    
         // Create previous page button
         const prevButton = document.createElement("button");
         prevButton.textContent = "Previous";
@@ -51,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
         paginationContainer.appendChild(prevButton);
-
+    
         // Create next page button
         const nextButton = document.createElement("button");
         nextButton.textContent = "Next";
@@ -65,11 +75,17 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         paginationContainer.appendChild(nextButton);
     }
-
+    
     // Load books for the current page
     async function loadBooks() {
         try {
-            const response = await fetch(`/mental/${userId}?page=${currentPage}&limit=${booksPerPage}`);
+
+
+            // here the /getBooks makes the markAsComplete not work
+            //also cant find the pagination container
+
+
+            const response = await fetch(`/mental/${userId}/getBooks?page=${currentPage}&limit=${booksPerPage}`);
             const data = await response.json();
 
             renderBooks(data.books);
@@ -111,10 +127,12 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Mark book as read and open review modal
-    document.querySelectorAll(".markAsRead").forEach((checkbox) => {
-        checkbox.addEventListener("change", async function () {
-            let bookId = this.dataset.id;
-            openReviewModal(bookId); // ✅ Open review modal when book is marked as read
+    document.getElementById("bookList").addEventListener("change", async function (event) {
+        if (event.target.classList.contains("markAsRead")) {
+            let bookId = event.target.dataset.id;
+            openReviewModal(bookId);
+
+    
 
             let bookDiv = document.getElementById(`book-${bookId}`);
 
@@ -130,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
             } catch (error) {
                 console.error("Error marking book as read:", error);
             }
-        });
+        }
     });
 
     // Save review when "Save" button is clicked
@@ -172,4 +190,37 @@ document.addEventListener("DOMContentLoaded", function () {
         let modal = new bootstrap.Modal(document.getElementById("bookReviewModal"));
         modal.show();
     }
+
+    document.getElementById("saveProgress").addEventListener("click", async ()=>{
+        let type = document.getElementById("progressType").value;
+        let amount = document.getElementById("progressAmount").value
+
+        try {
+            await fetch(`/mental/${userId}/saveProgress`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ type, amount }),
+            });
+
+        } catch (error) {
+            console.error("Error updating progress:", error);
+        }
+        window.location.reload(); // Reload to update UI
+    })
+
+    document.getElementById("saveMeditationProgress").addEventListener("click", async ()=>{
+        let amount = document.getElementById("meditationProgressAmount").value
+
+        try {
+            await fetch(`/mental/${userId}/saveMeditationProgress`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ amount }),
+            });
+
+        } catch (error) {
+            console.error("Error updating progress:", error);
+        }
+        window.location.reload(); // Reload to update UI
+    })
 });
