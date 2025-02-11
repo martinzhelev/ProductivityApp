@@ -40,15 +40,15 @@ router.get('/:userId', async (req, res) => {
 
         // Fetch exercises (if workout exists)
         let [exercises] = await db.execute(
-            'SELECT exercise_name AS name, exercise_id, active FROM exercises WHERE user_id = ? AND date = ?',
+            'SELECT exercise_name AS name, exercise_id, active FROM exercises WHERE user_id = ? AND date = ? AND active = 1',
             [userId, today]
         );
 
         // Ensure exercises is an array
-        if (Array.isArray(exercises) && exercises.length > 0) {
-            // Keep only exercises where active == 1
-            exercises = exercises.filter(exercise => exercise.active === 1);
-        }
+        // if (Array.isArray(exercises) && exercises.length > 0) {
+        //     // Keep only exercises where active == 1
+        //     exercises = exercises.filter(exercise => exercise.active === 1);
+        // }
 
 
 
@@ -68,7 +68,9 @@ router.get('/:userId', async (req, res) => {
         // Merge the sets with exercises
         // Merge the sets with exercises
         exercises = exercises.map((exercise, index) => {
-            const sets = setsResults[index][0] && setsResults[index][0][0] ? setsResults[index][0][0] : {}; // Access the first object in the array
+           // const sets = setsResults[index][0] && setsResults[index][0][0] ? setsResults[index][0][0] : {}; // Access the first object in the array
+            const sets = setsResults[index]?.[0]?.[0] || {};
+
             return {
                 ...exercise,
                 sets: sets // Merge sets with exercises
