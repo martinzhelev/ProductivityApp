@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function renderBooks(books) {
         const bookListContainer = document.getElementById("bookList");
         bookListContainer.innerHTML = ""; // Clear the current list
-
+    
         books.forEach(book => {
             const bookDiv = document.createElement("div");
             bookDiv.classList.add("border", "p-3", "mb-3");
@@ -27,28 +27,30 @@ document.addEventListener("DOMContentLoaded", function () {
                 <h4>${book.title}</h4>
                 ${!book.completed ? `<input type="checkbox" class="markAsRead" data-id="${book.book_id}"> Mark as Read` : ''}
                 ${book.completed ? `<button class="btn btn-info btn-sm info-btn" data-id="${book.book_id}" data-title="${book.title}" data-summary="${book.summary}" data-review="${book.review}">Info</button>` : ''}
-            `;
+                <button id="deleteBook" class="btn btn-danger btn-sm delete-btn" data-id="${book.book_id}">Delete</button> <!-- Delete Button 
+ `;
             bookListContainer.appendChild(bookDiv);
         });
     }
+    
 
     // Function to render pagination
     function renderPagination(totalBooks) {
         const totalPages = Math.ceil(totalBooks / booksPerPage);
 
         let paginationContainer = document.getElementById("pagination");
-    
+
         if (!paginationContainer) {
             console.error("Pagination container not found!");
             return;
         }
-    
+
         console.log("Total Books:", totalBooks);
         console.log("Total Pages:", totalPages);
         console.log("Current Page:", currentPage);
-    
+
         paginationContainer.innerHTML = ""; // Clear current pagination
-    
+
         // Create previous page button
         const prevButton = document.createElement("button");
         prevButton.textContent = "Previous";
@@ -61,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
         paginationContainer.appendChild(prevButton);
-    
+
         // Create next page button
         const nextButton = document.createElement("button");
         nextButton.textContent = "Next";
@@ -75,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         paginationContainer.appendChild(nextButton);
     }
-    
+
     // Load books for the current page
     async function loadBooks() {
         try {
@@ -132,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let bookId = event.target.dataset.id;
             openReviewModal(bookId);
 
-    
+
 
             let bookDiv = document.getElementById(`book-${bookId}`);
 
@@ -168,10 +170,23 @@ document.addEventListener("DOMContentLoaded", function () {
             let modal = bootstrap.Modal.getInstance(document.getElementById("bookReviewModal"));
             modal.hide();
 
-            window.location.reload(); // Reload to update UI
+
         } catch (error) {
             console.error("Error updating book:", error);
         }
+        try {
+            const response = await fetch(`/mental/${userId}/updateStats`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: "books" }),
+
+            })
+            if (!response.ok) throw new Error('Failed to update category point');
+        } catch (error) {
+            console.error("Error updating category point: ", error)
+        }
+        window.location.reload(); // Reload to update UI
+
     });
 
     // Open book info modal
@@ -191,36 +206,122 @@ document.addEventListener("DOMContentLoaded", function () {
         modal.show();
     }
 
-    document.getElementById("saveProgress").addEventListener("click", async ()=>{
-        let type = document.getElementById("progressType").value;
-        let amount = document.getElementById("progressAmount").value
+    document.getElementById("bookList").addEventListener("click", async function (event) {
+        if (event.target && event.target.id === "deleteBook") {
+            const bookId = event.target.dataset.id; // Get the book ID from the button's data-id attribute
+            
+            // Confirm before deleting
+            if (confirm("Are you sure you want to delete this book?")) {
+                try {
+                    // Send DELETE request to server
+                    const response = await fetch(`/mental/${userId}/deleteBook`, {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ bookId })
+                    });
+    
+                    if (!response.ok) {
+                        throw new Error("Failed to delete the book");
+                    }
+    
+                    // If successful, remove the book from the DOM
+                    const bookDiv = document.getElementById(`book-${bookId}`);
+                    bookDiv.remove();
+    
+                    console.log(`Book with ID ${bookId} has been deleted`);
+                } catch (error) {
+                    console.error("Error deleting book:", error);
+                }
+            }
+        }
+    });
+    
 
+    document.getElementById("saveProgress").addEventListener("click", async () => {
+        let type = document.getElementById("progressType").value;
+        let amount = parseInt(document.getElementById("progressAmount").value, 10) || 0;
+    
+        let counterPagesElem = document.getElementById("progressCounterPages");
+        let counterMinutesElem = document.getElementById("progressCounterMinutes");
+    
+        let counterPages = parseInt(counterPagesElem.innerText.match(/\d+/)[0], 10);
+        let counterMinutes = parseInt(counterMinutesElem.innerText.match(/\d+/)[0], 10);
+    
+        console.log(counterPages + amount); // Now it correctly adds numbers
+    
+        if (counterMinutes + amount <= 10 || counterPages + amount <= 10) {
+            try {
+                const response = await fetch(`/mental/${userId}/updateStats`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ type: "progress" }),
+                });
+    
+                if (!response.ok) throw new Error("Failed to update category point");
+            } catch (error) {
+                console.error("Error updating stats: ", error);
+            }
+        }
+    
         try {
             await fetch(`/mental/${userId}/saveProgress`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ type, amount }),
             });
-
+    
+            // ✅ Dynamically update the UI without reloading
+            if (type === "pages") {
+                counterPagesElem.innerText = `${counterPages + amount} pages`;
+            } else {
+                counterMinutesElem.innerText = `${counterMinutes + amount} minutes`;
+            }
+    
+            // ✅ Clear input field after saving
+            document.getElementById("progressAmount").value = "";
         } catch (error) {
             console.error("Error updating progress:", error);
         }
-        window.location.reload(); // Reload to update UI
-    })
+    });
+    
 
-    document.getElementById("saveMeditationProgress").addEventListener("click", async ()=>{
-        let amount = document.getElementById("meditationProgressAmount").value
-
+    document.getElementById("saveMeditationProgress").addEventListener("click", async () => {
+        let amount = parseInt(document.getElementById("meditationProgressAmount").value, 10) || 0;
+        let counterMinutesElem = document.getElementById("progressCounterMeditationMinutes");
+        let counterMinutes = parseInt(counterMinutesElem.innerText.match(/\d+/)[0], 10);
+    
+        if (counterMinutes + amount <= 10) {
+            try {
+                const response = await fetch(`/mental/${userId}/updateStats`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ type: "progress" }),
+                });
+    
+                if (!response.ok) throw new Error("Failed to update category point");
+            } catch (error) {
+                console.error("Error updating stats:", error);
+            }
+        }
+    
         try {
-            await fetch(`/mental/${userId}/saveMeditationProgress`, {
+            const response = await fetch(`/mental/${userId}/saveMeditationProgress`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ amount }),
             });
-
+    
+            if (!response.ok) throw new Error("Failed to save progress");
+    
+            // ✅ Dynamically update meditation counter
+            counterMinutesElem.innerText = `${counterMinutes + amount} minutes`;
+    
+            // ✅ Clear input field after saving
+            document.getElementById("meditationProgressAmount").value = "";
+            
         } catch (error) {
             console.error("Error updating progress:", error);
         }
-        window.location.reload(); // Reload to update UI
-    })
+    });
+    
 });

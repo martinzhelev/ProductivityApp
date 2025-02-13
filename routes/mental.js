@@ -27,7 +27,7 @@ router.get('/:userId', async (req, res) => {
         res.render('mental', {
             books,
             readingProgress: readingProgress[0],
-            meditationProgress: meditation[0]
+            meditationProgress: meditation[0].total
         });
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -181,5 +181,55 @@ router.post('/:userId/saveMeditationProgress', async (req, res) => {
     }
 });
 
+router.patch('/:userId/updateStats', async (req, res) => {
+    const { type } = req.body;
+    const userId = req.cookies.userId;
+
+    try {
+        // Check if the "mental" stat exists for the user
+        const [statRows] = await db.execute(
+            'SELECT * FROM user_stats WHERE user_id = ? AND stat_name = "mental"',
+            [userId]
+        );
+
+        let statId;
+        let incrementValue = 0;
+
+        // Determine increment value based on type
+        switch (type) {
+            case "books":
+                incrementValue = 5;
+                break;
+            case "progress":
+                incrementValue = 1;
+                break;
+            default:
+                return res.status(400).json({ message: 'Invalid action' });
+        }
+
+        if (statRows.length > 0) {
+            // ✅ Stat exists, update it
+            statId = statRows[0].stat_id;
+            await db.execute(
+                'UPDATE user_stats SET stat_value = GREATEST(stat_value + ?, 0) WHERE stat_id = ?',
+                [incrementValue, statId]
+            );
+            console.log(`Stat found, incremented by ${incrementValue}`);
+        } else {
+            // ❌ Stat doesn't exist, insert it with the increment value
+            await db.execute(
+                'INSERT INTO user_stats (user_id, stat_name, stat_value) VALUES (?, "mental", ?)',
+                [userId, incrementValue]
+            );
+            console.log(`Stat not found, created new stat with value ${incrementValue}`);
+        }
+
+        return res.json({ success: true, message: 'Mental status updated' });
+
+    } catch (error) {
+        console.error("Error updating stats:", error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
 
 module.exports = router;
