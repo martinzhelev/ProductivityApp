@@ -155,4 +155,30 @@ document.addEventListener("DOMContentLoaded", () => {
     // Attach event listeners to existing checkboxes
     document.querySelectorAll(".checkbox").forEach(attachCheckboxEvent);
     
+    const tasksList = document.getElementById("tasks-list");
+
+    function removeDoneTasks() {
+        const tasks = tasksList.querySelectorAll('li');
+
+        tasks.forEach(taskItem => {
+            const checkbox = taskItem.querySelector('.checkbox');
+            if (checkbox && checkbox.checked) {
+                const taskId = taskItem.getAttribute('data-task-id');
+                fetch(`/work/${userId}/deleteDoneTasks`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: taskId })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message === 'Task deleted successfully') {
+                            tasksList.removeChild(taskItem);
+                            console.log(`Task ${taskId} deleted`);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        });
+    }
+    document.getElementById("removeDoneTask").addEventListener("click", removeDoneTasks())
 });

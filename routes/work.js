@@ -163,6 +163,37 @@ router.put('/:userId/updateStat', async (req, res) => {
     }
 });
 
+router.delete('/:userId/deleteDoneTasks', async (req, res) => {
+    const { id } = req.body; // Expect `type` ("task" or "habit") and `id` (taskId or habitId)
+    const user_id = req.userId;
+
+    if ( !id) {
+        return res.status(400).json({ message: 'Invalid input: "id" is required' });
+    }
+
+
+    try {
+        
+        // Check if the user exists
+        const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [user_id]);
+        if (userRows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Check if the entity exists for this user
+        const [entityRows] = await db.execute(`SELECT * FROM tasks WHERE user_id = ? AND task_id = ?`, [user_id, id]);
+        if (entityRows.length === 0) {
+            return res.status(404).json({ message: `tasks not found` });
+        }
+
+        // Delete the entity
+        await db.execute(`DELETE FROM tasks WHERE task_id = ? AND user_id = ?`, [id, user_id]);
+        res.status(200).json({ message: `task deleted successfully` });
+    } catch (err) {
+        console.error(`Error deleting task}:`, err);
+        res.status(500).json({ message: `Error deleting task` });
+    }
+});
 
 
 module.exports = router;

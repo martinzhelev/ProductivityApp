@@ -9,51 +9,59 @@
 <body class="bg-light">
 
 <div class="container mt-5">
-    <h2 class="text-center">Work Deadlines</h2>
+    <h2 class="text-center mb-4">📌 Work Deadlines & Tasks</h2>
 
-    <!-- Add Deadline Form -->
-    <div class="card p-4 mb-3 shadow-sm">
-        <div class="mb-3">
-            <label for="deadlineName" class="form-label">Deadline Name</label>
-            <input type="text" id="deadlineName" class="form-control" placeholder="Enter deadline">
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <label for="deadlineDate" class="form-label">Date</label>
-                <input type="date" id="deadlineDate" class="form-control">
-            </div>
-            <div class="col-md-6">
-                <label for="deadlineTime" class="form-label">Time</label>
-                <input type="time" id="deadlineTime" class="form-control">
-            </div>
-        </div>
-
-        <button id="saveDeadlineBtn" class="btn btn-primary mt-3">Save Deadline</button>
-    </div>
-
-    <!-- Deadline List -->
-    <div id="deadlineList" class="list-group">
-        <% deadlines.forEach(deadline => { %>
-            <div class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <strong class="text-primary"><%= deadline.deadline %></strong> <br>
-                    📅 <%= new Date(deadline.date).toLocaleDateString('en-GB') %> | ⏰ <%= new Date(deadline.date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) %>
-                </div>
-                <button class="btn btn-danger btn-sm delete-deadline" data-id="<%= deadline.deadline_id %>">
-                    Delete
-                </button>
-            </div>
-        <% }) %>
-    </div>
-    
-    
-
-    <div class="row mt-5">
-        <!-- Left Column: Tasks -->
+    <div class="row">
+        <!-- Left Column: Deadlines -->
         <div class="col-md-6">
-            <div class="card p-4 shadow-sm">
-                <h2>Tasks</h2>
+            <div class="card shadow-sm p-4 mb-4">
+                <h4 class="text-primary mb-3">📅 Add a Deadline</h4>
+
+                <!-- Add Deadline Form -->
+                <div class="mb-3">
+                    <label for="deadlineName" class="form-label">Deadline Name</label>
+                    <input type="text" id="deadlineName" class="form-control" placeholder="Enter deadline">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="deadlineDate" class="form-label">Date</label>
+                        <input type="date" id="deadlineDate" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="deadlineTime" class="form-label">Time</label>
+                        <input type="time" id="deadlineTime" class="form-control">
+                    </div>
+                </div>
+
+                <button id="saveDeadlineBtn" class="btn btn-primary mt-3 w-100">➕ Save Deadline</button>
+            </div>
+
+            <!-- Deadline List -->
+            <div class="card shadow-sm p-4">
+                <h4 class="text-success mb-3">📝 Deadlines</h4>
+                <div id="deadlineList" class="list-group">
+                    <% if (deadlines.length > 0) { %>
+                        <% deadlines.forEach(deadline => { %>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong class="text-primary"><%= deadline.deadline %></strong> <br>
+                                    📅 <%= new Date(deadline.date).toLocaleDateString('en-GB') %> | ⏰ <%= new Date(deadline.date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) %>
+                                </div>
+                                <button class="btn btn-danger btn-sm delete-deadline" data-id="<%= deadline.deadline_id %>">Delete</button>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <p class="text-muted">No deadlines yet.</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Tasks -->
+        <div class="col-md-6">
+            <div class="card shadow-sm p-4">
+                <h4 class="text-warning mb-3">📋 Tasks</h4>
                 <ul class="list-group" id="tasks-list">
                     <% if (tasks.length > 0) { %>
                         <% tasks.forEach(task => { %>
@@ -66,41 +74,40 @@
                             </li>
                         <% }); %>
                     <% } else { %>
-                        <li class="list-group-item">No tasks found</li>
+                        <li class="list-group-item text-muted">No tasks found</li>
                     <% } %>
                 </ul>
-                <button class="btn btn-primary mt-3" id="addTask">Add Task</button>
-                <button class="btn btn-danger mt-2" id="removeTask">Remove Done Tasks</button>
+                
+                <button class="btn btn-primary mt-3 w-100" id="addTask">➕ Add Task</button>
+                <button class="btn btn-danger mt-2 w-100" id="removeDoneTask">🗑 Remove Done Tasks</button>
             </div>
         </div>
     </div>
 
     <!-- Add Task Modal -->
-<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="taskModalLabel">Add Task</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <label for="taskName" class="form-label">Task Name</label>
-                <input type="text" id="taskName" class="form-control" placeholder="Enter task">
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" id="saveTaskBtn" class="btn btn-primary">Add Task</button>
+    <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="taskModalLabel">📝 Add New Task</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="taskName" class="form-label">Task Name</label>
+                    <input type="text" id="taskName" class="form-control" placeholder="Enter task">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="saveTaskBtn" class="btn btn-primary">✔ Add Task</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-</div>
-
-<!-- JavaScript -->
- <!-- Bootstrap Bundle with Popper.js (Required for Modals) -->
+<!-- Bootstrap Bundle with Popper.js -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/frontendJS/workFE.js"></script>
+
 </body>
 </html>
