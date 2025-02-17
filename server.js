@@ -31,6 +31,7 @@ const registerRouter = require("./routes/register");
 const homeRouter = require("./routes/home");
 const bodyRouter = require("./routes/body");
 const mentalRouter = require('./routes/mental');
+const workRouter = require('./routes/work')
 
 // Mount Routes
 app.use("/register", registerRouter);
@@ -38,7 +39,7 @@ app.use("/login", loginRouter);
 app.use("/home", homeRouter);
 app.use("/body", bodyRouter)
 app.use('/mental', mentalRouter);
-
+app.use("/work", workRouter);
 
 // Handle 404 errors
 app.use((req, res) => {

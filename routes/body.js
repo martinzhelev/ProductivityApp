@@ -271,6 +271,14 @@ router.patch('/:userId', async (req, res) => {
                     [statId]
                 );
             }
+            else {
+                // ❌ Stat doesn't exist, insert it with the increment value
+                await db.execute(
+                    'INSERT INTO user_stats (user_id, stat_name, stat_value) VALUES (?, ?, ?)',
+                    [userId, category, incrementValue]
+                );
+                console.log(`Stat not found, created new stat with value ${incrementValue}`);
+            }
             return res.json({ success: true, message: 'Workout status updated' });
         }
         default:

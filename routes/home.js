@@ -67,8 +67,8 @@ router.post('/:userId', async (req, res) => {
 
         let newItem;
         let message;
-        const taskcategory = taskCategory || 'Strength';
-        const habitcategory = habitCategory || 'Strength';
+        const taskcategory = taskCategory || 'No category';
+        const habitcategory = habitCategory || 'No category';
         if (task) {
             const [result] = await db.execute('INSERT INTO tasks (user_id, task, completed, task_category) VALUES (?, ?, ?, ?)', [user_id, task, false, taskcategory]);
             [newItem] = await db.execute('SELECT * FROM tasks WHERE task_id = ?', [result.insertId]);
@@ -341,7 +341,34 @@ router.patch('/:userId', async (req, res) => {
     });
 
 
+    router.delete("/:userId/deleteTask/:id", (req, res) => {
+        const taskId = req.params.id;
+        const userId = req.cookies.userId;
+    
+        const sql = "DELETE FROM tasks WHERE task_id = ? AND user_id = ?";
+        db.query(sql, [taskId, userId], (err, result) => {
+            if (err) {
+                console.error("Error deleting task:", err);
+                return res.json({ success: false });
+            }
+            return res.json({ success: true });
+        });
+    });
 
+    router.delete("/:userId/deleteHabit/:id", (req, res) => {
+        const taskId = req.params.id;
+        const userId = req.cookies.userId;
+    
+        const sql = "DELETE FROM habits WHERE habit_id = ? AND user_id = ?";
+        db.query(sql, [taskId, userId], (err, result) => {
+            if (err) {
+                console.error("Error deleting task:", err);
+                return res.json({ success: false });
+            }
+            return res.json({ success: true });
+        });
+    });
+    
 
 
 module.exports = router

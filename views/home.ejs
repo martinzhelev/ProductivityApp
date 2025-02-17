@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,158 +9,182 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/home.css">
 </head>
+
 <body>
 
-<header class="bg-dark text-white p-3">
-    <div class="container d-flex justify-content-between align-items-center">
-        <div class="profile d-flex align-items-center">
-            <!-- <img src="profile.jpg" alt="Profile Picture"> -->
-            <span class="ms-2"><%= username %></span>
-        </div>
-        <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
-            ☰
-        </button>
-    </div>
-</header>
-
-<!-- Offcanvas Menu -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title">Menu</h5>
-        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
-    </div>
-    <div class="offcanvas-body">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="#">Dashboard</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Settings</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Logout</a>
-            </li>
-        </ul>
-    </div>
-</div>
-
-<main class="container mt-4">
-    <div class="row">
-        <!-- Left Column: Tasks -->
-        <div class="col-md-4">
-            <div class="column">
-                <h2>Tasks</h2>
-                <ul class="tasks list-unstyled" id="tasks-list">
-                    <% if (tasks.length > 0) { %>
-                        <% tasks.forEach(function(task) { %>
-                            <li data-task-id="<%= task.task_id %>">
-                                <input type="checkbox" class="checkbox" <%= task.completed ? 'checked' : '' %> >
-                                <%= task.task %>
-                            </li>
-                        <% }); %>
-                    <% } else { %>
-                        <li>No tasks found</li>
-                    <% } %>
-                    
-                </ul>
-                
-                <button class="btn btn-primary mt-2" id="addTask">Add Task</button>
-                <button class="btn btn-danger mt-2" id="removeTask">Remove Done Tasks</button>
+    <header class="bg-dark text-white p-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="profile d-flex align-items-center">
+                <!-- <img src="profile.jpg" alt="Profile Picture"> -->
+                <span class="ms-2">
+                    <%= username %>
+                </span>
             </div>
+            <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasNavbar">
+                ☰
+            </button>
         </div>
-    
-        <!-- Middle Column: Habits -->
-        <div class="col-md-4">
-            <div class="column">
-                <h2>Habits</h2>
-                <ul class="habits list-unstyled" id="habits-list">
-                    <% if (habits.length > 0) { %>
-                        <% habits.forEach(function(habit) { %>
-                            <li data-habit-id="<%= habit.habit_id %>">
-                                <input type="checkbox" class="checkbox" <%= habit.completed ? 'checked' : '' %> >
-                                <%= habit.habit %>
-                            </li>
-                        <% }); %>
-                    <% } else { %>
-                        <li>No habits found</li>
-                    <% } %>
-                </ul>
-                
-                <button class="btn btn-primary mt-2" id="addHabit">Add Habit</button>
-                <button class="btn btn-danger mt-2" id="removeHabit">Remove Habit</button>
+    </header>
+
+    <!-- Offcanvas Menu -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Menu</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Settings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="container mt-4">
+        <div class="row">
+            <!-- Left Column: Tasks -->
+            <div class="col-md-4">
+                <div class="column">
+                    <h2>Tasks</h2>
+                    <ul class="tasks list-unstyled" id="tasks-list">
+                        <% if (tasks.length> 0) { %>
+                            <% tasks.forEach(function(task) { %>
+                                <li data-task-id="<%= task.task_id %>"
+                                    class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <input type="checkbox" class="checkbox me-2" <%=task.completed ? 'checked' : ''
+                                            %> >
+                                        <%= task.task %>
+                                    </div>
+                                    <button class="btn btn-danger btn-sm delete-task"
+                                        data-id="<%= task.task_id %>">Delete</button>
+                                </li>
+                                <% }); %>
+                                    <% } else { %>
+                                        <li>No tasks found</li>
+                                        <% } %>
+                    </ul>
+
+                    <button class="btn btn-primary mt-2" id="addTask">Add Task</button>
+                    <button class="btn btn-danger mt-2" id="removeTask">Remove Done Tasks</button>
+                </div>
             </div>
-        </div>
-
-<!-- Right Column: Stats -->
-<div class="col-md-4">
-    <div class="column">
-        <h2>Player Stats</h2>
-        <div class="stats">
-            <% if (stats) { %>
-                <p>Strength: <%= stats.strength || 0 %></p>
-                <p>Agility: <%= stats.agility || 0 %></p>
-                <p>Mental: <%= stats.mental || 0 %></p>
-                <p>Work: <%= stats.work || 0 %></p>
-                <p>Social: <%= stats.social || 0 %></p>
-                <p>Financial: <%= stats.financial || 0 %></p>
-                <p>Speed: <%= stats.speed || 0 %></p>
-            <% } else { %>
-                <p>No stats available</p>
-            <% } %>
-        </div>
-    </div>
-</div>
 
 
-<div class="modal" id="task-modal">
-    <div class="modal-header">
-        <span class="title">Add Task</span>
-        <span class="close-button" id="close-task-modal">&times;</span>
-    </div>
-    <div class="modal-body">
-        <input type="text" name="task" id="task-input" placeholder="Enter your task" />
-        <select id="task-category" class="form-select">
-            <option value="" disabled selected>Select Category</option>
-            <option value="Strength">Strength</option>
-            <option value="Agility">Agility</option>
-            <option value="Mental">Mental</option>
-            <option value="Work">Work</option>
-            <option value="Social">Social</option>
-            <option value="Financial">Financial</option>
-            <option value="Speed">Speed</option>
-        </select>
-        <button id="modal-add-task">Add Task</button>
-    </div>
-</div>
-<div class="modal" id="habit-modal">
-    <div class="modal-header">
-        <span class="title">Add Habit</span>
-        <span class="close-button" id="close-habit-modal">&times;</span>
-    </div>
-    <div class="modal-body">
-        <input type="text" name="habit" id="habit-input" placeholder="Enter your habit" />
-        <select id="habit-category" class="form-select">
-            <option value="" disabled selected>Select Category</option>
-            <option value="Strength">Strength</option>
-            <option value="Agility">Agility</option>
-            <option value="Mental">Mental</option>
-            <option value="Work">Work</option>
-            <option value="Social">Social</option>
-            <option value="Financial">Financial</option>
-            <option value="Speed">Speed</option>
-        </select>
-        <button id="modal-add-habit">Add Habit</button>
-    </div>
-</div>
-<div id="overlay"></div>
+            <!-- Middle Column: Habits -->
+            <div class="col-md-4">
+                <div class="column">
+                    <h2>Habits</h2>
+                    <ul class="habits list-unstyled" id="habits-list">
+                        <% if (habits.length> 0) { %>
+                            <% habits.forEach(function(habit) { %>
+                                <li data-habit-id="<%= habit.habit_id %>" class="d-flex justify-content-between align-items-center">
+                                    
+                                    <div>
+                                        <input type="checkbox" class="checkbox" <%=habit.completed ? 'checked' : '' %> >
+                                        <%= habit.habit %>
+                                    </div>
+                                    <button class="btn btn-danger btn-sm delete-task"
+                                        data-id="<%= habit.habit_id %>">Delete</button>
+                                </li>
+
+                                <% }); %>
+                                    <% } else { %>
+                                        <li>No habits found</li>
+                                        <% } %>
+                    </ul>
+
+                    <button class="btn btn-primary mt-2" id="addHabit">Add Habit</button>
+                    <button class="btn btn-danger mt-2" id="removeHabit">Remove Habits</button>
+                </div>
+            </div>
+
+            <!-- Right Column: Stats -->
+            <div class="col-md-4">
+                <div class="column">
+                    <h2>Player Stats</h2>
+                    <div class="stats">
+                        <% if (stats) { %>
+                            <p>Strength: <%= stats.strength || 0 %>
+                            </p>
+                            <p>Agility: <%= stats.agility || 0 %>
+                            </p>
+                            <p>Mental: <%= stats.mental || 0 %>
+                            </p>
+                            <p>Work: <%= stats.work || 0 %>
+                            </p>
+                            <p>Social: <%= stats.social || 0 %>
+                            </p>
+                            <p>Financial: <%= stats.financial || 0 %>
+                            </p>
+                            <p>Speed: <%= stats.speed || 0 %>
+                            </p>
+                            <% } else { %>
+                                <p>No stats available</p>
+                                <% } %>
+                    </div>
+                </div>
+            </div>
 
 
-</main>
+            <div class="modal" id="task-modal">
+                <div class="modal-header">
+                    <span class="title">Add Task</span>
+                    <span class="close-button" id="close-task-modal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <input type="text" name="task" id="task-input" placeholder="Enter your task" />
+                    <select id="task-category" class="form-select">
+                        <option value="" disabled selected>Select Category</option>
+                        <option value="Strength">Strength</option>
+                        <option value="Agility">Agility</option>
+                        <option value="Mental">Mental</option>
+                        <option value="Work">Work</option>
+                        <option value="Social">Social</option>
+                        <option value="Financial">Financial</option>
+                        <option value="Speed">Speed</option>
+                    </select>
+                    <button id="modal-add-task">Add Task</button>
+                </div>
+            </div>
+            <div class="modal" id="habit-modal">
+                <div class="modal-header">
+                    <span class="title">Add Habit</span>
+                    <span class="close-button" id="close-habit-modal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <input type="text" name="habit" id="habit-input" placeholder="Enter your habit" />
+                    <select id="habit-category" class="form-select">
+                        <option value="" disabled selected>Select Category</option>
+                        <option value="Strength">Strength</option>
+                        <option value="Agility">Agility</option>
+                        <option value="Mental">Mental</option>
+                        <option value="Work">Work</option>
+                        <option value="Social">Social</option>
+                        <option value="Financial">Financial</option>
+                        <option value="Speed">Speed</option>
+                    </select>
+                    <button id="modal-add-habit">Add Habit</button>
+                </div>
+            </div>
+            <div id="overlay"></div>
 
-<div id="user-info" data-user-id="<%= userId %>"></div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/frontendJS/homeFE.js"></script>
+    </main>
+
+    <div id="user-info" data-user-id="<%= userId %>"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/frontendJS/homeFE.js"></script>
 </body>
+
 </html>

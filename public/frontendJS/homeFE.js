@@ -242,12 +242,51 @@ document.addEventListener("DOMContentLoaded", function (event) {
         overlay.addEventListener('click', closeTaskModal);
         modalAddTask.addEventListener('click', addTask);
         removeTaskButton.addEventListener('click', removeDoneTasks);
+        document.querySelectorAll(".delete-task").forEach(attachDeleteEvent);
+
 
         // Habit event listeners
         addHabitButton.addEventListener('click', openHabitModal);
         removeDoneHabitsButton.addEventListener('click', removeDoneHabits); // Add event listener to removeDoneHabitsButton
         closeButtons.forEach(button => button.addEventListener('click', closeHabitModal)); // Loop through closeButtons
         modalAddHabit.addEventListener('click', addHabit);
+    }
+    function attachDeleteEvent(button) {
+        button.addEventListener("click", function () {
+            const taskId = this.getAttribute("data-id");
+
+            if (confirm("Are you sure you want to delete this task?")) {
+                fetch(`/home/${userId}/deleteTask/${taskId}`, {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.closest("li").remove();
+                        } else {
+                            alert("Failed to delete task.");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+
+                    fetch(`/home/${userId}/deleteHabit/${taskId}`, {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json" },
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                this.closest("li").remove();
+                            } else {
+                                alert("Failed to delete task.");
+                            }
+                        })
+                        .catch(error => console.error("Error:", error));
+            }
+            window.location.reload();
+
+        });
     }
 
     // Initialize app
