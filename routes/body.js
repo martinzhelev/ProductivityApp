@@ -275,7 +275,7 @@ router.patch('/:userId', async (req, res) => {
                 // ❌ Stat doesn't exist, insert it with the increment value
                 await db.execute(
                     'INSERT INTO user_stats (user_id, stat_name, stat_value) VALUES (?, ?, ?)',
-                    [userId, category, incrementValue]
+                    [userId, category, 1]
                 );
                 console.log(`Stat not found, created new stat with value ${incrementValue}`);
             }
