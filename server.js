@@ -33,6 +33,7 @@ const bodyRouter = require("./routes/body");
 const mentalRouter = require('./routes/mental');
 const workRouter = require('./routes/work')
 const socialRouter = require('./routes/social')
+const timeOffRouter = require('./routes/timeOff');
 
 // Mount Routes
 app.use("/register", registerRouter);
@@ -41,7 +42,8 @@ app.use("/home", homeRouter);
 app.use("/body", bodyRouter)
 app.use('/mental', mentalRouter);
 app.use("/work", workRouter);
-app.use("/social", socialRouter)
+app.use("/social", socialRouter);
+app.use("/timeoff", timeOffRouter);
 
 // Handle 404 errors
 app.use((req, res) => {
