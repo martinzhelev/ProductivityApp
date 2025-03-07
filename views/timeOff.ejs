@@ -90,9 +90,15 @@
                     <div class="tab-pane fade show active" id="daily" role="tabpanel" aria-labelledby="daily-tab">
                         <div class="mb-4">
                             <h5 class="text-primary mb-3">Add Daily Time Off</h5>
-                            <div class="mb-3">
-                                <label for="dailyDate" class="form-label">Date</label>
-                                <input type="date" id="dailyDate" class="form-control" required>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="dailyDate" class="form-label">Date</label>
+                                    <input type="date" id="dailyDate" class="form-control" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="dailyTime" class="form-label">Time</label>
+                                    <input type="time" id="dailyTime" class="form-control" required>
+                                </div>
                             </div>
                             <div class="mb-3">
                                 <label for="dailyDescription" class="form-label">Description (optional)</label>
@@ -107,6 +113,7 @@
                                     <div class="list-group-item d-flex justify-content-between align-items-center">
                                         <div>
                                             📅 <%= new Date(timeOff.start_date).toLocaleDateString('en-GB') %>
+                                            <% if (timeOff.start_time) { %> at <%= timeOff.start_time %> <% } %>
                                             <% if (timeOff.description) { %> - <span class="text-muted"><%= timeOff.description %></span> <% } %>
                                         </div>
                                         <button class="btn btn-danger delete-timeoff" data-id="<%= timeOff.id %>">Delete</button>
@@ -124,17 +131,17 @@
                             <h5 class="text-primary mb-3">Add Weekly Time Off</h5>
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label for="weeklyStart" class="form-label">Start Date</label>
-                                    <input type="date" id="weeklyStart" class="form-control" required>
+                                    <label for="weeklyDate" class="form-label">Date</label>
+                                    <input type="date" id="weeklyDate" class="form-control" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="weeklyEnd" class="form-label">End Date</label>
-                                    <input type="date" id="weeklyEnd" class="form-control" required>
+                                    <label for="weeklyTime" class="form-label">Time (optional)</label>
+                                    <input type="time" id="weeklyTime" class="form-control">
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label for="weeklyDescription" class="form-label">Description (optional)</label>
-                                <input type="text" id="weeklyDescription" class="form-control" placeholder="e.g., Vacation week">
+                                <input type="text" id="weeklyDescription" class="form-control" placeholder="e.g., Team meeting">
                             </div>
                             <button id="saveWeeklyBtn" class="btn btn-primary w-100">Save Weekly</button>
                         </div>
@@ -144,7 +151,8 @@
                                 <% timeOffData.week.forEach(timeOff => { %>
                                     <div class="list-group-item d-flex justify-content-between align-items-center">
                                         <div>
-                                            📅 <%= new Date(timeOff.start_date).toLocaleDateString('en-GB') %> - <%= new Date(timeOff.end_date).toLocaleDateString('en-GB') %>
+                                            📅 <%= new Date(timeOff.start_date).toLocaleDateString('en-GB') %>
+                                            <% if (timeOff.start_time) { %> at <%= timeOff.start_time %> <% } %>
                                             <% if (timeOff.description) { %> - <span class="text-muted"><%= timeOff.description %></span> <% } %>
                                         </div>
                                         <button class="btn btn-danger delete-timeoff" data-id="<%= timeOff.id %>">Delete</button>
@@ -241,6 +249,6 @@
     window.userId = '<%= userId %>';
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/frontendJS/timeoff.js"></script>
+<script src="/frontendJS/timeoffFE.js"></script>
 </body>
 </html>

@@ -8,25 +8,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const monthlyList = document.getElementById("monthlyList");
     const yearlyList = document.getElementById("yearlyList");
 
-    function getCookie(name) {
-        const cookies = document.cookie.split("; ");
-        for (let cookie of cookies) {
-            const [cookieName, cookieValue] = cookie.split("=");
-            if (cookieName === name) {
-                return decodeURIComponent(cookieValue);
-            }
-        }
-        return null;
-    }
-    const userId = getCookie("userId") || window.userId;
+    const userId = window.userId;
 
     // Save Daily Time Off
     saveDailyBtn.addEventListener("click", function () {
         const date = document.getElementById("dailyDate").value;
+        const time = document.getElementById("dailyTime").value;
         const description = document.getElementById("dailyDescription").value;
 
-        if (!date) {
-            alert("Please select a date");
+        if (!date || !time) {
+            alert("Please select a date and time");
             return;
         }
 
@@ -34,12 +25,13 @@ document.addEventListener("DOMContentLoaded", function () {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: 'include',
-            body: JSON.stringify({ type: "day", start_date: date, end_date: date, description })
+            body: JSON.stringify({ type: "day", start_date: date, end_date: date, start_time: time, description })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 document.getElementById("dailyDate").value = "";
+                document.getElementById("dailyTime").value = "";
                 document.getElementById("dailyDescription").value = "";
                 updateLists();
             } else {
@@ -51,12 +43,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Save Weekly Time Off
     saveWeeklyBtn.addEventListener("click", function () {
-        const start = document.getElementById("weeklyStart").value;
-        const end = document.getElementById("weeklyEnd").value;
+        const date = document.getElementById("weeklyDate").value;
+        const time = document.getElementById("weeklyTime").value;
         const description = document.getElementById("weeklyDescription").value;
 
-        if (!start || !end) {
-            alert("Please select start and end dates");
+        if (!date) {
+            alert("Please select a date");
             return;
         }
 
@@ -64,13 +56,13 @@ document.addEventListener("DOMContentLoaded", function () {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: 'include',
-            body: JSON.stringify({ type: "week", start_date: start, end_date: end, description })
+            body: JSON.stringify({ type: "week", start_date: date, end_date: date, start_time: time || null, description })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                document.getElementById("weeklyStart").value = "";
-                document.getElementById("weeklyEnd").value = "";
+                document.getElementById("weeklyDate").value = "";
+                document.getElementById("weeklyTime").value = "";
                 document.getElementById("weeklyDescription").value = "";
                 updateLists();
             } else {
@@ -80,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => console.error("Error saving weekly time off:", error));
     });
 
-    // Save Monthly Time Off
+    // Save Monthly Time Off (unchanged)
     saveMonthlyBtn.addEventListener("click", function () {
         const start = document.getElementById("monthlyStart").value;
         const end = document.getElementById("monthlyEnd").value;
@@ -111,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => console.error("Error saving monthly time off:", error));
     });
 
-    // Save Yearly Time Off
+    // Save Yearly Time Off (unchanged)
     saveYearlyBtn.addEventListener("click", function () {
         const start = document.getElementById("yearlyStart").value;
         const end = document.getElementById("yearlyEnd").value;

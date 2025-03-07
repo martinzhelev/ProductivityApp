@@ -15,7 +15,7 @@ router.get("/:userId", async (req, res) => {
 
     try {
         const [rows] = await db.execute(
-            "SELECT id, type, start_date, end_date, description FROM time_off WHERE user_id = ? ORDER BY start_date ASC",
+            "SELECT id, type, start_date, end_date, start_time, description FROM time_off WHERE user_id = ? ORDER BY start_date ASC",
             [userId]
         );
 
@@ -38,20 +38,20 @@ router.get("/:userId", async (req, res) => {
 });
 
 router.post("/add", async (req, res) => {
-    const { type, start_date, end_date, description } = req.body;
+    const { type, start_date, end_date, start_time, description } = req.body;
     const userId = req.userId;
 
     try {
-        if (!type || !start_date || !end_date) {
+        if (!type || !start_date) {
             return res.status(400).json({ success: false, error: "Missing required fields" });
         }
 
-        // For daily, set end_date = start_date
-        const finalEndDate = type === 'day' ? start_date : end_date;
+        // For daily and weekly, end_date is the same as start_date
+        const finalEndDate = (type === 'day' || type === 'week') ? start_date : end_date;
 
         await db.execute(
-            "INSERT INTO time_off (user_id, type, start_date, end_date, description) VALUES (?, ?, ?, ?, ?)",
-            [userId, type, start_date, finalEndDate, description || null]
+            "INSERT INTO time_off (user_id, type, start_date, end_date, start_time, description) VALUES (?, ?, ?, ?, ?, ?)",
+            [userId, type, start_date, finalEndDate, start_time || null, description || null]
         );
         res.json({ success: true });
     } catch (error) {
