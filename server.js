@@ -34,6 +34,7 @@ const mentalRouter = require('./routes/mental');
 const workRouter = require('./routes/work')
 const socialRouter = require('./routes/social')
 const timeOffRouter = require('./routes/timeOff');
+const calorieTrackerRouter = require("./routes/calorieTracker");
 
 // Mount Routes
 app.use("/register", registerRouter);
@@ -44,6 +45,8 @@ app.use('/mental', mentalRouter);
 app.use("/work", workRouter);
 app.use("/social", socialRouter);
 app.use("/timeoff", timeOffRouter);
+app.use("/calorieTracker", calorieTrackerRouter);
+
 
 // Handle 404 errors
 app.use((req, res) => {
