@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - ProductivityApp</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Arial', sans-serif; }
+        .profile-card { border: none; border-radius: 15px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); background-color: #fff; padding: 20px; }
+        .chart-container { position: relative; height: 250px; width: 100%; margin-bottom: 20px; }
+        .radial-progress { width: 120px; height: 120px; position: relative; margin: 0 auto; }
+        .radial-progress svg { width: 100%; height: 100%; }
+        .radial-progress circle { fill: none; stroke-width: 8; }
+        .radial-progress .bg { stroke: #e9ecef; }
+        .radial-progress .progress { stroke: #007bff; transition: stroke-dashoffset 0.5s; }
+        .radial-progress span { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: bold; }
+        h5 { color: #343a40; }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center mb-4 text-primary">🎯 Your Productivity Profile</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="profile-card">
+                    <div class="row">
+                        <!-- Nutrient Pie Chart -->
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Today's Nutrients</h5>
+                            <div class="chart-container">
+                                <canvas id="nutrientChart"></canvas>
+                            </div>
+                        </div>
+                        <!-- Weekly Calorie Intake Bar Graph -->
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Weekly Calorie Intake</h5>
+                            <div class="chart-container">
+                                <canvas id="calorieChart"></canvas>
+                            </div>
+                        </div>
+                        <!-- Task Completion Radial (All Time) -->
+                        <div class="col-md-4">
+                            <h5 class="mb-3">Task Completion (All Time)</h5>
+                            <div class="radial-progress">
+                                <svg>
+                                    <circle class="bg" cx="60" cy="60" r="52"></circle>
+                                    <circle class="progress" cx="60" cy="60" r="52" stroke-dasharray="326" stroke-dashoffset="<%= 326 - (326 * taskCompletion / 100) %>"></circle>
+                                </svg>
+                                <span><%= taskCompletion.toFixed(1) %>%</span>
+                            </div>
+                        </div>
+                        <!-- Habit Completion Line Chart (All Time) -->
+                        <div class="col-md-4">
+                            <h5 class="mb-3">Habit Completion (All Time)</h5>
+                            <div class="chart-container">
+                                <canvas id="habitChart"></canvas>
+                            </div>
+                        </div>
+                        <!-- Reading Progress Bar Chart -->
+                        <div class="col-md-4">
+                            <h5 class="mb-3">Pages Read (Week)</h5>
+                            <div class="chart-container">
+                                <canvas id="readingChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        window.profileData = {
+            nutrients: { 
+                fat: '<%= nutrients.fat || 0 %>', 
+                carbs: '<%= nutrients.carbs || 0 %>', 
+                protein: '<%= nutrients.protein || 0 %>' 
+            },
+            weeklyCalories: '<%- JSON.stringify(weeklyCalories || []) %>',
+            habits: '<%- JSON.stringify(habits || []) %>',
+            reading: '<%- JSON.stringify(reading || []) %>'
+        };
+    </script>
+    <script src="/frontendJS/profileFE.js"></script>
+</body>
+</html>
