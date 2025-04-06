@@ -136,28 +136,28 @@ router.get("/:userId", async (req, res) => {
 
         // Reading Progress
         const [reading] = await db.execute(
-            "SELECT DATE(date) as day, SUM(pages_read) as pages " +
+            "SELECT DATE(date) as day, COUNT(*) as sessions, SUM(pages_read) as pages " +
             "FROM reading_progress WHERE user_id = ? AND date >= ? " +
             "GROUP BY day ORDER BY day",
             [userId, weekAgo]
         );
 
-        // Monthly Books and Trend
-        const [monthlyBooksData] = await db.execute(
-            "SELECT COUNT(*) as total_books, SUM(pages_read) as total_pages " +
+        // Monthly Reading Sessions and Trend
+        const [monthlyReadingData] = await db.execute(
+            "SELECT COUNT(*) as total_sessions, SUM(pages_read) as total_pages " +
             "FROM reading_progress WHERE user_id = ? AND date >= ?",
             [userId, monthAgo]
         );
-        const [lastMonthBooks] = await db.execute(
-            "SELECT COUNT(*) as total_books " +
+        const [lastMonthReading] = await db.execute(
+            "SELECT COUNT(*) as total_sessions " +
             "FROM reading_progress WHERE user_id = ? AND date BETWEEN ? AND ?",
             [userId, lastMonthStart, lastMonthEnd]
         );
-        const monthlyBooks = monthlyBooksData[0]?.total_books || 0;
-        const pagesRead = monthlyBooksData[0]?.total_pages || 0;
-        const lastMonthBooksTotal = lastMonthBooks[0]?.total_books || 0;
-        const bookTrend = lastMonthBooksTotal ? 
-            ((monthlyBooks - lastMonthBooksTotal) / lastMonthBooksTotal) * 100 : 0;
+        const monthlySessions = monthlyReadingData[0]?.total_sessions || 0;
+        const pagesRead = monthlyReadingData[0]?.total_pages || 0;
+        const lastMonthSessions = lastMonthReading[0]?.total_sessions || 0;
+        const readingTrend = lastMonthSessions ? 
+            ((monthlySessions - lastMonthSessions) / lastMonthSessions) * 100 : 0;
 
         // Monthly Meditation and Trend
         const [monthlyMeditationData] = await db.execute(
@@ -178,6 +178,7 @@ router.get("/:userId", async (req, res) => {
 
         res.render("profile", {
             user,
+            userId,
             userStats: userStats,
             nutrients: { 
                 fat: total_fat || 0, 
@@ -197,14 +198,15 @@ router.get("/:userId", async (req, res) => {
             totalHabits,
             reading: reading.map(row => ({ 
                 day: row.day, 
+                sessions: row.sessions || 0,
                 pages: row.pages || 0 
             })),
             monthlyCalories,
             calorieTrend,
             monthlyWorkouts,
             workoutTrend,
-            monthlyBooks,
-            bookTrend,
+            monthlySessions,
+            readingTrend,
             pagesRead,
             monthlyMeditation,
             meditationTrend,

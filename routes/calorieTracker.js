@@ -19,6 +19,12 @@ router.get("/:userId", async (req, res) => {
     const offset = (page - 1) * limit;
 
     try {
+        // Fetch user details
+        const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [userId]);
+        if (userRows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
         const [logs] = await db.execute(
             `SELECT DATE(log_date) as log_day, 
                     GROUP_CONCAT(
@@ -68,6 +74,7 @@ router.get("/:userId", async (req, res) => {
         const suggestion = getHealthSuggestion(total_calories || 0, total_fat || 0, total_carbs || 0, total_protein || 0);
 
         res.render("calorieTracker", {
+            username: userRows[0].username,
             userId,
             logs: formattedLogs,
             page,
@@ -180,7 +187,7 @@ router.post("/log", async (req, res) => {
         if (!calories) {
             return res.status(400).json({
                 success: false,
-                error: "Couldn’t calculate calories. Ensure all ingredients are valid."
+                error: "Couldn't calculate calories. Ensure all ingredients are valid."
             });
         }
 

@@ -1,0 +1,26 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+}
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+h1 {
+    font-weight: bold;
+    color: #343a40;
+}
+h2 {
+    font-size: 1.5rem;
+    color: #495057;
+}
+.btn {
+    font-weight: bold;
+    transition: 0.3s;
+}
+.btn:hover {
+    transform: translateY(-2px);
+}
+input, select {
+    border-radius: 6px;
+}

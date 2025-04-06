@@ -6,343 +6,7 @@
     <title>Profile - ProductivityApp</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        body { background-color: #f8f9fa; font-family: 'Arial', sans-serif; }
-        .profile-header {
-            background: linear-gradient(135deg, #6B73FF 0%, #000DFF 100%);
-            color: white;
-            padding: 2rem 0;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-        .profile-header h1 {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 0;
-        }
-        .avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            font-size: 32px;
-            font-weight: bold;
-            color: white;
-        }
-        .profile-card { 
-            border: none; 
-            border-radius: 15px; 
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); 
-            background-color: #fff; 
-            padding: 20px; 
-        }
-        .radial-progress { width: 120px; height: 120px; position: relative; margin: 0 auto; }
-        .radial-progress svg { width: 100%; height: 100%; }
-        .radial-progress circle { fill: none; stroke-width: 8; }
-        .radial-progress .bg { stroke: #e9ecef; }
-        .radial-progress .progress { stroke: #007bff; transition: stroke-dashoffset 0.5s; }
-        .radial-progress span { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: bold; }
-        h5 { color: #343a40; }
-        .core-stats-section {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-        .core-stats-title {
-            text-align: center;
-            color: #343a40;
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        .core-stats-chart {
-            height: 300px;
-            position: relative;
-        }
-        .chart-legend {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            font-size: 0.9rem;
-        }
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 2px;
-            margin-right: 0.5rem;
-        }
-        .progress-section {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-        .progress-title {
-            text-align: center;
-            color: #343a40;
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        .progress-card {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            transition: transform 0.2s;
-        }
-        .progress-card:hover {
-            transform: translateY(-2px);
-        }
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-        .progress-label {
-            font-weight: 600;
-            color: #495057;
-        }
-        .progress-value {
-            font-weight: bold;
-            color: #007bff;
-        }
-        .progress-bar-container {
-            height: 8px;
-            background: #e9ecef;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #007bff, #00bcd4);
-            border-radius: 4px;
-            transition: width 0.5s ease;
-        }
-        .progress-details {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-        .health-section {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-        .health-title {
-            text-align: center;
-            color: #343a40;
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        .health-card {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            transition: transform 0.2s;
-            text-align: center;
-        }
-        .health-card:hover {
-            transform: translateY(-2px);
-        }
-        .health-icon {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-        .health-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #007bff;
-            margin-bottom: 0.5rem;
-        }
-        .health-label {
-            color: #6c757d;
-            font-size: 1rem;
-        }
-        .health-trend {
-            font-size: 0.9rem;
-            color: #28a745;
-            margin-top: 0.5rem;
-        }
-        .health-trend.negative {
-            color: #dc3545;
-        }
-        .growth-section {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-        .growth-title {
-            text-align: center;
-            color: #343a40;
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        .growth-card {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            transition: transform 0.2s;
-            text-align: center;
-        }
-        .growth-card:hover {
-            transform: translateY(-2px);
-        }
-        .growth-icon {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-        .growth-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #007bff;
-            margin-bottom: 0.5rem;
-        }
-        .growth-label {
-            color: #6c757d;
-            font-size: 1rem;
-        }
-        .growth-trend {
-            font-size: 0.9rem;
-            color: #28a745;
-            margin-top: 0.5rem;
-        }
-        .growth-trend.negative {
-            color: #dc3545;
-        }
-        .growth-details {
-            font-size: 0.9rem;
-            color: #6c757d;
-            margin-top: 0.5rem;
-        }
-        /* Add loading animation */
-        .loading {
-            position: relative;
-            min-height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .loading::after {
-            content: '';
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #007bff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Add section animations */
-        .section-fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 0.5s ease forwards;
-        }
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Improve mobile responsiveness */
-        @media (max-width: 768px) {
-            .profile-header {
-                padding: 1.5rem 0;
-            }
-            .avatar {
-                width: 60px;
-                height: 60px;
-                font-size: 24px;
-            }
-            .profile-header h1 {
-                font-size: 20px;
-            }
-            .core-stats-chart {
-                height: 250px;
-            }
-            .chart-legend {
-                gap: 0.5rem;
-            }
-            .legend-item {
-                font-size: 0.8rem;
-            }
-            .health-card, .growth-card {
-                margin-bottom: 1rem;
-            }
-        }
-
-        /* Add hover effects */
-        .core-stats-section, .progress-section, .health-section, .growth-section {
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .core-stats-section:hover, .progress-section:hover, .health-section:hover, .growth-section:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Add data refresh indicator */
-        .data-refresh {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            display: none;
-            z-index: 1000;
-            transition: transform 0.2s;
-        }
-        .data-refresh:hover {
-            transform: scale(1.05);
-        }
-        .data-refresh.show {
-            display: block;
-            animation: slideIn 0.3s ease forwards;
-        }
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="/css/profile.css">
 </head>
 <body class="bg-light">
     <!-- Header -->
@@ -367,18 +31,33 @@
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
         </div>
         <div class="offcanvas-body">
-            <ul class="navbar-nav">
+            <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="/home">Dashboard</a>
+                    <a class="nav-link" href="/home/<%= userId %>">🏠 Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/profile">Profile</a>
+                    <a class="nav-link" href="/profile/<%= userId %>">👤 Profile</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/settings">Settings</a>
+                    <a class="nav-link" href="/work/<%= userId %>">💼 Work</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/logout">Logout</a>
+                    <a class="nav-link" href="/mental/<%= userId %>">🧠 Mental</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/calorietracker/<%= userId %>">🍽️ Calorie Tracker</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/social/<%= userId %>">👥 Social</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/timeoff/<%= userId %>">⏰ Time Off</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/body/<%= userId %>">💪 Body</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/auth/logout">🚪 Logout</a>
                 </li>
             </ul>
         </div>
@@ -427,9 +106,9 @@
         <!-- Progress Tracking Section -->
         <div class="progress-section section-fade-in">
             <h2 class="progress-title">Progress Tracking</h2>
-            <div class="row">
+                    <div class="row">
                 <!-- Task Completion -->
-                <div class="col-md-6">
+                        <div class="col-md-6">
                     <div class="progress-card">
                         <div class="progress-header">
                             <span class="progress-label">Task Completion</span>
@@ -444,7 +123,7 @@
                                 </circle>
                             </svg>
                             <span><%= taskCompletion.toFixed(1) %>%</span>
-                        </div>
+                            </div>
                         <div class="progress-details">
                             <span>Completed: <%= completedTasks %></span>
                             <span>Total: <%= totalTasks %></span>
@@ -452,20 +131,20 @@
                     </div>
                 </div>
                 <!-- Habit Tracking -->
-                <div class="col-md-6">
+                        <div class="col-md-6">
                     <div class="progress-card">
                         <div class="progress-header">
                             <span class="progress-label">Habit Completion</span>
                             <span class="progress-value"><%= habitCompletion.toFixed(1) %>%</span>
                         </div>
-                        <div class="radial-progress">
-                            <svg>
-                                <circle class="bg" cx="60" cy="60" r="52"></circle>
+                            <div class="radial-progress">
+                                <svg>
+                                    <circle class="bg" cx="60" cy="60" r="52"></circle>
                                 <circle class="progress" cx="60" cy="60" r="52" 
                                     stroke-dasharray="326" 
                                     stroke-dashoffset="<%= 326 - (326 * habitCompletion / 100) %>">
                                 </circle>
-                            </svg>
+                                </svg>
                             <span><%= habitCompletion.toFixed(1) %>%</span>
                         </div>
                         <div class="progress-details">
@@ -479,7 +158,7 @@
 
         <!-- Health Dashboard Section -->
         <div class="health-section section-fade-in">
-            <h2 class="health-title">Health Dashboard</h2>
+            <h2 class="health-title">Health </h2>
             <div class="row">
                 <!-- Monthly Calories -->
                 <div class="col-md-6">
@@ -502,6 +181,15 @@
                             <%= workoutTrend >= 0 ? '↑' : '↓' %> <%= Math.abs(workoutTrend).toFixed(1) %>% vs last month
                         </div>
                     </div>
+                            </div>
+                <!-- Nutrient Chart -->
+                <div class="col-12 mt-4">
+                    <div class="profile-card">
+                        <h5 class="mb-3">Today's Nutrients</h5>
+                        <div class="chart-container" style="height: 300px;">
+                            <canvas id="nutrientChart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -514,11 +202,11 @@
                 <div class="col-md-6">
                     <div class="growth-card">
                         <div class="growth-icon">📚</div>
-                        <div class="growth-value"><%= monthlyBooks %></div>
-                        <div class="growth-label">Books Read This Month</div>
-                        <div class="growth-trend <%= bookTrend >= 0 ? '' : 'negative' %>">
-                            <%= bookTrend >= 0 ? '↑' : '↓' %> <%= Math.abs(bookTrend).toFixed(1) %>% vs last month
-                        </div>
+                        <div class="growth-value"><%= monthlySessions %></div>
+                        <div class="growth-label">Reading Sessions This Month</div>
+                        <div class="growth-trend <%= readingTrend >= 0 ? '' : 'negative' %>">
+                            <%= readingTrend >= 0 ? '↑' : '↓' %> <%= Math.abs(readingTrend).toFixed(1) %>% vs last month
+                            </div>
                         <div class="growth-details">
                             <%= pagesRead %> pages read this month
                         </div>
@@ -532,7 +220,7 @@
                         <div class="growth-label">Meditation Minutes</div>
                         <div class="growth-trend <%= meditationTrend >= 0 ? '' : 'negative' %>">
                             <%= meditationTrend >= 0 ? '↑' : '↓' %> <%= Math.abs(meditationTrend).toFixed(1) %>% vs last month
-                        </div>
+                            </div>
                         <div class="growth-details">
                             <%= meditationSessions %> sessions this month
                         </div>
@@ -541,36 +229,7 @@
             </div>
         </div>
 
-        <h2 class="text-center mb-4 text-primary">🎯 Your Productivity Profile</h2>
-        <div class="row justify-content-center">
-            <div class="col-md-10">
-                <div class="profile-card">
-                    <div class="row">
-                        <!-- Nutrient Pie Chart -->
-                        <div class="col-md-6">
-                            <h5 class="mb-3">Today's Nutrients</h5>
-                            <div class="chart-container">
-                                <canvas id="nutrientChart"></canvas>
-                            </div>
-                        </div>
-                        <!-- Weekly Calorie Intake Bar Graph -->
-                        <div class="col-md-6">
-                            <h5 class="mb-3">Weekly Calorie Intake</h5>
-                            <div class="chart-container">
-                                <canvas id="calorieChart"></canvas>
-                            </div>
-                        </div>
-                        <!-- Reading Progress Bar Chart -->
-                        <div class="col-md-4">
-                            <h5 class="mb-3">Pages Read (Week)</h5>
-                            <div class="chart-container">
-                                <canvas id="readingChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
     </div>
 
     <!-- Data Refresh Button -->
@@ -596,9 +255,9 @@
                 carbs: Number("<%= nutrients.carbs || 0 %>"), 
                 protein: Number("<%= nutrients.protein || 0 %>") 
             },
-            weeklyCalories: Number("<%- weeklyCalories || 0 %>"),
-            habits: Number("<%- habits || 0 %>"),
-            reading: Number("<%- reading || 0 %>"),
+            weeklyCalories: Number("<%= weeklyCalories || 0 %>"),
+            habits: Number("<%= habits || 0 %>"),
+            reading: Number("<%= reading || 0 %>"),
             progress: {
                 taskCompletion: Number("<%= taskCompletion || 0 %>"),
                 completedTasks: Number("<%= completedTasks || 0 %>"),
@@ -614,129 +273,14 @@
                 workoutTrend: Number("<%= workoutTrend || 0 %>")
             },
             growth: {
-                monthlyBooks: Number("<%= monthlyBooks || 0 %>"),
-                bookTrend: Number("<%= bookTrend || 0 %>"),
+                monthlySessions: Number("<%= monthlySessions || 0 %>"),
+                readingTrend: Number("<%= readingTrend || 0 %>"),
                 pagesRead: Number("<%= pagesRead || 0 %>"),
                 monthlyMeditation: Number("<%= monthlyMeditation || 0 %>"),
                 meditationTrend: Number("<%= meditationTrend || 0 %>"),
                 meditationSessions: Number("<%= meditationSessions || 0 %>")
             }
         };
-
-        // Core Stats Chart Configuration
-        document.addEventListener('DOMContentLoaded', function() {
-            const ctx = document.getElementById('coreStatsChart').getContext('2d');
-            const coreStats = window.profileData.coreStats;
-            
-            // Debug log to check the values
-            console.log('Core Stats values:', coreStats);
-            
-            const chartData = [
-                Number(coreStats.strength),
-                Number(coreStats.speed),
-                Number(coreStats.mental),
-                Number(coreStats.social),
-                Number(coreStats.work),
-                Number(coreStats.agility),
-                Number(coreStats.financial)
-            ];
-            
-            console.log('Chart data array:', chartData);
-            
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Strength', 'Speed', 'Mental', 'Social', 'Work', 'Agility', 'Financial'],
-                    datasets: [{
-                        data: chartData,
-                        backgroundColor: [
-                            '#FF6B6B',
-                            '#4ECDC4',
-                            '#45B7D1',
-                            '#96CEB4',
-                            '#FFEEAD',
-                            '#D4A5A5',
-                            '#9B59B6'
-                        ],
-                        borderWidth: 0,
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            grid: {
-                                display: true,
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            },
-                            ticks: {
-                                stepSize: 20
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `${context.raw}%`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Add section fade-in animation
-            const sections = document.querySelectorAll('.section-fade-in');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, { threshold: 0.1 });
-
-            sections.forEach(section => observer.observe(section));
-
-            // Add data refresh functionality
-            const refreshButton = document.getElementById('dataRefresh');
-            let lastUpdate = new Date();
-
-            function checkForUpdates() {
-                const now = new Date();
-                const timeDiff = now - lastUpdate;
-                if (timeDiff > 5 * 60 * 1000) { // 5 minutes
-                    refreshButton.classList.add('show');
-                }
-            }
-
-            setInterval(checkForUpdates, 60000); // Check every minute
-
-            refreshButton.addEventListener('click', function() {
-                // Add loading state
-                sections.forEach(section => {
-                    section.innerHTML = '<div class="loading"></div>';
-                });
-
-                // Simulate data refresh
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
-            });
-        });
     </script>
     <script src="/frontendJS/profileFE.js"></script>
 </body>

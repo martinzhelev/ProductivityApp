@@ -14,6 +14,12 @@ router.get("/:userId", async (req, res) => {
     const userId = req.userId;
 
     try {
+        // Fetch user details
+        const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [userId]);
+        if (userRows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
         const [rows] = await db.execute(
             "SELECT id, type, start_date, end_date, start_time, description FROM time_off WHERE user_id = ? ORDER BY start_date ASC",
             [userId]
@@ -29,7 +35,8 @@ router.get("/:userId", async (req, res) => {
 
         res.render("timeoff", {
             timeOffData,
-            userId
+            userId,
+            username: userRows[0].username
         });
     } catch (error) {
         console.error("Database error:", error);

@@ -15,7 +15,13 @@ router.use((req, res, next) => {
 
 router.get("/:userId", async (req, res) => {
     try {
-        const userId = req.userId; // Replace this with authentication logic
+        const userId = req.userId;
+
+        // Fetch user details
+        const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [userId]);
+        if (userRows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
 
         // Fetch deadlines
         const [deadlines] = await db.execute(
@@ -29,7 +35,12 @@ router.get("/:userId", async (req, res) => {
             [userId]
         );
 
-        res.render("work", { deadlines, tasks }); // Pass data to frontend (EJS)
+        res.render("work", { 
+            deadlines, 
+            tasks,
+            userId,
+            username: userRows[0].username
+        });
     } catch (error) {
         console.error("Error fetching data:", error);
         res.status(500).send("Server error");

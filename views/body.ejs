@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Workout Tracker</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/body.css" rel="stylesheet">
 </head>
 <body>
   <header class="bg-dark text-white p-3 shadow-sm">
@@ -26,15 +27,33 @@
       <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
     </div>
     <div class="offcanvas-body">
-      <ul class="navbar-nav">
+      <ul class="nav flex-column">
         <li class="nav-item">
-          <a class="nav-link" href="#">Dashboard</a>
+          <a class="nav-link" href="/home/<%= userId %>">🏠 Dashboard</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Settings</a>
+          <a class="nav-link" href="/profile/<%= userId %>">👤 Profile</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Logout</a>
+          <a class="nav-link" href="/work/<%= userId %>">💼 Work</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/mental/<%= userId %>">🧠 Mental</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/calorietracker/<%= userId %>">🍽️ Calorie Tracker</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/social/<%= userId %>">👥 Social</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/timeoff/<%= userId %>">⏰ Time Off</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/body/<%= userId %>">💪 Body</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/auth/logout">🚪 Logout</a>
         </li>
       </ul>
     </div>
@@ -45,59 +64,63 @@
       <!-- Workouts Calendar -->
       <div class="col-md-6">
         <div class="workouts border p-4 rounded shadow-sm bg-light">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <button id="prevMonth" class="btn btn-dark">&lt;</button>
-                <h2 id="calendarTitle" class="text-center">
-                    <%= new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' }) %>
-                </h2>
-                <button id="nextMonth" class="btn btn-dark">&gt;</button>
+            <div class="calendar-nav">
+                <div class="d-flex align-items-center">
+                    <button id="prevMonth">&lt;</button>
+                    <h2 id="calendarTitle">
+                        <%= new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' }) %>
+                    </h2>
+                    <button id="nextMonth">&gt;</button>
+                </div>
             </div>
     
-            <table class="table table-bordered text-center table-striped">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Sun</th>
-                        <th>Mon</th>
-                        <th>Tue</th>
-                        <th>Wed</th>
-                        <th>Thu</th>
-                        <th>Fri</th>
-                        <th>Sat</th>
-                    </tr>
-                </thead>
-                <tbody id="calendarBody">
-                    <% 
-                        const firstDay = new Date(year, month, 1).getDay();
-                        const daysInMonth = new Date(year, month + 1, 0).getDate();
-                        let date = 1;
-                    %>
-    
-                    <% for (let week = 0; week < 6; week++) { %>
+            <div class="table-responsive">
+                <table class="table table-bordered text-center table-striped">
+                    <thead class="table-dark">
                         <tr>
-                            <% for (let day = 0; day < 7; day++) { %>
-                                <% if (week === 0 && day < firstDay) { %>
-                                    <td></td>
-                                <% } else if (date > daysInMonth) { %>
-                                    <td></td>
-                                <% } else { %>
-                                    <td>
-                                        <% const dateString = `${year}-${(month + 1).toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`; %>
-                                        <% const workout = completedWorkouts.find(w => w.date === dateString); %>
-                                        <% const isChecked = workout && workout.is_completed ? 'checked' : ''; %>
-                                        <div class="form-check">
-                                            <input class="form-check-input workout-checkbox" type="checkbox" id="day-<%= date %>" 
-                                                data-workout-id="<%= workout ? workout.workout_id : '' %>" 
-                                                data-date="<%= dateString %>" <%= isChecked %> />
-                                            <label class="form-check-label" for="day-<%= date %>"><%= date %></label>
-                                        </div>
-                                    </td>
-                                    <% date++; %>
-                                <% } %>
-                            <% } %>
+                            <th>Sun</th>
+                            <th>Mon</th>
+                            <th>Tue</th>
+                            <th>Wed</th>
+                            <th>Thu</th>
+                            <th>Fri</th>
+                            <th>Sat</th>
                         </tr>
-                    <% } %>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody id="calendarBody">
+                        <% 
+                            const firstDay = new Date(year, month, 1).getDay();
+                            const daysInMonth = new Date(year, month + 1, 0).getDate();
+                            let date = 1;
+                        %>
+        
+                        <% for (let week = 0; week < 6; week++) { %>
+                            <tr>
+                                <% for (let day = 0; day < 7; day++) { %>
+                                    <% if (week === 0 && day < firstDay) { %>
+                                        <td></td>
+                                    <% } else if (date > daysInMonth) { %>
+                                        <td></td>
+                                    <% } else { %>
+                                        <td>
+                                            <% const dateString = `${year}-${(month + 1).toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`; %>
+                                            <% const workout = completedWorkouts.find(w => w.date === dateString); %>
+                                            <% const isChecked = workout && workout.is_completed ? 'checked' : ''; %>
+                                            <div class="form-check">
+                                                <input class="form-check-input workout-checkbox" type="checkbox" id="day-<%= date %>" 
+                                                    data-workout-id="<%= workout ? workout.workout_id : '' %>" 
+                                                    data-date="<%= dateString %>" <%= isChecked %> />
+                                                <label class="form-check-label" for="day-<%= date %>"><%= date %></label>
+                                            </div>
+                                        </td>
+                                        <% date++; %>
+                                    <% } %>
+                                <% } %>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     
@@ -106,49 +129,51 @@
       <div class="col-md-6">
         <div class="workout-tracker border p-4 rounded shadow-sm bg-light">
           <h2 class="mb-3 text-center">Workout Tracker</h2>
-          <table class="table table-bordered text-center">
-            <thead class="table-dark">
-              <tr>
-                <th>Exercise 
-                  <button class="btn btn-sm btn-success ms-2" data-bs-toggle="modal" data-bs-target="#addExerciseModal">+</button>
-                </th>
-                <th>Set 1</th>
-                <th>Set 2</th>
-                <th>Set 3</th>
-                <th>Set 4</th>
-                <th>Set 5</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% if (exercises && exercises.length > 0) { %>
-                <% exercises.forEach((exercise) => { %>
-                  <tr>
-                    <td data-id="<%= exercise.exercise_id %>"><%= exercise.name %></td>
-                    <% for (let i = 1; i <= 5; i++) { %>
-                      <td>
-                        <% const set = exercise.sets[`set${i}`]; %>
-                        <% if (set && set !== 0) { %>
-                          <%= set %> reps
-                        <% } else { %>
-                          <span class="text-muted">-</span>
-                        <% } %>
-                      </td>
-                    <% } %>
-                    <td>
-                      <button class="btn btn-sm btn-primary add-set-btn" data-bs-toggle="modal" data-bs-target="#addSetModal" data-exercise-id="<%= exercise.exercise_id %>">
-                        Add Set
-                      </button>
-                    </td>
-                  </tr>
-                <% }) %>
-              <% } else { %>
+          <div class="table-responsive">
+            <table class="table table-bordered text-center">
+              <thead class="table-dark">
                 <tr>
-                  <td colspan="7" class="text-center">No exercises added yet</td>
+                  <th>Exercise 
+                    <button class="btn btn-sm btn-success ms-2" data-bs-toggle="modal" data-bs-target="#addExerciseModal">+</button>
+                  </th>
+                  <th>Set 1</th>
+                  <th>Set 2</th>
+                  <th>Set 3</th>
+                  <th>Set 4</th>
+                  <th>Set 5</th>
+                  <th>Actions</th>
                 </tr>
-              <% } %>
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                <% if (exercises && exercises.length > 0) { %>
+                  <% exercises.forEach((exercise) => { %>
+                    <tr>
+                      <td data-id="<%= exercise.exercise_id %>"><%= exercise.name %></td>
+                      <% for (let i = 1; i <= 5; i++) { %>
+                        <td>
+                          <% const set = exercise.sets[`set${i}`]; %>
+                          <% if (set && set !== 0) { %>
+                            <%= set %> reps
+                          <% } else { %>
+                            <span class="text-muted">-</span>
+                          <% } %>
+                        </td>
+                      <% } %>
+                      <td>
+                        <button class="btn btn-sm btn-primary add-set-btn" data-bs-toggle="modal" data-bs-target="#addSetModal" data-exercise-id="<%= exercise.exercise_id %>">
+                          Add Set
+                        </button>
+                      </td>
+                    </tr>
+                  <% }) %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="7" class="text-center">No exercises added yet</td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
 
           <!-- Category Picker and Finish Button -->
           <div class="d-flex justify-content-between align-items-center mt-4">
@@ -174,7 +199,7 @@
   <h2 class="text-center mb-4">All Exercises</h2>
 
   <div class="d-flex justify-content-center">
-    <div class="card p-3 shadow-lg rounded-3" style="max-width: 600px;">
+    <div class="card p-3 shadow-lg rounded-3 exercise-history" style="max-width: 600px;">
         <% if (allExercises.length > 0) { %>
             <% let groupedExercises = {}; %>
 
@@ -208,13 +233,40 @@
                     <% }); %>
                 </div>
             <% }); %>
+
+            <!-- Pagination Controls -->
+            <% if (totalPages > 1) { %>
+                <nav aria-label="Exercise history pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <% if (currentPage > 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>&year=<%= year %>&month=<%= month %>" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        <% } %>
+                        
+                        <% for(let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>&year=<%= year %>&month=<%= month %>"><%= i %></a>
+                            </li>
+                        <% } %>
+                        
+                        <% if (currentPage < totalPages) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage + 1 %>&year=<%= year %>&month=<%= month %>" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </nav>
+            <% } %>
         <% } else { %>
             <p class="text-muted text-center">No exercises found.</p>
         <% } %>
     </div>
 </div>
-
-
 
   <!-- Add Exercise Modal -->
   <div class="modal fade" id="addExerciseModal" tabindex="-1" aria-labelledby="addExerciseModalLabel" aria-hidden="true">

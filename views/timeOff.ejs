@@ -5,250 +5,248 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Time Off Scheduler</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Arial', sans-serif;
-        }
-        .timeoff-card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-        .nav-tabs {
-            border-bottom: 2px solid #e9ecef;
-            background-color: #fff;
-        }
-        .nav-link {
-            color: #495057;
-            font-weight: 500;
-            padding: 12px 20px;
-            border-radius: 10px 10px 0 0;
-        }
-        .nav-link.active {
-            background-color: #007bff;
-            color: white;
-            border-color: #007bff;
-        }
-        .tab-pane {
-            padding: 20px;
-            background-color: #fff;
-        }
-        .form-label {
-            font-weight: 600;
-            color: #343a40;
-        }
-        .list-group-item {
-            border: none;
-            border-bottom: 1px solid #e9ecef;
-            padding: 15px;
-            transition: background-color 0.2s;
-        }
-        .list-group-item:hover {
-            background-color: #f1f3f5;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            border: none;
-            border-radius: 8px;
-            padding: 10px;
-            font-weight: 500;
-        }
-        .btn-danger {
-            background-color: #dc3545;
-            border: none;
-            border-radius: 8px;
-            padding: 6px 12px;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/timeoff.css">
 </head>
-<body>
+<body class="bg-light">
+    <!-- Header -->
+    <header class="bg-dark text-white p-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="profile d-flex align-items-center">
+                <span class="ms-2">
+                    <%= username %>
+                </span>
+            </div>
+            <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasNavbar">
+                ☰
+            </button>
+        </div>
+    </header>
 
-<div class="container mt-5">
-    <h2 class="text-center mb-4 text-primary">⏰ Time Off Scheduler</h2>
+    <!-- Offcanvas Menu -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Menu</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/home/<%= userId %>">🏠 Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/profile/<%= userId %>">👤 Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/work/<%= userId %>">💼 Work</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/mental/<%= userId %>">🧠 Mental</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/calorietracker/<%= userId %>">🍽️ Calorie Tracker</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/social/<%= userId %>">👥 Social</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/timeoff/<%= userId %>">⏰ Time Off</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/body/<%= userId %>">💪 Body</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/auth/logout">🚪 Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
 
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card timeoff-card">
-                <ul class="nav nav-tabs" id="timeOffTab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="daily-tab" data-bs-toggle="tab" data-bs-target="#daily" type="button" role="tab" aria-controls="daily" aria-selected="true">Daily</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="weekly-tab" data-bs-toggle="tab" data-bs-target="#weekly" type="button" role="tab" aria-controls="weekly" aria-selected="false">Weekly</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="monthly-tab" data-bs-toggle="tab" data-bs-target="#monthly" type="button" role="tab" aria-controls="monthly" aria-selected="false">Monthly</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="yearly-tab" data-bs-toggle="tab" data-bs-target="#yearly" type="button" role="tab" aria-controls="yearly" aria-selected="false">Yearly</button>
-                    </li>
-                </ul>
-                <div class="tab-content" id="timeOffTabContent">
-                    <!-- Daily Time Off -->
-                    <div class="tab-pane fade show active" id="daily" role="tabpanel" aria-labelledby="daily-tab">
-                        <div class="mb-4">
-                            <h5 class="text-primary mb-3">Add Daily Time Off</h5>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="dailyDate" class="form-label">Date</label>
-                                    <input type="date" id="dailyDate" class="form-control" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="dailyTime" class="form-label">Time</label>
-                                    <input type="time" id="dailyTime" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="dailyDescription" class="form-label">Description (optional)</label>
-                                <input type="text" id="dailyDescription" class="form-control" placeholder="e.g., Doctor's appointment">
-                            </div>
-                            <button id="saveDailyBtn" class="btn btn-primary w-100">Save Daily</button>
-                        </div>
-                        <h5 class="text-success mb-3">Daily Schedule</h5>
-                        <div id="dailyList" class="list-group">
-                            <% if (timeOffData.day && timeOffData.day.length > 0) { %>
-                                <% timeOffData.day.forEach(timeOff => { %>
-                                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            📅 <%= new Date(timeOff.start_date).toLocaleDateString('en-GB') %>
-                                            <% if (timeOff.start_time) { %> at <%= timeOff.start_time %> <% } %>
-                                            <% if (timeOff.description) { %> - <span class="text-muted"><%= timeOff.description %></span> <% } %>
-                                        </div>
-                                        <button class="btn btn-danger delete-timeoff" data-id="<%= timeOff.id %>">Delete</button>
+    <div class="container mt-4">
+        <h2 class="text-center mb-4 text-primary">⏰ Time Off Scheduler</h2>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card timeoff-card">
+                    <ul class="nav nav-tabs" id="timeOffTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="daily-tab" data-bs-toggle="tab" data-bs-target="#daily" type="button" role="tab" aria-controls="daily" aria-selected="true">Daily</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="weekly-tab" data-bs-toggle="tab" data-bs-target="#weekly" type="button" role="tab" aria-controls="weekly" aria-selected="false">Weekly</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="monthly-tab" data-bs-toggle="tab" data-bs-target="#monthly" type="button" role="tab" aria-controls="monthly" aria-selected="false">Monthly</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="yearly-tab" data-bs-toggle="tab" data-bs-target="#yearly" type="button" role="tab" aria-controls="yearly" aria-selected="false">Yearly</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="timeOffTabContent">
+                        <!-- Daily Time Off -->
+                        <div class="tab-pane fade show active" id="daily" role="tabpanel" aria-labelledby="daily-tab">
+                            <div class="mb-4">
+                                <h5 class="text-primary mb-3">Add Daily Time Off</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="dailyDate" class="form-label">Date</label>
+                                        <input type="date" id="dailyDate" class="form-control" required>
                                     </div>
-                                <% }) %>
-                            <% } else { %>
-                                <p class="text-muted">No daily time off scheduled.</p>
-                            <% } %>
-                        </div>
-                    </div>
-
-                    <!-- Weekly Time Off -->
-                    <div class="tab-pane fade" id="weekly" role="tabpanel" aria-labelledby="weekly-tab">
-                        <div class="mb-4">
-                            <h5 class="text-primary mb-3">Add Weekly Time Off</h5>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="weeklyDate" class="form-label">Date</label>
-                                    <input type="date" id="weeklyDate" class="form-control" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="weeklyTime" class="form-label">Time (optional)</label>
-                                    <input type="time" id="weeklyTime" class="form-control">
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="weeklyDescription" class="form-label">Description (optional)</label>
-                                <input type="text" id="weeklyDescription" class="form-control" placeholder="e.g., Team meeting">
-                            </div>
-                            <button id="saveWeeklyBtn" class="btn btn-primary w-100">Save Weekly</button>
-                        </div>
-                        <h5 class="text-success mb-3">Weekly Schedule</h5>
-                        <div id="weeklyList" class="list-group">
-                            <% if (timeOffData.week && timeOffData.week.length > 0) { %>
-                                <% timeOffData.week.forEach(timeOff => { %>
-                                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            📅 <%= new Date(timeOff.start_date).toLocaleDateString('en-GB') %>
-                                            <% if (timeOff.start_time) { %> at <%= timeOff.start_time %> <% } %>
-                                            <% if (timeOff.description) { %> - <span class="text-muted"><%= timeOff.description %></span> <% } %>
-                                        </div>
-                                        <button class="btn btn-danger delete-timeoff" data-id="<%= timeOff.id %>">Delete</button>
+                                    <div class="col-md-6">
+                                        <label for="dailyTime" class="form-label">Time</label>
+                                        <input type="time" id="dailyTime" class="form-control" required>
                                     </div>
-                                <% }) %>
-                            <% } else { %>
-                                <p class="text-muted">No weekly time off scheduled.</p>
-                            <% } %>
-                        </div>
-                    </div>
-
-                    <!-- Monthly Time Off -->
-                    <div class="tab-pane fade" id="monthly" role="tabpanel" aria-labelledby="monthly-tab">
-                        <div class="mb-4">
-                            <h5 class="text-primary mb-3">Add Monthly Time Off</h5>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="monthlyStart" class="form-label">Start Date</label>
-                                    <input type="date" id="monthlyStart" class="form-control" required>
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="monthlyEnd" class="form-label">End Date</label>
-                                    <input type="date" id="monthlyEnd" class="form-control" required>
+                                <div class="mb-3">
+                                    <label for="dailyDescription" class="form-label">Description (optional)</label>
+                                    <input type="text" id="dailyDescription" class="form-control" placeholder="e.g., Doctor's appointment">
                                 </div>
+                                <button id="saveDailyBtn" class="btn btn-primary w-100">Save Daily</button>
                             </div>
-                            <div class="mb-3">
-                                <label for="monthlyDescription" class="form-label">Description (optional)</label>
-                                <input type="text" id="monthlyDescription" class="form-control" placeholder="e.g., Extended leave">
-                            </div>
-                            <button id="saveMonthlyBtn" class="btn btn-primary w-100">Save Monthly</button>
-                        </div>
-                        <h5 class="text-success mb-3">Monthly Schedule</h5>
-                        <div id="monthlyList" class="list-group">
-                            <% if (timeOffData.month && timeOffData.month.length > 0) { %>
-                                <% timeOffData.month.forEach(timeOff => { %>
-                                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            📅 <%= new Date(timeOff.start_date).toLocaleDateString('en-GB') %> - <%= new Date(timeOff.end_date).toLocaleDateString('en-GB') %>
-                                            <% if (timeOff.description) { %> - <span class="text-muted"><%= timeOff.description %></span> <% } %>
+                            <h5 class="text-success mb-3">Daily Schedule</h5>
+                            <div id="dailyList" class="list-group">
+                                <% if (timeOffData.day && timeOffData.day.length > 0) { %>
+                                    <% timeOffData.day.forEach(timeOff => { %>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                📅 <%= new Date(timeOff.start_date).toLocaleDateString('en-GB') %>
+                                                <% if (timeOff.start_time) { %> at <%= timeOff.start_time %> <% } %>
+                                                <% if (timeOff.description) { %> - <span class="text-muted"><%= timeOff.description %></span> <% } %>
+                                            </div>
+                                            <button class="btn btn-danger delete-timeoff" data-id="<%= timeOff.id %>">Delete</button>
                                         </div>
-                                        <button class="btn btn-danger delete-timeoff" data-id="<%= timeOff.id %>">Delete</button>
-                                    </div>
-                                <% }) %>
-                            <% } else { %>
-                                <p class="text-muted">No monthly time off scheduled.</p>
-                            <% } %>
+                                    <% }) %>
+                                <% } else { %>
+                                    <p class="text-muted">No daily time off scheduled.</p>
+                                <% } %>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Yearly Time Off -->
-                    <div class="tab-pane fade" id="yearly" role="tabpanel" aria-labelledby="yearly-tab">
-                        <div class="mb-4">
-                            <h5 class="text-primary mb-3">Add Yearly Time Off</h5>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="yearlyStart" class="form-label">Start Date</label>
-                                    <input type="date" id="yearlyStart" class="form-control" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="yearlyEnd" class="form-label">End Date</label>
-                                    <input type="date" id="yearlyEnd" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="yearlyDescription" class="form-label">Description (optional)</label>
-                                <input type="text" id="yearlyDescription" class="form-control" placeholder="e.g., Sabbatical">
-                            </div>
-                            <button id="saveYearlyBtn" class="btn btn-primary w-100">Save Yearly</button>
-                        </div>
-                        <h5 class="text-success mb-3">Yearly Schedule</h5>
-                        <div id="yearlyList" class="list-group">
-                            <% if (timeOffData.year && timeOffData.year.length > 0) { %>
-                                <% timeOffData.year.forEach(timeOff => { %>
-                                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            📅 <%= new Date(timeOff.start_date).toLocaleDateString('en-GB') %> - <%= new Date(timeOff.end_date).toLocaleDateString('en-GB') %>
-                                            <% if (timeOff.description) { %> - <span class="text-muted"><%= timeOff.description %></span> <% } %>
-                                        </div>
-                                        <button class="btn btn-danger delete-timeoff" data-id="<%= timeOff.id %>">Delete</button>
+                        <!-- Weekly Time Off -->
+                        <div class="tab-pane fade" id="weekly" role="tabpanel" aria-labelledby="weekly-tab">
+                            <div class="mb-4">
+                                <h5 class="text-primary mb-3">Add Weekly Time Off</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="weeklyDate" class="form-label">Date</label>
+                                        <input type="date" id="weeklyDate" class="form-control" required>
                                     </div>
-                                <% }) %>
-                            <% } else { %>
-                                <p class="text-muted">No yearly time off scheduled.</p>
-                            <% } %>
+                                    <div class="col-md-6">
+                                        <label for="weeklyTime" class="form-label">Time (optional)</label>
+                                        <input type="time" id="weeklyTime" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="weeklyDescription" class="form-label">Description (optional)</label>
+                                    <input type="text" id="weeklyDescription" class="form-control" placeholder="e.g., Team meeting">
+                                </div>
+                                <button id="saveWeeklyBtn" class="btn btn-primary w-100">Save Weekly</button>
+                            </div>
+                            <h5 class="text-success mb-3">Weekly Schedule</h5>
+                            <div id="weeklyList" class="list-group">
+                                <% if (timeOffData.week && timeOffData.week.length > 0) { %>
+                                    <% timeOffData.week.forEach(timeOff => { %>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                📅 <%= new Date(timeOff.start_date).toLocaleDateString('en-GB') %>
+                                                <% if (timeOff.start_time) { %> at <%= timeOff.start_time %> <% } %>
+                                                <% if (timeOff.description) { %> - <span class="text-muted"><%= timeOff.description %></span> <% } %>
+                                            </div>
+                                            <button class="btn btn-danger delete-timeoff" data-id="<%= timeOff.id %>">Delete</button>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <p class="text-muted">No weekly time off scheduled.</p>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- Monthly Time Off -->
+                        <div class="tab-pane fade" id="monthly" role="tabpanel" aria-labelledby="monthly-tab">
+                            <div class="mb-4">
+                                <h5 class="text-primary mb-3">Add Monthly Time Off</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="monthlyStart" class="form-label">Start Date</label>
+                                        <input type="date" id="monthlyStart" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="monthlyEnd" class="form-label">End Date</label>
+                                        <input type="date" id="monthlyEnd" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="monthlyDescription" class="form-label">Description (optional)</label>
+                                    <input type="text" id="monthlyDescription" class="form-control" placeholder="e.g., Extended leave">
+                                </div>
+                                <button id="saveMonthlyBtn" class="btn btn-primary w-100">Save Monthly</button>
+                            </div>
+                            <h5 class="text-success mb-3">Monthly Schedule</h5>
+                            <div id="monthlyList" class="list-group">
+                                <% if (timeOffData.month && timeOffData.month.length > 0) { %>
+                                    <% timeOffData.month.forEach(timeOff => { %>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                📅 <%= new Date(timeOff.start_date).toLocaleDateString('en-GB') %> - <%= new Date(timeOff.end_date).toLocaleDateString('en-GB') %>
+                                                <% if (timeOff.description) { %> - <span class="text-muted"><%= timeOff.description %></span> <% } %>
+                                            </div>
+                                            <button class="btn btn-danger delete-timeoff" data-id="<%= timeOff.id %>">Delete</button>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <p class="text-muted">No monthly time off scheduled.</p>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- Yearly Time Off -->
+                        <div class="tab-pane fade" id="yearly" role="tabpanel" aria-labelledby="yearly-tab">
+                            <div class="mb-4">
+                                <h5 class="text-primary mb-3">Add Yearly Time Off</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="yearlyStart" class="form-label">Start Date</label>
+                                        <input type="date" id="yearlyStart" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="yearlyEnd" class="form-label">End Date</label>
+                                        <input type="date" id="yearlyEnd" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="yearlyDescription" class="form-label">Description (optional)</label>
+                                    <input type="text" id="yearlyDescription" class="form-control" placeholder="e.g., Sabbatical">
+                                </div>
+                                <button id="saveYearlyBtn" class="btn btn-primary w-100">Save Yearly</button>
+                            </div>
+                            <h5 class="text-success mb-3">Yearly Schedule</h5>
+                            <div id="yearlyList" class="list-group">
+                                <% if (timeOffData.year && timeOffData.year.length > 0) { %>
+                                    <% timeOffData.year.forEach(timeOff => { %>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                📅 <%= new Date(timeOff.start_date).toLocaleDateString('en-GB') %> - <%= new Date(timeOff.end_date).toLocaleDateString('en-GB') %>
+                                                <% if (timeOff.description) { %> - <span class="text-muted"><%= timeOff.description %></span> <% } %>
+                                            </div>
+                                            <button class="btn btn-danger delete-timeoff" data-id="<%= timeOff.id %>">Delete</button>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <p class="text-muted">No yearly time off scheduled.</p>
+                                <% } %>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    window.userId = '<%= userId %>';
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/frontendJS/timeoffFE.js"></script>
+    <script>
+        window.userId = '<%= userId %>';
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/frontendJS/timeoffFE.js"></script>
 </body>
 </html>

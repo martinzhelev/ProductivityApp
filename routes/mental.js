@@ -15,6 +15,12 @@ router.use((req, res, next) => {
 router.get('/:userId', async (req, res) => {
     const userId = req.userId;
     try {
+        // Fetch user details
+        const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [userId]);
+        if (userRows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
         const [books] = await db.execute('SELECT * FROM books WHERE user_id = ?', [userId]);
         const [readingProgress] = await db.execute(
             'SELECT COALESCE(SUM(pages_read), 0) AS pages, COALESCE(SUM(minutes_read), 0) AS minutes FROM reading_progress WHERE user_id = ? AND date = CURDATE()',
@@ -25,6 +31,8 @@ router.get('/:userId', async (req, res) => {
             [userId]
         );
         res.render('mental', {
+            userId,
+            username: userRows[0].username,
             books,
             readingProgress: readingProgress[0],
             meditationProgress: meditation[0].total

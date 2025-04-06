@@ -34,15 +34,33 @@
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
         </div>
         <div class="offcanvas-body">
-            <ul class="navbar-nav">
+            <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Dashboard</a>
+                    <a class="nav-link" href="/home/<%= userId %>">🏠 Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Settings</a>
+                    <a class="nav-link" href="/profile/<%= userId %>">👤 Profile</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Logout</a>
+                    <a class="nav-link" href="/work/<%= userId %>">💼 Work</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/mental/<%= userId %>">🧠 Mental</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/calorietracker/<%= userId %>">🍽️ Calorie Tracker</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/social/<%= userId %>">👥 Social</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/timeoff/<%= userId %>">⏰ Time Off</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/body/<%= userId %>">💪 Body</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/auth/logout">🚪 Logout</a>
                 </li>
             </ul>
         </div>
@@ -57,20 +75,17 @@
                     <ul class="tasks list-unstyled" id="tasks-list">
                         <% if (tasks.length> 0) { %>
                             <% tasks.forEach(function(task) { %>
-                                <li data-task-id="<%= task.task_id %>"
-                                    class="d-flex justify-content-between align-items-center">
+                                <li data-task-id="<%= task.task_id %>">
                                     <div>
-                                        <input type="checkbox" class="checkbox me-2" <%=task.completed ? 'checked' : ''
-                                            %> >
+                                        <input type="checkbox" class="checkbox me-2" <%=task.completed ? 'checked' : '' %> >
                                         <%= task.task %>
                                     </div>
-                                    <button class="btn btn-danger btn-sm delete-task"
-                                        data-id="<%= task.task_id %>">Delete</button>
+                                    <button class="btn btn-danger btn-sm delete-task" data-id="<%= task.task_id %>">Delete</button>
                                 </li>
-                                <% }); %>
-                                    <% } else { %>
-                                        <li>No tasks found</li>
-                                        <% } %>
+                            <% }); %>
+                        <% } else { %>
+                            <li>No tasks found</li>
+                        <% } %>
                     </ul>
 
                     <button class="btn btn-primary mt-2" id="addTask">Add Task</button>
@@ -86,20 +101,17 @@
                     <ul class="habits list-unstyled" id="habits-list">
                         <% if (habits.length> 0) { %>
                             <% habits.forEach(function(habit) { %>
-                                <li data-habit-id="<%= habit.habit_id %>" class="d-flex justify-content-between align-items-center">
-                                    
+                                <li data-habit-id="<%= habit.habit_id %>">
                                     <div>
-                                        <input type="checkbox" class="checkbox" <%=habit.completed ? 'checked' : '' %> >
+                                        <input type="checkbox" class="checkbox me-2" <%=habit.completed ? 'checked' : '' %> >
                                         <%= habit.habit %>
                                     </div>
-                                    <button class="btn btn-danger btn-sm delete-task"
-                                        data-id="<%= habit.habit_id %>">Delete</button>
+                                    <button class="btn btn-danger btn-sm delete-task" data-id="<%= habit.habit_id %>">Delete</button>
                                 </li>
-
-                                <% }); %>
-                                    <% } else { %>
-                                        <li>No habits found</li>
-                                        <% } %>
+                            <% }); %>
+                        <% } else { %>
+                            <li>No habits found</li>
+                        <% } %>
                     </ul>
 
                     <button class="btn btn-primary mt-2" id="addHabit">Add Habit</button>

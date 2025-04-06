@@ -13,6 +13,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const userId = getCookie("userId");
     console.log("userId:", userId);
 
+    // Get current page from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentPage = parseInt(urlParams.get('page')) || 1;
+    let currentYear = parseInt(urlParams.get("year")) || new Date().getFullYear();
+    let currentMonth = parseInt(urlParams.get("month")) || new Date().getMonth();
+
+    // Function to update URL with pagination parameters
+    function updateURL(page, year, month) {
+        const params = new URLSearchParams(window.location.search);
+        params.set('page', page);
+        params.set('year', year);
+        params.set('month', month);
+        window.location.href = `${window.location.pathname}?${params.toString()}`;
+    }
+
+    // Handle pagination clicks
+    document.querySelectorAll('.pagination .page-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const href = link.getAttribute('href');
+            const params = new URLSearchParams(href.substring(1));
+            const page = parseInt(params.get('page'));
+            const year = parseInt(params.get('year'));
+            const month = parseInt(params.get('month'));
+            
+            // Update URL with all parameters
+            const newParams = new URLSearchParams(window.location.search);
+            newParams.set('page', page);
+            newParams.set('year', year);
+            newParams.set('month', month);
+            window.location.href = `${window.location.pathname}?${newParams.toString()}`;
+        });
+    });
+
     // Add exercise form submission
     document.getElementById('addExerciseForm').addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -114,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try{
-            const response = await fetch(`/body/${userId}`,{
+            let response = await fetch(`/body/${userId}`,{
                 method: 'PATCH',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({action: 'finishWorkout', category})
@@ -126,22 +160,23 @@ document.addEventListener('DOMContentLoaded', () => {
         location.reload();
     })
 
-
-    
-    const urlParams = new URLSearchParams(window.location.search);
-    let currentYear = parseInt(urlParams.get("year")) || new Date().getFullYear();
-    let currentMonth = parseInt(urlParams.get("month")); // Get month directly from URL
-
-    // If no month parameter is found, default to current month
-    if (isNaN(currentMonth)) {
-        currentMonth = new Date().getMonth();
-    }
-
+    // Function to update calendar
     function updateCalendar() {
-        window.location.href = `?year=${currentYear}&month=${currentMonth}`;
+        const params = new URLSearchParams(window.location.search);
+        params.set('year', currentYear);
+        params.set('month', currentMonth);
+        
+        // Update the calendar title
+        const calendarTitle = document.getElementById('calendarTitle');
+        const date = new Date(currentYear, currentMonth);
+        calendarTitle.textContent = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+        
+        window.location.href = `${window.location.pathname}?${params.toString()}`;
     }
 
-    document.getElementById("prevMonth").addEventListener("click", () => {
+    // Handle month navigation
+    document.getElementById("prevMonth").addEventListener("click", (e) => {
+        e.preventDefault();
         currentMonth--;
         if (currentMonth < 0) {
             currentMonth = 11;
@@ -150,7 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCalendar();
     });
 
-    document.getElementById("nextMonth").addEventListener("click", () => {
+    document.getElementById("nextMonth").addEventListener("click", (e) => {
+        e.preventDefault();
         currentMonth++;
         if (currentMonth > 11) {
             currentMonth = 0;
@@ -158,7 +194,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         updateCalendar();
     });
-
-   
 
 });

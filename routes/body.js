@@ -6,6 +6,8 @@ const db = require("../server"); // Import database connection
 router.get('/:userId', async (req, res) => {
     let year = parseInt(req.query.year);
     let month = parseInt(req.query.month);
+    const page = parseInt(req.query.page) || 1;
+    const itemsPerPage = 5;
 
     if (isNaN(year) || isNaN(month)) {
         const today = new Date();
@@ -44,15 +46,7 @@ router.get('/:userId', async (req, res) => {
             [userId, today]
         );
 
-        // Ensure exercises is an array
-        // if (Array.isArray(exercises) && exercises.length > 0) {
-        //     // Keep only exercises where active == 1
-        //     exercises = exercises.filter(exercise => exercise.active === 1);
-        // }
-
-
-
-        // Now we need to fetch sets for each exercise
+        // Fetch sets for today's exercises
         let setsPromises = exercises.map(exercise => {
             return db.execute(
                 'SELECT set1, set2, set3, set4, set5 FROM sets WHERE user_id = ? AND exercise_id = ? AND date = ?',
@@ -60,29 +54,34 @@ router.get('/:userId', async (req, res) => {
             );
         });
 
-        // Wait for all set fetch operations to complete
         let setsResults = await Promise.all(setsPromises);
 
-        // Log the sets results to debug
-
-        // Merge the sets with exercises
-        // Merge the sets with exercises
+        // Initialize exercises with sets
         exercises = exercises.map((exercise, index) => {
-           // const sets = setsResults[index][0] && setsResults[index][0][0] ? setsResults[index][0][0] : {}; // Access the first object in the array
-            const sets = setsResults[index]?.[0]?.[0] || {};
-
-            return {
-                ...exercise,
-                sets: sets // Merge sets with exercises
+            const sets = setsResults[index]?.[0]?.[0] || {
+                set1: 0,
+                set2: 0,
+                set3: 0,
+                set4: 0,
+                set5: 0
             };
+            return { ...exercise, sets };
         });
 
-        let [allExercises] = await db.execute(
-            'SELECT exercise_name AS name, exercise_id, active, date FROM exercises WHERE user_id = ? ORDER BY date ASC',
+        // Fetch all exercises with pagination
+        const [allExercises] = await db.execute(
+            'SELECT exercise_name AS name, exercise_id, active, date FROM exercises WHERE user_id = ? ORDER BY date DESC',
             [userId]
         );
 
-        let allSetsPromises = allExercises.map(exercise => {
+        // Calculate pagination
+        const totalPages = Math.ceil(allExercises.length / itemsPerPage);
+        const startIndex = (page - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const paginatedExercises = allExercises.slice(startIndex, endIndex);
+
+        // Fetch sets for paginated exercises
+        let allSetsPromises = paginatedExercises.map(exercise => {
             return db.execute(
                 'SELECT set1, set2, set3, set4, set5 FROM sets WHERE user_id = ? AND exercise_id = ? AND date = ?',
                 [userId, exercise.exercise_id, exercise.date]
@@ -91,34 +90,38 @@ router.get('/:userId', async (req, res) => {
 
         let allSetsResults = await Promise.all(allSetsPromises);
 
-        allExercises = allExercises.map((exercise, index) => {
-            const sets = allSetsResults[index][0] && allSetsResults[index][0][0] ? allSetsResults[index][0][0] : {};
+        const exercisesWithSets = paginatedExercises.map((exercise, index) => {
+            const sets = allSetsResults[index]?.[0]?.[0] || {
+                set1: 0,
+                set2: 0,
+                set3: 0,
+                set4: 0,
+                set5: 0
+            };
             return { ...exercise, sets };
         });
 
         // Format completed workouts
         const formattedCompletedWorkouts = completedWorkouts.map(workout => {
             const workoutDate = new Date(workout.date);
-
-            // Adjust for the time zone offset
             workoutDate.setMinutes(workoutDate.getMinutes() - workoutDate.getTimezoneOffset());
-
-            // Return the formatted date as YYYY-MM-DD
             return {
                 ...workout,
                 date: workoutDate.toISOString().split('T')[0]
             };
         });
 
-
-        // Render template
+        // Render template with pagination data
         res.render('body', {
             month,
             year,
             exercises: exercises || [],
-            allExercises,
+            allExercises: exercisesWithSets,
+            totalPages,
+            currentPage: page,
             completedWorkouts: formattedCompletedWorkouts || [],
-            username
+            username,
+            userId: req.params.userId
         });
     } catch (error) {
         console.error("Error fetching workouts:", error);

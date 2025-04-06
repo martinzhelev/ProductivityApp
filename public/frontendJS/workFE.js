@@ -179,6 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     .catch(error => console.error('Error:', error));
             }
         });
+        window.location.reload();
     }
-    document.getElementById("removeDoneTask").addEventListener("click", removeDoneTasks())
+    document.getElementById("removeDoneTask").addEventListener("click", removeDoneTasks);
 });

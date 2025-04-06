@@ -3,6 +3,7 @@ const router = express.Router();
 
 const bodyParser = require("body-parser");
 const db = require("../server");
+const bcrypt = require('bcrypt');
 
 
 // Middleware to parse JSON bodies
@@ -27,19 +28,34 @@ router.post('/', async (req, res) => {
         return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const userObject = { username, email, password };
-    console.log(userObject);
-
     try {
-        // Insert the new user into the users table
+        // Check if username or email already exists
+        const [existingUsers] = await db.execute(
+            'SELECT * FROM users WHERE username = ? OR email = ?',
+            [username, email]
+        );
+
+        if (existingUsers.length > 0) {
+            return res.status(400).json({ message: 'Username or email already exists' });
+        }
+
+        // Hash the password
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        // Insert the new user into the users table with hashed password
         await db.execute(
             'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
-            [username, email, password]
+            [username, email, hashedPassword]
         );
-        res.status(200).json({ message: 'User registered successfully', redirectUrl: '/login' });
-        //console.log('User registered successfully with ID:', result.insertId);
+
+        res.status(200).json({ 
+            message: 'User registered successfully', 
+            redirectUrl: '/login' 
+        });
     } catch (error) {
-        //console.error('Error registering user:', error);
+        console.error('Error registering user:', error);
+        res.status(500).json({ message: 'Error registering user' });
     }
 });
 

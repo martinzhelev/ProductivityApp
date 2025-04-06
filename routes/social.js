@@ -20,6 +20,12 @@ router.get("/:userId", async (req, res) => {
     const peopleOffset = (peoplePage - 1) * peopleLimit;
 
     try {
+        // Fetch user details
+        const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [userId]);
+        if (userRows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
         const [eventCountResult] = await db.execute(
             "SELECT COUNT(*) as total FROM social WHERE user_id = ?",
             [userId]
@@ -53,6 +59,7 @@ router.get("/:userId", async (req, res) => {
         }
 
         res.render("social", {
+            username: userRows[0].username,
             socializingData: socialRows,
             peopleData: peopleRows,
             eventPage: eventPage,

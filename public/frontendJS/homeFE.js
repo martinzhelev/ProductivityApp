@@ -106,7 +106,13 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
         const newTaskItem = document.createElement('li');
         newTaskItem.setAttribute('data-task-id', task.task_id);
-        newTaskItem.innerHTML = `<input type="checkbox" class="checkbox" ${task.completed ? 'checked' : ''}> ${task.task}`;
+        newTaskItem.innerHTML = `
+            <div>
+                <input type="checkbox" class="checkbox me-2" ${task.completed ? 'checked' : ''}>
+                ${task.task}
+            </div>
+            <button class="btn btn-danger btn-sm delete-task" data-id="${task.task_id}">Delete</button>
+        `;
 
         // Add event listener to the checkbox for task status updates
         const checkbox = newTaskItem.querySelector('.checkbox');
@@ -123,16 +129,19 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
         const newHabitItem = document.createElement('li');
         newHabitItem.setAttribute('data-habit-id', habit.habit_id);
-        //console.log(habit)
-        console.log(habit.habitId)
-
-        newHabitItem.innerHTML = `<input type="checkbox" class="checkbox" ${habit.completed ? 'checked' : ''}> ${habit.habit}`;
+        newHabitItem.innerHTML = `
+            <div>
+                <input type="checkbox" class="checkbox me-2" ${habit.completed ? 'checked' : ''}>
+                ${habit.habit}
+            </div>
+            <button class="btn btn-danger btn-sm delete-task" data-id="${habit.habit_id}">Delete</button>
+        `;
 
         // Add event listener to the checkbox for habit status updates
         const checkbox = newHabitItem.querySelector('.checkbox');
         checkbox.addEventListener('change', () => updateHabitStatus(habit.habit_id, checkbox.checked));
 
-        habitsList.appendChild(newHabitItem); // Make sure `habitsList` is definedldddlllldlll
+        habitsList.appendChild(newHabitItem);
     }
 
     // Function to update task completion status
@@ -238,56 +247,51 @@ document.addEventListener("DOMContentLoaded", function (event) {
     function addEventListeners() {
         // Task event listeners
         addTaskButton.addEventListener('click', openTaskModal);
-        closeButtons.forEach(button => button.addEventListener('click', closeTaskModal)); // Loop through closeButtons
+        closeButtons.forEach(button => button.addEventListener('click', closeTaskModal));
         overlay.addEventListener('click', closeTaskModal);
         modalAddTask.addEventListener('click', addTask);
         removeTaskButton.addEventListener('click', removeDoneTasks);
-        document.querySelectorAll(".delete-task").forEach(attachDeleteEvent);
-
 
         // Habit event listeners
         addHabitButton.addEventListener('click', openHabitModal);
-        removeDoneHabitsButton.addEventListener('click', removeDoneHabits); // Add event listener to removeDoneHabitsButton
-        closeButtons.forEach(button => button.addEventListener('click', closeHabitModal)); // Loop through closeButtons
+        removeDoneHabitsButton.addEventListener('click', removeDoneHabits);
+        closeButtons.forEach(button => button.addEventListener('click', closeHabitModal));
         modalAddHabit.addEventListener('click', addHabit);
     }
-    function attachDeleteEvent(button) {
-        button.addEventListener("click", function () {
-            const taskId = this.getAttribute("data-id");
 
-            if (confirm("Are you sure you want to delete this task?")) {
-                fetch(`/home/${userId}/deleteTask/${taskId}`, {
-                    method: "DELETE",
-                    headers: { "Content-Type": "application/json" },
+    // Single delete handler for all delete buttons
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('delete-task')) {
+            const id = e.target.getAttribute('data-id');
+            const li = e.target.closest('li');
+            
+            // Determine if it's a task or habit
+            const isTask = li.hasAttribute('data-task-id');
+            
+            if (confirm("Are you sure you want to delete this item?")) {
+                fetch(`/home/${userId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        type: isTask ? 'task' : 'habit', 
+                        id: id 
+                    })
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            this.closest("li").remove();
-                        } else {
-                            alert("Failed to delete task.");
-                        }
-                    })
-                    .catch(error => console.error("Error:", error));
-
-                    fetch(`/home/${userId}/deleteHabit/${taskId}`, {
-                        method: "DELETE",
-                        headers: { "Content-Type": "application/json" },
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                this.closest("li").remove();
-                            } else {
-                                alert("Failed to delete task.");
-                            }
-                        })
-                        .catch(error => console.error("Error:", error));
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Task deleted successfully' || data.message === 'Habit deleted successfully') {
+                        li.remove();
+                    } else {
+                        throw new Error('Failed to delete item');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to delete item');
+                });
             }
-            window.location.reload();
-
-        });
-    }
+        }
+    });
 
     // Initialize app
     addCheckboxEventListeners();

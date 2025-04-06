@@ -3,6 +3,8 @@ const mysql = require('mysql2/promise')
 const bodyParser = require('body-parser');  
 const app = express();
 const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 // Middleware for JSON and URL-encoded form data
 app.use(bodyParser.json());
@@ -10,20 +12,38 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(cookieParser());
 
+// JWT middleware
+const authMiddleware = (req, res, next) => {
+    const token = req.cookies.token;
+
+    if (!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
+        next();
+    } catch (error) {
+        console.error('Token verification failed:', error);
+        res.status(401).json({ message: 'Invalid token' });
+    }
+};
+
 // Set EJS as the view engine
 app.set('view engine', 'ejs');
 
 const db = mysql.createPool({
     host: 'localhost',
     user: 'root',
-    password:null,
+    password: null,
     database: 'productivityapp',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
 });
 
-  module.exports = db;
+module.exports = db;
 
 // Route Imports
 const loginRouter = require("./routes/login");
@@ -36,19 +56,20 @@ const socialRouter = require('./routes/social')
 const timeOffRouter = require('./routes/timeOff');
 const calorieTrackerRouter = require("./routes/calorieTracker");
 const profileRouter = require("./routes/profile");
+const authRouter = require("./routes/auth");
 
 // Mount Routes
 app.use("/register", registerRouter);
 app.use("/login", loginRouter);  
-app.use("/home", homeRouter);
-app.use("/body", bodyRouter)
-app.use('/mental', mentalRouter);
-app.use("/work", workRouter);
-app.use("/social", socialRouter);
-app.use("/timeoff", timeOffRouter);
-app.use("/calorieTracker", calorieTrackerRouter);
-app.use("/profile", profileRouter);
-
+app.use("/home", authMiddleware, homeRouter);
+app.use("/body", authMiddleware, bodyRouter)
+app.use('/mental', authMiddleware, mentalRouter);
+app.use("/work", authMiddleware, workRouter);
+app.use("/social", authMiddleware, socialRouter);
+app.use("/timeoff", authMiddleware, timeOffRouter);
+app.use("/calorieTracker", authMiddleware, calorieTrackerRouter);
+app.use("/profile", authMiddleware, profileRouter);
+app.use("/auth", authRouter);
 
 // Handle 404 errors
 app.use((req, res) => {

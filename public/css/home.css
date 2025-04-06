@@ -1,4 +1,3 @@
-
 body {
     background-color: #f8f9fa;
 }
@@ -20,6 +19,33 @@ body {
     margin-bottom: 20px;
 }
 
+/* Task and Habit List Items */
+.tasks li, .habits li {
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+
+.tasks li:hover, .habits li:hover {
+    background-color: #e9ecef;
+}
+
+.tasks li div, .habits li div {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.delete-task {
+    margin-left: 10px;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+}
 
 /* Modal container */
 .modal {
@@ -28,15 +54,15 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: white;
-    width: 400px; /* Set to 100% for full width */
-    max-width: 80%; /* Avoid exceeding screen size */
-    height: auto; /* Set to auto to adjust based on content */
+    width: 400px;
+    max-width: 80%;
+    height: auto;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1000;
-    display: none; /* Hidden by default */
+    display: none;
     font-family: Arial, sans-serif;
-    padding: 0; /* Remove any extra padding */
+    padding: 0;
 }
 
 /* Modal header */
@@ -63,14 +89,13 @@ body {
 }
 
 /* Modal body */
-/* Modal body */
 .modal-body {
     padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    width: 100%; /* Ensure modal body takes full width */
-    box-sizing: border-box; /* Prevent padding from causing overflow */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Input field */
@@ -82,7 +107,7 @@ body {
 }
 
 /* Add button */
-#modal-add-task, #modal-add-habit{
+#modal-add-task, #modal-add-habit {
     padding: 10px;
     background-color: #4CAF50;
     color: white;
@@ -93,7 +118,7 @@ body {
     transition: background-color 0.3s ease;
 }
 
-#modal-add-task:hover, #modal-add-habit {
+#modal-add-task:hover, #modal-add-habit:hover {
     background-color: #45a049;
 }
 
@@ -106,5 +131,5 @@ body {
     height: 100%;
     background: rgba(0, 0, 0, 0.6);
     z-index: 999;
-    display: none; /* Hidden by default */
+    display: none;
 }

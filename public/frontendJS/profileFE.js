@@ -1,85 +1,140 @@
-// // Nutrient Pie Chart
-// const nutrientCtx = document.getElementById('nutrientChart').getContext('2d');
-// new Chart(nutrientCtx, {
-//     type: 'pie',
-//     data: {
-//         labels: ['Fat', 'Carbs', 'Protein'],
-//         datasets: [{
-//             data: [
-//                 parseFloat(window.profileData.nutrients.fat),
-//                 parseFloat(window.profileData.nutrients.carbs),
-//                 parseFloat(window.profileData.nutrients.protein)
-//             ],
-//             backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56'],
-//             borderWidth: 1
-//         }]
-//     },
-//     options: { responsive: true, maintainAspectRatio: false }
-// });
+// Core Stats Chart Configuration
+document.addEventListener('DOMContentLoaded', function() {
+    // Core Stats Chart
+    const ctx = document.getElementById('coreStatsChart').getContext('2d');
+    const coreStats = window.profileData.coreStats;
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Strength', 'Speed', 'Mental', 'Social', 'Work', 'Agility', 'Financial'],
+            datasets: [{
+                data: [
+                    coreStats.strength,
+                    coreStats.speed,
+                    coreStats.mental,
+                    coreStats.social,
+                    coreStats.work,
+                    coreStats.agility,
+                    coreStats.financial
+                ],
+                backgroundColor: [
+                    '#FF6B6B',
+                    '#4ECDC4',
+                    '#45B7D1',
+                    '#96CEB4',
+                    '#FFEEAD',
+                    '#D4A5A5',
+                    '#9B59B6'
+                ],
+                borderWidth: 0,
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: {
+                        display: true,
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    },
+                    ticks: {
+                        stepSize: 20
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.raw}%`;
+                        }
+                    }
+                }
+            }
+        }
+    });
 
-// // Weekly Calorie Intake Bar Graph
-// const calorieCtx = document.getElementById('calorieChart').getContext('2d');
-// const days = Array.from({ length: 7 }, (_, i) => {
-//     const d = new Date();
-//     d.setDate(d.getDate() - i);
-//     return d.toISOString().split('T')[0];
-// }).reverse();
-// const weeklyCalories = JSON.parse(window.profileData.weeklyCalories);
-// const intakeData = days.map(day => {
-//     const entry = weeklyCalories.find(d => d.day === day);
-//     return entry ? entry.intake : 0;
-// });
-// new Chart(calorieCtx, {
-//     type: 'bar',
-//     data: {
-//         labels: days.map(d => new Date(d).toLocaleDateString('en-US', { weekday: 'short' })),
-//         datasets: [
-//             { label: 'Intake', data: intakeData, backgroundColor: '#36a2eb' }
-//         ]
-//     },
-//     options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
-// });
+    // Nutrient Pie Chart
+    const nutrientCtx = document.getElementById('nutrientChart').getContext('2d');
+    const nutrients = window.profileData.nutrients;
+    
+    new Chart(nutrientCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Fat', 'Carbs', 'Protein'],
+            datasets: [{
+                data: [nutrients.fat, nutrients.carbs, nutrients.protein],
+                backgroundColor: ['#FF6B6B', '#4ECDC4', '#45B7D1'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.label}: ${context.raw}g`;
+                        }
+                    }
+                }
+            }
+        }
+    });
 
-// // Habit Completion Line Chart (All Time)
-// const habitCtx = document.getElementById('habitChart').getContext('2d');
-// const habits = JSON.parse(window.profileData.habits);
-// new Chart(habitCtx, {
-//     type: 'line',
-//     data: {
-//         labels: habits.map(h => new Date(h.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
-//         datasets: [{
-//             label: 'Completed',
-//             data: habits.map(h => h.completed ? 1 : 0),
-//             borderColor: '#ffcd56',
-//             fill: false,
-//             tension: 0.1
-//         }]
-//     },
-//     options: { 
-//         responsive: true, 
-//         maintainAspectRatio: false, 
-//         scales: { 
-//             y: { beginAtZero: true, max: 1, ticks: { stepSize: 1 } },
-//             x: { ticks: { maxRotation: 45, minRotation: 45 } }
-//         } 
-//     }
-// });
+    // Add section fade-in animation
+    const sections = document.querySelectorAll('.section-fade-in');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
 
-// // Reading Progress Bar Chart
-// const readingCtx = document.getElementById('readingChart').getContext('2d');
-// const readingData = JSON.parse(window.profileData.reading);
-// new Chart(readingCtx, {
-//     type: 'bar',
-//     data: {
-//         labels: days.map(d => new Date(d).toLocaleDateString('en-US', { weekday: 'short' })),
-//         datasets: [{
-//             label: 'Pages Read',
-//             data: days.map(day => {
-//                 const entry = readingData.find(r => r.day === day);
-//                 return entry ? entry.pages : 0;
-//             }),
-//             backgroundColor: '#28a745'
-//         }]
-//     },
-//     options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
-// });
+    sections.forEach(section => observer.observe(section));
+
+    // Add data refresh functionality
+    const refreshButton = document.getElementById('dataRefresh');
+    let lastUpdate = new Date();
+
+    function checkForUpdates() {
+        const now = new Date();
+        const timeDiff = now - lastUpdate;
+        if (timeDiff > 5 * 60 * 1000) { // 5 minutes
+            refreshButton.classList.add('show');
+        }
+    }
+
+    setInterval(checkForUpdates, 60000); // Check every minute
+
+    refreshButton.addEventListener('click', function() {
+        // Add loading state
+        sections.forEach(section => {
+            section.innerHTML = '<div class="loading"></div>';
+        });
+
+        // Simulate data refresh
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    });
+});
