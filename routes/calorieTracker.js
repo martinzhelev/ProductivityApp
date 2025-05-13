@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../server");
 const axios = require("axios");
+require('dotenv').config();
 
 router.use((req, res, next) => {
     req.userId = req.cookies.userId;
@@ -9,8 +10,8 @@ router.use((req, res, next) => {
     next();
 });
 
-const EDAMAM_APP_ID = "79827d70";
-const EDAMAM_APP_KEY = "0aa43e2aebfb8bb3d50dcb969d9ec0f4";
+const EDAMAM_APP_ID = process.env.EDAMAM_APP_ID;
+const EDAMAM_APP_KEY = process.env.EDAMAM_APP_KEY;
 
 router.get("/:userId", async (req, res) => {
     const userId = req.userId;
@@ -138,9 +139,7 @@ router.post("/log", async (req, res) => {
             protein = cached[0].protein;
             finalFoodText = `${foodText} (${cached[0].ingredients})`;
         } else {
-            const response = await axios.get("https://api.edamam.com/api/nutrition-data", {
-                params: { app_id: EDAMAM_APP_ID, app_key: EDAMAM_APP_KEY, ingr: foodText }
-            });
+            const response = await axios.get(`https://api.edamam.com/api/nutrition-data?app_id=${EDAMAM_APP_ID}&app_key=${EDAMAM_APP_KEY}&ingr=${encodeURIComponent(foodText)}`);
             console.log("Edamam Direct Response:", JSON.stringify(response.data, null, 2));
 
             const parsed = response.data.ingredients?.[0]?.parsed?.[0];
@@ -162,9 +161,7 @@ router.post("/log", async (req, res) => {
             if (ingredients.length) {
                 const validIngredients = ingredients.filter(i => i.trim());
                 for (const ingr of validIngredients) {
-                    const ingrResponse = await axios.get("https://api.edamam.com/api/nutrition-data", {
-                        params: { app_id: EDAMAM_APP_ID, app_key: EDAMAM_APP_KEY, ingr }
-                    });
+                    const ingrResponse = await axios.get(`https://api.edamam.com/api/nutrition-data?app_id=${EDAMAM_APP_ID}&app_key=${EDAMAM_APP_KEY}&ingr=${encodeURIComponent(ingr)}`);
                     console.log(`Edamam Response for ${ingr}:`, JSON.stringify(ingrResponse.data, null, 2));
                     const ingrParsed = ingrResponse.data.ingredients?.[0]?.parsed?.[0];
                     if (ingrParsed?.nutrients) {
@@ -199,7 +196,11 @@ router.post("/log", async (req, res) => {
         res.json({ success: true, calories });
     } catch (error) {
         console.error("Error logging calories:", error.response?.data || error.message);
-        res.status(500).json({ success: false, error: "Failed to log calories" });
+        res.status(500).json({ 
+            success: false, 
+            error: "Failed to log calories",
+            details: error.response?.data || error.message 
+        });
     }
 });
 
