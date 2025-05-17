@@ -21,6 +21,8 @@
     "mongose": "^0.0.2-security",
     "mysql": "^2.18.1",
     "mysql2": "^3.11.4",
+    "node-cron": "^4.0.5",
+    "nodemailer": "^7.0.3",
     "sequelize": "^6.37.5"
   },
   "devDependencies": {

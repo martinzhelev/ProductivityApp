@@ -315,7 +315,7 @@ router.patch('/:userId', async (req, res) => {
                     );
 
                     if (statRows.length > 0) {
-                        console.log(`Stat found, incrementing value for stat: ${statName}`); // Debugging
+                        console.log(`Stat found, decrementing value for stat: ${statName}`); // Debugging
                         const statId = statRows[0].stat_id;
 
                         // Increment the stat value

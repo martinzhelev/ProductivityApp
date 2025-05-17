@@ -8,8 +8,7 @@ require('dotenv').config();
 
 router.use(bodyParser.json());
 
-// JWT secret key - in production, this should be stored in environment variables
-const JWT_SECRET = 'your-secret-key'; // Replace with a secure secret key
+
 
 router.get('/', (req, res) => {
     res.render('login');

@@ -5,6 +5,7 @@ const app = express();
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+const { startScheduler } = require('./utils/scheduler');
 
 // Middleware for JSON and URL-encoded form data
 app.use(bodyParser.json());
@@ -46,6 +47,7 @@ const db = mysql.createPool({
 module.exports = db;
 
 // Route Imports
+const landingRouter = require('./routes/landing');
 const loginRouter = require("./routes/login");
 const registerRouter = require("./routes/register");
 const homeRouter = require("./routes/home");
@@ -59,6 +61,7 @@ const profileRouter = require("./routes/profile");
 const authRouter = require("./routes/auth");
 
 // Mount Routes
+app.use("/", landingRouter);
 app.use("/register", registerRouter);
 app.use("/login", loginRouter);  
 app.use("/home", authMiddleware, homeRouter);
@@ -70,6 +73,9 @@ app.use("/timeoff", authMiddleware, timeOffRouter);
 app.use("/calorieTracker", authMiddleware, calorieTrackerRouter);
 app.use("/profile", authMiddleware, profileRouter);
 app.use("/auth", authRouter);
+
+// Start the email reminder scheduler
+startScheduler();
 
 // Handle 404 errors
 app.use((req, res) => {
