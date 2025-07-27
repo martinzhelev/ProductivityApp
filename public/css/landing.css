@@ -1,0 +1,36 @@
+body {
+    font-family: 'Inter', sans-serif;
+}
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.bg-gradient-hero {
+    background: linear-gradient(to right, #3b82f6, #1d4ed8);
+}
+.bg-gradient-cta {
+    background: linear-gradient(to right, #14b8a6, #0d9488);
+}
+.btn-teal {
+    background-color: #14b8a6;
+    border-color: #14b8a6;
+    color: white;
+}
+.btn-teal:hover {
+    background-color: #0d9488;
+    border-color: #0d9488;
+}
+.card {
+    transition: transform 0.2s;
+}
+.card:hover {
+    transform: translateY(-5px);
+}
+header {
+    background: rgba(255, 255, 255, 0.95);
+}

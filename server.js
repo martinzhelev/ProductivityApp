@@ -35,10 +35,10 @@ const authMiddleware = (req, res, next) => {
 app.set('view engine', 'ejs');
 
 const db = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
+    host: process.env.DATABASE_HOST,
+    user: process.env.DATABASE_USER,
     password: null,
-    database: 'productivityapp',
+    database: process.env.DATABASE_NAME,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0

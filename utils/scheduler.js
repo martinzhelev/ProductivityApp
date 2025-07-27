@@ -139,9 +139,47 @@ const scheduleNotifications = async () => {
     }
 };
 
+// Add new function to reset habits
+const resetHabits = async () => {
+    console.log('Running daily habit reset at:', new Date().toLocaleString());
+    try {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                console.error('Error getting connection from pool:', err);
+                return;
+            }
+
+            // Reset all habits to unchecked without affecting stats
+            connection.query(`
+                UPDATE habits 
+                SET completed = 0 
+                WHERE completed = 1
+            `, (error, result) => {
+                if (error) {
+                    console.error('Error resetting habits:', error);
+                } else {
+                    console.log(`Reset ${result.affectedRows} habits`);
+                }
+                connection.release();
+            });
+        });
+    } catch (error) {
+        console.error('Error in resetHabits:', error);
+    }
+};
+
+// Modify your existing startScheduler function
 const startScheduler = () => {
     try {
+        // Your existing notification scheduling code
         scheduleNotifications();
+
+        // Add new daily reset at midnight
+        const resetJob = cron.schedule('0 0 * * *', resetHabits, {
+            scheduled: true,
+            timezone: 'Europe/Bucharest'
+        });
+
         console.log('Scheduler started successfully');
     } catch (error) {
         console.error('Error starting scheduler:', error);
