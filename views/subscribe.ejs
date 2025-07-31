@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payments</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="/css/main.css"/>
+</head>
+<body class="bg-light">
+
+  <!-- Header -->
+  <header class="bg-dark text-white p-3">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div class="profile d-flex align-items-center">
+        <span class="ms-2">
+          <%= username %>
+        </span>
+      </div>
+      <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
+        ☰
+      </button>
+    </div>
+  </header>
+
+  <!-- Offcanvas Menu -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title">Menu</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+      <ul class="nav flex-column">
+        <!-- Add your existing nav items -->
+        <li class="nav-item"><a class="nav-link" href="/home/<%= userId %>">🏠 Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="/payments/<%= userId %>">💳 Payments</a></li>
+        <li class="nav-item"><a class="nav-link" href="/auth/logout">🚪 Logout</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container mt-4">
+    <h2 class="text-center mb-4">💳 Subscription Management</h2>
+
+    <!-- Subscription Info -->
+    <div class="card shadow-sm p-4 mb-4">
+      <% if (0) { %>
+        <h4 class="text-success mb-3">✅ You are a Premium Member</h4>
+        <p>Thank you for supporting the app! You have access to all premium features.</p>
+        <button id="cancelSubscriptionBtn" class="btn btn-danger">Cancel Subscription</button>
+      <% } else { %>
+        <h4 class="text-primary mb-3">🔓 You are on the Free Plan</h4>
+        <p>Upgrade to premium to unlock extra features and support development.</p>
+        <button id="subscribeBtn" class="btn btn-success w-100">Subscribe via Stripe</button>
+      <% } %>
+    </div>
+
+    <!-- Premium Features -->
+    <div class="card shadow-sm p-4 mb-4">
+      <h4 class="text-info mb-3">🌟 Premium Features</h4>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">✔️ Unlimited Tracking</li>
+        <li class="list-group-item">✔️ Priority Support</li>
+        <li class="list-group-item">✔️ Early Access to New Modules</li>
+        <li class="list-group-item">✔️ Advanced Statistics and Reports</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("subscribeBtn")?.addEventListener("click", async () => {
+      try {
+        const res = await fetch("/create-checkout-session", { method: "POST" });
+        const data = await res.json();
+        if (data.url) window.location.href = data.url;
+      } catch (err) {
+        alert("Failed to redirect to Stripe");
+        console.error(err);
+      }
+    });
+
+    document.getElementById("cancelSubscriptionBtn")?.addEventListener("click", async () => {
+      if (confirm("Are you sure you want to cancel your subscription?")) {
+        try {
+          const res = await fetch("/cancel-subscription", { method: "POST" });
+          const data = await res.json();
+          if (data.success) window.location.reload();
+          else alert("Could not cancel subscription.");
+        } catch (err) {
+          alert("Error cancelling subscription.");
+        }
+      }
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

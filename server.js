@@ -35,10 +35,10 @@ const authMiddleware = (req, res, next) => {
 app.set('view engine', 'ejs');
 
 const db = mysql.createPool({
-    host: process.env.DATABASE_HOST,
-    user: process.env.DATABASE_USER,
+    host: process.env.DATABASE_HOST || 'localhost',
+    user: process.env.DATABASE_USER || 'root',
     password: null,
-    database: process.env.DATABASE_NAME,
+    database: process.env.DATABASE_NAME || 'productivityapp',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -59,6 +59,7 @@ const timeOffRouter = require('./routes/timeOff');
 const calorieTrackerRouter = require("./routes/calorieTracker");
 const profileRouter = require("./routes/profile");
 const authRouter = require("./routes/auth");
+const subscribeRouter = require("./routes/subscribe")
 
 // Mount Routes
 app.use("/", landingRouter);
@@ -73,6 +74,7 @@ app.use("/timeoff", authMiddleware, timeOffRouter);
 app.use("/calorieTracker", authMiddleware, calorieTrackerRouter);
 app.use("/profile", authMiddleware, profileRouter);
 app.use("/auth", authRouter);
+app.use("/subscribe", authMiddleware, subscribeRouter);
 
 // Start the email reminder scheduler
 startScheduler();
