@@ -13,6 +13,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(cookieParser());
 
+// Raw body parser for Stripe webhooks
+app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
+
 // JWT middleware
 const authMiddleware = (req, res, next) => {
     const token = req.cookies.token;
@@ -59,22 +62,29 @@ const timeOffRouter = require('./routes/timeOff');
 const calorieTrackerRouter = require("./routes/calorieTracker");
 const profileRouter = require("./routes/profile");
 const authRouter = require("./routes/auth");
-const subscribeRouter = require("./routes/subscribe")
+const subscribeRouter = require("./routes/subscribe");
+const stripeRouter = require("./routes/stripe"); // Активирано
+const { requirePremium, checkSubscriptionStatus } = require('./middleware/subscriptionMiddleware');
 
 // Mount Routes
 app.use("/", landingRouter);
 app.use("/register", registerRouter);
 app.use("/login", loginRouter);  
 app.use("/home", authMiddleware, homeRouter);
-app.use("/body", authMiddleware, bodyRouter)
-app.use('/mental', authMiddleware, mentalRouter);
-app.use("/work", authMiddleware, workRouter);
-app.use("/social", authMiddleware, socialRouter);
-app.use("/timeoff", authMiddleware, timeOffRouter);
-app.use("/calorieTracker", authMiddleware, calorieTrackerRouter);
-app.use("/profile", authMiddleware, profileRouter);
+
+// Premium routes - изискват премиум абонамент
+app.use("/body", authMiddleware, requirePremium, bodyRouter);
+app.use('/mental', authMiddleware, requirePremium, mentalRouter);
+app.use("/work", authMiddleware, requirePremium, workRouter);
+app.use("/social", authMiddleware, requirePremium, socialRouter);
+app.use("/timeoff", authMiddleware, requirePremium, timeOffRouter);
+app.use("/calorieTracker", authMiddleware, requirePremium, calorieTrackerRouter);
+app.use("/profile", authMiddleware, requirePremium, profileRouter);
+
+// Auth and subscription routes
 app.use("/auth", authRouter);
 app.use("/subscribe", authMiddleware, subscribeRouter);
+app.use("/stripe", stripeRouter); // Активирано
 
 // Start the email reminder scheduler
 startScheduler();

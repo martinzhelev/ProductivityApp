@@ -45,9 +45,12 @@
 
     <!-- Subscription Info -->
     <div class="card shadow-sm p-4 mb-4">
-      <% if (0) { %>
+      <% if (subscriptionInfo.hasSubscription) { %>
         <h4 class="text-success mb-3">✅ You are a Premium Member</h4>
         <p>Thank you for supporting the app! You have access to all premium features.</p>
+        <% if (subscriptionInfo.currentPeriodEnd) { %>
+          <p class="text-muted">Your subscription is active until: <%= new Date(subscriptionInfo.currentPeriodEnd).toLocaleDateString() %></p>
+        <% } %>
         <button id="cancelSubscriptionBtn" class="btn btn-danger">Cancel Subscription</button>
       <% } else { %>
         <h4 class="text-primary mb-3">🔓 You are on the Free Plan</h4>
@@ -64,6 +67,19 @@
         <li class="list-group-item">✔️ Priority Support</li>
         <li class="list-group-item">✔️ Early Access to New Modules</li>
         <li class="list-group-item">✔️ Advanced Statistics and Reports</li>
+        <li class="list-group-item">✔️ Access to All App Modules</li>
+        <li class="list-group-item">✔️ Export Data</li>
+      </ul>
+    </div>
+
+    <!-- Free Plan Limitations -->
+    <div class="card shadow-sm p-4 mb-4">
+      <h4 class="text-warning mb-3">⚠️ Free Plan Limitations</h4>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">❌ Access only to Home Dashboard</li>
+        <li class="list-group-item">❌ Limited tracking features</li>
+        <li class="list-group-item">❌ No advanced analytics</li>
+        <li class="list-group-item">❌ No data export</li>
       </ul>
     </div>
   </div>
@@ -71,7 +87,7 @@
   <script>
     document.getElementById("subscribeBtn")?.addEventListener("click", async () => {
       try {
-        const res = await fetch("/create-checkout-session", { method: "POST" });
+        const res = await fetch("/stripe/create-checkout-session", { method: "POST" });
         const data = await res.json();
         if (data.url) window.location.href = data.url;
       } catch (err) {
@@ -83,10 +99,14 @@
     document.getElementById("cancelSubscriptionBtn")?.addEventListener("click", async () => {
       if (confirm("Are you sure you want to cancel your subscription?")) {
         try {
-          const res = await fetch("/cancel-subscription", { method: "POST" });
+          const res = await fetch("/stripe/cancel-subscription", { method: "POST" });
           const data = await res.json();
-          if (data.success) window.location.reload();
-          else alert("Could not cancel subscription.");
+          if (data.success) {
+            alert("Subscription will be canceled at the end of the current period.");
+            window.location.reload();
+          } else {
+            alert("Could not cancel subscription.");
+          }
         } catch (err) {
           alert("Error cancelling subscription.");
         }
