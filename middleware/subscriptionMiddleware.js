@@ -90,7 +90,54 @@ const checkSubscriptionStatus = async (req, res, next) => {
     }
 };
 
+// Middleware за пренасочване на безплатни потребители към payments страницата
+const redirectFreeUsers = async (req, res, next) => {
+    try {
+        // Проверяваме userId от различни места
+        const userId = req.userId || req.user?.user_id || req.cookies.userId || req.params.userId;
+        
+        if (!userId) {
+            return res.redirect('/login');
+        }
+
+        // Проверяваме статуса на абонамента
+        const [subscriptionRows] = await db.execute(`
+            SELECT s.status, s.plan_type
+            FROM subscriptions s 
+            WHERE s.user_id = ? 
+            ORDER BY s.created_at DESC 
+            LIMIT 1
+        `, [userId]);
+
+        let hasPremium = false;
+        
+        if (subscriptionRows.length > 0) {
+            const subscription = subscriptionRows[0];
+            
+            if (subscription.plan_type === 'premium' && subscription.status === 'active') {
+                hasPremium = true;
+            }
+        }
+
+        if (!hasPremium) {
+            console.log('Redirecting free user to payments page:', userId);
+            return res.redirect(`/subscribe/${userId}?redirected=true`);
+        }
+
+        next();
+    } catch (error) {
+        console.error('Redirect middleware error:', error);
+        // В случай на грешка, пренасочваме към payments страницата
+        const userId = req.userId || req.user?.user_id || req.cookies.userId || req.params.userId;
+        if (userId) {
+            return res.redirect(`/subscribe/${userId}`);
+        }
+        res.redirect('/login');
+    }
+};
+
 module.exports = {
     requirePremium,
-    checkSubscriptionStatus
+    checkSubscriptionStatus,
+    redirectFreeUsers
 }; 

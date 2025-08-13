@@ -38,7 +38,8 @@ router.get("/:userId", async (req, res) => {
             hasSubscription: hasPremium,
             planType: planType,
             status: 'free',
-            currentPeriodEnd: null
+            currentPeriodEnd: null,
+            cancelAtPeriodEnd: false
         };
 
         if (subscriptionRows.length > 0) {
@@ -47,14 +48,16 @@ router.get("/:userId", async (req, res) => {
                 hasSubscription: hasPremium,
                 planType: subscription.plan_type || 'free',
                 status: subscription.status || 'free',
-                currentPeriodEnd: subscription.current_period_end
+                currentPeriodEnd: subscription.current_period_end,
+                cancelAtPeriodEnd: subscription.status === 'canceled' && subscription.current_period_end > new Date()
             };
         }
 
         res.render("subscribe", {
             username: userRows[0].username,
             userId: userId,
-            subscriptionInfo: subscriptionInfo
+            subscriptionInfo: subscriptionInfo,
+            redirected: req.query.redirected === 'true'
         });
     } catch (error) {
         console.error('Error in subscribe route:', error);

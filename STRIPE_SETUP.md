@@ -1,179 +1,108 @@
-# Stripe Integration Setup Instructions
+# Stripe Setup Guide
 
-## 📋 Преглед
-Този документ описва как да настроите Stripe интеграцията за системата за абонаменти.
+## Step 1: Create Stripe Account
 
-## 🔧 Стъпки за настройка
+1. Go to [stripe.com](https://stripe.com) and create an account
+2. Complete the account verification process
+3. Switch to test mode for development
 
-### 1. Инсталиране на зависимости
-```bash
-npm install stripe
-```
+## Step 2: Get Your API Keys
 
-### 2. Създаване на Stripe акаунт
-1. Отидете на [stripe.com](https://stripe.com)
-2. Създайте нов акаунт
-3. Активирайте тестовия режим (Test Mode)
+1. In your Stripe Dashboard, go to **Developers > API keys**
+2. Copy your **Publishable key** and **Secret key**
+3. Keep these keys secure and never commit them to version control
 
-### 3. Конфигуриране на Stripe Dashboard
+## Step 3: Create a Product and Price
 
-#### Създаване на продукт и цена:
-1. В Stripe Dashboard отидете на **Products**
-2. Създайте нов продукт:
-   - **Name**: Premium Subscription
-   - **Description**: Access to all premium features
-3. Добавете цена:
-   - **Pricing model**: Recurring
-   - **Billing period**: Monthly
-   - **Price**: $9.99 (или желаната сума)
-   - **Currency**: USD
-4. Запишете **Price ID** (започва с `price_`)
+1. Go to **Products** in your Stripe Dashboard
+2. Click **Add product**
+3. Set product name: "Premium Subscription"
+4. Set price to $9.99/month (or your desired price)
+5. Copy the **Price ID** (starts with `price_`)
 
-#### Настройка на Webhook:
-1. В Stripe Dashboard отидете на **Developers > Webhooks**
-2. Добавете endpoint:
-   - **URL**: `https://yourdomain.com/stripe/webhook`
-   - **Events to send**:
-     - `checkout.session.completed`
-     - `customer.subscription.created`
-     - `customer.subscription.updated`
-     - `customer.subscription.deleted`
-     - `invoice.payment_succeeded`
-     - `invoice.payment_failed`
-3. Запишете **Webhook Secret** (започва с `whsec_`)
+## Step 4: Set Up Webhooks
 
-### 4. Конфигуриране на .env файл
-Създайте `.env` файл в root директорията:
+1. Go to **Developers > Webhooks** in your Stripe Dashboard
+2. Click **Add endpoint**
+3. Set the endpoint URL to: `https://yourdomain.com/stripe/webhook`
+   - For local development: `http://localhost:3000/stripe/webhook`
+4. Select these events:
+   - `checkout.session.completed`
+   - `customer.subscription.created`
+   - `customer.subscription.updated`
+   - `customer.subscription.deleted`
+   - `invoice.payment_succeeded`
+   - `invoice.payment_failed`
+5. Copy the **Webhook signing secret** (starts with `whsec_`)
+
+## Step 5: Environment Variables
+
+Add these variables to your `.env` file:
 
 ```env
-# Database Configuration
+# Stripe Configuration
+STRIPE_SECRET_KEY=sk_test_your_secret_key_here
+STRIPE_PREMIUM_PRICE_ID=price_your_price_id_here
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
+
+# Other existing variables...
 DATABASE_HOST=localhost
 DATABASE_USER=root
 DATABASE_NAME=productivityapp
-
-# JWT Secret
-JWT_SECRET=your_jwt_secret_here
-
-# Stripe Configuration
-STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
-STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key_here
-STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
-STRIPE_PREMIUM_PRICE_ID=price_your_premium_price_id_here
+JWT_SECRET=your_jwt_secret
 ```
 
-### 5. Изпълнение на SQL скрипта
-Изпълнете SQL скрипта от `database/subscriptions_table.sql` в MySQL:
+## Step 6: Test the Integration
 
-```sql
--- Създаване на таблица за абонаменти
-CREATE TABLE IF NOT EXISTS subscriptions (
-    subscription_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT UNSIGNED NOT NULL,
-    stripe_subscription_id VARCHAR(255) UNIQUE,
-    stripe_customer_id VARCHAR(255),
-    status ENUM('active', 'canceled', 'past_due', 'unpaid', 'incomplete', 'incomplete_expired', 'trialing', 'paused') DEFAULT 'active',
-    plan_type ENUM('free', 'premium') DEFAULT 'free',
-    current_period_start DATETIME,
-    current_period_end DATETIME,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    INDEX idx_user_id (user_id),
-    INDEX idx_stripe_subscription_id (stripe_subscription_id),
-    INDEX idx_status (status)
-);
+1. Start your server: `npm run devStart`
+2. Navigate to the subscription page
+3. Click "Subscribe via Stripe"
+4. Use Stripe's test card numbers:
+   - Success: `4242 4242 4242 4242`
+   - Decline: `4000 0000 0000 0002`
+   - Expiry: Any future date
+   - CVC: Any 3 digits
 
--- Добавяне на колона за абонамент статус в users таблицата
-ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_status ENUM('free', 'premium') DEFAULT 'free';
+## Step 7: Production Deployment
 
--- Създаване на таблица за плащания
-CREATE TABLE IF NOT EXISTS payments (
-    payment_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT UNSIGNED NOT NULL,
-    subscription_id BIGINT UNSIGNED,
-    stripe_payment_intent_id VARCHAR(255) UNIQUE,
-    amount DECIMAL(10,2) NOT NULL,
-    currency VARCHAR(3) DEFAULT 'USD',
-    status ENUM('succeeded', 'pending', 'failed', 'canceled') DEFAULT 'pending',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (subscription_id) REFERENCES subscriptions(subscription_id) ON DELETE SET NULL,
-    INDEX idx_user_id (user_id),
-    INDEX idx_stripe_payment_intent_id (stripe_payment_intent_id)
-);
+When deploying to production:
+
+1. Switch to **Live mode** in Stripe Dashboard
+2. Update your environment variables with live keys
+3. Update webhook endpoint URL to your production domain
+4. Test the complete flow with real cards
+
+## Troubleshooting
+
+### Common Issues:
+
+1. **Webhook signature verification failed**
+   - Check that `STRIPE_WEBHOOK_SECRET` is correct
+   - Ensure webhook endpoint URL is accessible
+
+2. **Price ID not found**
+   - Verify `STRIPE_PREMIUM_PRICE_ID` is correct
+   - Ensure the price is active in Stripe Dashboard
+
+3. **Subscription not updating**
+   - Check webhook events are being received
+   - Verify database connection and table structure
+
+### Testing Webhooks Locally:
+
+Use Stripe CLI for local webhook testing:
+
+```bash
+# Install Stripe CLI
+stripe listen --forward-to localhost:3000/stripe/webhook
+
+# This will give you a webhook secret to use locally
 ```
 
-### 6. Тестване на интеграцията
+## Security Notes
 
-#### Локално тестване:
-1. Стартирайте сървъра: `npm run devStart`
-2. Отидете на `/subscribe/{userId}`
-3. Тествайте плащане с тестови карти:
-   - **Успешно плащане**: `4242 4242 4242 4242`
-   - **Неуспешно плащане**: `4000 0000 0000 0002`
-
-#### Webhook тестване:
-1. Използвайте [ngrok](https://ngrok.com) за локално тестване
-2. Стартирайте ngrok: `ngrok http 3000`
-3. Обновете webhook URL в Stripe Dashboard
-4. Тествайте webhook събития
-
-## 🔐 Безопасност
-
-### Production настройки:
-1. Превключете към Live режим в Stripe
-2. Обновете всички ключове с live версии
-3. Настройте SSL сертификат
-4. Конфигурирайте firewall правила
-
-### Важни бележки:
-- Никога не споделяйте secret ключовете
-- Използвайте HTTPS в production
-- Регулярно обновявайте зависимости
-- Мониторирайте webhook събития
-
-## 🚀 Функционалности
-
-### За безплатни потребители:
-- ✅ Доступ до Home Dashboard
-- ❌ Ограничен достъп до други модули
-
-### За премиум потребители:
-- ✅ Пълен достъп до всички модули
-- ✅ Неограничено проследяване
-- ✅ Приоритетна поддръжка
-- ✅ Експорт на данни
-- ✅ Разширени анализи
-
-## 🔧 Troubleshooting
-
-### Често срещани проблеми:
-
-1. **Webhook не работи**:
-   - Проверете URL адреса
-   - Проверете webhook secret
-   - Проверете SSL сертификата
-
-2. **Плащане не се обработва**:
-   - Проверете Stripe ключовете
-   - Проверете price ID
-   - Проверете database връзката
-
-3. **Middleware грешки**:
-   - Проверете database структурата
-   - Проверете user_id в cookies
-   - Проверете subscription статуса
-
-### Логове за дебъгване:
-```javascript
-// Добавете в routes/stripe.js
-console.log('Webhook received:', event.type);
-console.log('Subscription data:', event.data.object);
-```
-
-## 📞 Поддръжка
-
-За допълнителна помощ:
-- Stripe Documentation: https://stripe.com/docs
-- Stripe Support: https://support.stripe.com
-- GitHub Issues: [създайте issue в репозиторията] 
+- Never expose your secret keys in client-side code
+- Always verify webhook signatures
+- Use HTTPS in production
+- Regularly rotate your API keys
+- Monitor webhook events for suspicious activity 

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../server');
-const { stripe, PRODUCT_CONFIG } = require('../config/stripe');
+const { stripe, PRODUCT_CONFIG, WEBHOOK_CONFIG } = require('../config/stripe');
 
 // Middleware за проверка на потребител
 router.use((req, res, next) => {
@@ -74,7 +74,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
     let event;
 
     try {
-        event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+        event = stripe.webhooks.constructEvent(req.body, sig, WEBHOOK_CONFIG.endpoint_secret);
     } catch (err) {
         console.error('Webhook signature verification failed:', err.message);
         return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -250,6 +250,35 @@ router.post('/cancel-subscription', async (req, res) => {
     } catch (error) {
         console.error('Error canceling subscription:', error);
         res.status(500).json({ error: 'Failed to cancel subscription' });
+    }
+});
+
+// Reactivate subscription
+router.post('/reactivate-subscription', async (req, res) => {
+    try {
+        const userId = req.userId;
+        
+        // Намираме абонамента
+        const [subscriptionRows] = await db.execute(
+            'SELECT stripe_subscription_id FROM subscriptions WHERE user_id = ? ORDER BY created_at DESC LIMIT 1',
+            [userId]
+        );
+
+        if (subscriptionRows.length === 0) {
+            return res.status(404).json({ error: 'No subscription found' });
+        }
+
+        const subscriptionId = subscriptionRows[0].stripe_subscription_id;
+        
+        // Reactivate абонамента в Stripe
+        await stripe.subscriptions.update(subscriptionId, {
+            cancel_at_period_end: false
+        });
+
+        res.json({ success: true, message: 'Subscription reactivated successfully' });
+    } catch (error) {
+        console.error('Error reactivating subscription:', error);
+        res.status(500).json({ error: 'Failed to reactivate subscription' });
     }
 });
 

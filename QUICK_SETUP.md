@@ -1,147 +1,123 @@
-# 🚀 Бързи инструкции за настройка на Stripe интеграция
+# Quick Setup Guide
 
-## 📋 Стъпки за настройка:
+## ✅ What's Been Updated
 
-### 1. Инсталиране на зависимости
-```bash
-npm install stripe
-```
+### 1. **Payment Integration**
+- ✅ Stripe subscription system fully integrated
+- ✅ Webhook handling for subscription events
+- ✅ Subscription management (cancel/reactivate)
+- ✅ Database integration for subscription tracking
 
-### 2. Създаване на .env файл
-Създайте файл `.env` в root директорията със следното съдържание:
+### 2. **Navigation Updates**
+- ✅ Payments page added to all navigation menus
+- ✅ Consistent menu structure across all pages
+- ✅ Easy access to subscription management
 
+### 3. **Access Control**
+- ✅ Free users redirected to payments page when accessing premium features
+- ✅ Premium users have full access to all modules
+- ✅ Clear messaging about subscription requirements
+
+## 🚀 How It Works
+
+### For Free Users:
+1. Can access Home Dashboard
+2. When trying to access any other module (Body, Mental, Work, etc.), they're automatically redirected to the Payments page
+3. See a clear message explaining they need premium to access the feature
+4. Can upgrade to premium via Stripe
+
+### For Premium Users:
+1. Full access to all modules
+2. Can manage their subscription (cancel/reactivate)
+3. Subscription status displayed on payments page
+
+## 🔧 Setup Required
+
+### 1. **Environment Variables**
+Add to your `.env` file:
 ```env
-# Database Configuration
-DATABASE_HOST=localhost
-DATABASE_USER=root
-DATABASE_NAME=productivityapp
-
-# JWT Secret
-JWT_SECRET=your_jwt_secret_here_change_this_in_production
-
-# Stripe Configuration
-STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
-STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key_here
+STRIPE_SECRET_KEY=sk_test_your_secret_key_here
+STRIPE_PREMIUM_PRICE_ID=price_your_price_id_here
 STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
-STRIPE_PREMIUM_PRICE_ID=price_your_premium_price_id_here
 ```
 
-### 3. Настройка на Stripe акаунт
-1. Отидете на [stripe.com](https://stripe.com) и създайте акаунт
-2. В Dashboard отидете на **Developers > API keys**
-3. Копирайте **Publishable key** и **Secret key**
-4. Заменете стойностите в .env файла
+### 2. **Database Setup**
+Run the database setup scripts from `DATABASE_SETUP.md` to create:
+- `subscriptions` table
+- `payments` table
+- `subscription_status` column in `users` table
 
-### 4. Създаване на продукт в Stripe
-1. В Stripe Dashboard отидете на **Products**
-2. Създайте нов продукт "Premium Subscription"
-3. Добавете цена (например $9.99/месец)
-4. Копирайте Price ID и го добавете в .env файла
+### 3. **Stripe Configuration**
+Follow `STRIPE_SETUP.md` for complete Stripe setup instructions.
 
-### 5. Настройка на Webhook
-1. В Stripe Dashboard отидете на **Developers > Webhooks**
-2. Добавете endpoint: `https://yourdomain.com/stripe/webhook`
-3. Изберете събитията:
-   - `checkout.session.completed`
-   - `customer.subscription.created`
-   - `customer.subscription.updated`
-   - `customer.subscription.deleted`
-   - `invoice.payment_succeeded`
-   - `invoice.payment_failed`
-4. Копирайте Webhook Secret и го добавете в .env файла
+## 🎯 Testing
 
-### 6. Създаване на таблици в базата данни
-Изпълнете SQL скрипта от `database/create_subscriptions_table_fixed.sql` в MySQL:
+### Test Free User Flow:
+1. Login with a free user account
+2. Try to access any module other than Home
+3. Should be redirected to Payments page with upgrade message
 
-```sql
-USE productivityapp;
+### Test Premium User Flow:
+1. Login with a premium user account
+2. Should have access to all modules
+3. Can manage subscription on Payments page
 
--- Проверка на структурата на users таблицата
-DESCRIBE users;
+### Test Stripe Integration:
+1. Use test card: `4242 4242 4242 4242`
+2. Complete subscription process
+3. Verify webhook events are received
+4. Check database for subscription records
 
--- Създаване на таблица за абонаменти (без Foreign Key първо)
-CREATE TABLE IF NOT EXISTS subscriptions (
-    subscription_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT UNSIGNED NOT NULL,
-    stripe_subscription_id VARCHAR(255) UNIQUE,
-    stripe_customer_id VARCHAR(255),
-    status ENUM('active', 'canceled', 'past_due', 'unpaid', 'incomplete', 'incomplete_expired', 'trialing', 'paused') DEFAULT 'active',
-    plan_type ENUM('free', 'premium') DEFAULT 'free',
-    current_period_start DATETIME,
-    current_period_end DATETIME,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_user_id (user_id),
-    INDEX idx_stripe_subscription_id (stripe_subscription_id),
-    INDEX idx_status (status)
-);
+## 📱 Pages Updated
 
--- Добавяне на Foreign Key след създаване на таблицата
-ALTER TABLE subscriptions 
-ADD CONSTRAINT fk_subscriptions_user_id 
-FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE;
+All pages now include the Payments link in their navigation:
+- ✅ Home Dashboard
+- ✅ Body/Workout Tracker
+- ✅ Mental Health Tracker
+- ✅ Work Deadlines
+- ✅ Social Events
+- ✅ Time Off Scheduler
+- ✅ Calorie Tracker
+- ✅ Profile
 
--- Добавяне на колона за абонамент статус в users таблицата
-ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_status ENUM('free', 'premium') DEFAULT 'free';
+## 🔄 Middleware Changes
 
--- Създаване на таблица за плащания (без Foreign Key първо)
-CREATE TABLE IF NOT EXISTS payments (
-    payment_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT UNSIGNED NOT NULL,
-    subscription_id BIGINT UNSIGNED,
-    stripe_payment_intent_id VARCHAR(255) UNIQUE,
-    amount DECIMAL(10,2) NOT NULL,
-    currency VARCHAR(3) DEFAULT 'USD',
-    status ENUM('succeeded', 'pending', 'failed', 'canceled') DEFAULT 'pending',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_user_id (user_id),
-    INDEX idx_stripe_payment_intent_id (stripe_payment_intent_id)
-);
+- **New**: `redirectFreeUsers` middleware
+- **Updated**: All premium routes now use redirect instead of blocking
+- **Improved**: Better error handling and user experience
 
--- Добавяне на Foreign Keys за payments таблицата
-ALTER TABLE payments 
-ADD CONSTRAINT fk_payments_user_id 
-FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE;
+## 🎨 UI Improvements
 
-ALTER TABLE payments 
-ADD CONSTRAINT fk_payments_subscription_id 
-FOREIGN KEY (subscription_id) REFERENCES subscriptions(subscription_id) ON DELETE SET NULL;
-```
+- Consistent navigation across all pages
+- Clear subscription status indicators
+- Better messaging for free users
+- Professional payment flow
 
-### 7. Стартиране на приложението
-```bash
-npm run devStart
-```
+## 🚨 Important Notes
 
-### 8. Тестване
-1. Отидете на `/subscribe/{userId}`
-2. Тествайте плащане с тестови карти:
-   - **Успешно плащане**: `4242 4242 4242 4242`
-   - **Неуспешно плащане**: `4000 0000 0000 0002`
+1. **Webhook URL**: Update your Stripe webhook endpoint to: `https://yourdomain.com/stripe/webhook`
+2. **Test Mode**: Use Stripe test mode for development
+3. **Database**: Ensure all tables are created before testing
+4. **Environment**: Make sure all environment variables are set
 
-## 🔧 Функционалности
+## 🆘 Troubleshooting
 
-### За безплатни потребители:
-- ✅ Доступ до Home Dashboard
-- ❌ Ограничен достъп до други модули
+### Common Issues:
+1. **Redirect not working**: Check middleware is properly imported
+2. **Stripe errors**: Verify API keys and webhook configuration
+3. **Database errors**: Ensure all tables exist and have correct structure
+4. **Menu not showing**: Check if userId is being passed correctly
 
-### За премиум потребители:
-- ✅ Пълен достъп до всички модули
-- ✅ Неограничено проследяване
-- ✅ Приоритетна поддръжка
-- ✅ Експорт на данни
-- ✅ Разширени анализи
+### Debug Steps:
+1. Check server logs for middleware errors
+2. Verify Stripe webhook events are being received
+3. Test database connections
+4. Check environment variables are loaded
 
-## 🚨 Важни бележки:
-- Никога не споделяйте secret ключовете
-- Използвайте HTTPS в production
-- Регулярно обновявайте зависимости
-- Мониторирайте webhook събития
+## 📞 Support
 
-## 🔧 Troubleshooting:
-
-### Ако получавате Foreign Key грешки:
-1. Проверете дали `users` таблицата има `user_id` колона
-2. Проверете дали `user_id` е от тип `BIGINT UNSIGNED`
-3. Използвайте алтернативния скрипт от `database/create_subscriptions_table_alternative.sql`
-4. Добавете Foreign Keys ръчно след създаване на таблиците 
+For issues or questions:
+1. Check the logs for error messages
+2. Verify all setup steps are completed
+3. Test with Stripe test mode first
+4. Ensure database is properly configured 

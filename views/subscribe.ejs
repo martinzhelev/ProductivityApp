@@ -32,10 +32,36 @@
     </div>
     <div class="offcanvas-body">
       <ul class="nav flex-column">
-        <!-- Add your existing nav items -->
-        <li class="nav-item"><a class="nav-link" href="/home/<%= userId %>">🏠 Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link" href="/payments/<%= userId %>">💳 Payments</a></li>
-        <li class="nav-item"><a class="nav-link" href="/auth/logout">🚪 Logout</a></li>
+        <li class="nav-item">
+          <a class="nav-link" href="/home/<%= userId %>">🏠 Dashboard</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="/subscribe/<%= userId %>">💳 Payments</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="/profile/<%= userId %>">👤 Profile</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="/work/<%= userId %>">💼 Work</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="/mental/<%= userId %>">🧠 Mental</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="/calorietracker/<%= userId %>">🍽️ Calorie Tracker</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="/social/<%= userId %>">👥 Social</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="/timeoff/<%= userId %>">⏰ Time Off</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="/body/<%= userId %>">💪 Body</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="/auth/logout">🚪 Logout</a>
+      </li>
       </ul>
     </div>
   </div>
@@ -48,14 +74,42 @@
       <% if (subscriptionInfo.hasSubscription) { %>
         <h4 class="text-success mb-3">✅ You are a Premium Member</h4>
         <p>Thank you for supporting the app! You have access to all premium features.</p>
-        <% if (subscriptionInfo.currentPeriodEnd) { %>
+        
+        <% if (subscriptionInfo.cancelAtPeriodEnd) { %>
+          <div class="alert alert-warning" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Subscription Cancelled:</strong> Your subscription will end on 
+            <%= new Date(subscriptionInfo.currentPeriodEnd).toLocaleDateString() %>. 
+            You can reactivate anytime before then.
+          </div>
+        <% } else if (subscriptionInfo.currentPeriodEnd) { %>
           <p class="text-muted">Your subscription is active until: <%= new Date(subscriptionInfo.currentPeriodEnd).toLocaleDateString() %></p>
         <% } %>
-        <button id="cancelSubscriptionBtn" class="btn btn-danger">Cancel Subscription</button>
+        
+        <% if (!subscriptionInfo.cancelAtPeriodEnd) { %>
+          <button id="cancelSubscriptionBtn" class="btn btn-danger">
+            <i class="fas fa-times me-2"></i>Cancel Subscription
+          </button>
+        <% } else { %>
+          <button id="reactivateSubscriptionBtn" class="btn btn-success">
+            <i class="fas fa-play me-2"></i>Reactivate Subscription
+          </button>
+        <% } %>
       <% } else { %>
         <h4 class="text-primary mb-3">🔓 You are on the Free Plan</h4>
         <p>Upgrade to premium to unlock extra features and support development.</p>
-        <button id="subscribeBtn" class="btn btn-success w-100">Subscribe via Stripe</button>
+        
+        <% if (typeof redirected !== 'undefined' && redirected) { %>
+          <div class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Premium Feature Required:</strong> You need a premium subscription to access this feature. 
+            Upgrade now to unlock all modules!
+          </div>
+        <% } %>
+        
+        <button id="subscribeBtn" class="btn btn-success w-100">
+          <i class="fas fa-credit-card me-2"></i>Subscribe via Stripe
+        </button>
       <% } %>
     </div>
 
@@ -97,7 +151,7 @@
     });
 
     document.getElementById("cancelSubscriptionBtn")?.addEventListener("click", async () => {
-      if (confirm("Are you sure you want to cancel your subscription?")) {
+      if (confirm("Are you sure you want to cancel your subscription? You'll lose access to premium features at the end of your current billing period.")) {
         try {
           const res = await fetch("/stripe/cancel-subscription", { method: "POST" });
           const data = await res.json();
@@ -109,6 +163,23 @@
           }
         } catch (err) {
           alert("Error cancelling subscription.");
+        }
+      }
+    });
+
+    document.getElementById("reactivateSubscriptionBtn")?.addEventListener("click", async () => {
+      if (confirm("Reactivate your subscription?")) {
+        try {
+          const res = await fetch("/stripe/reactivate-subscription", { method: "POST" });
+          const data = await res.json();
+          if (data.success) {
+            alert("Subscription reactivated successfully!");
+            window.location.reload();
+          } else {
+            alert("Could not reactivate subscription.");
+          }
+        } catch (err) {
+          alert("Error reactivating subscription.");
         }
       }
     });

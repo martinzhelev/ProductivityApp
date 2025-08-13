@@ -39,11 +39,11 @@ app.set('view engine', 'ejs');
 
 const db = mysql.createPool({
     host: process.env.DATABASE_HOST || 'localhost',
-    user: process.env.DATABASE_USER || 'root',
-    password: null,
-    database: process.env.DATABASE_NAME || 'productivityapp',
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE_NAME,
     waitForConnections: true,
-    connectionLimit: 10,
+    connectionLimit: 10000,
     queueLimit: 0
 });
 
@@ -64,7 +64,7 @@ const profileRouter = require("./routes/profile");
 const authRouter = require("./routes/auth");
 const subscribeRouter = require("./routes/subscribe");
 const stripeRouter = require("./routes/stripe"); // Активирано
-const { requirePremium, checkSubscriptionStatus } = require('./middleware/subscriptionMiddleware');
+const { requirePremium, checkSubscriptionStatus, redirectFreeUsers } = require('./middleware/subscriptionMiddleware');
 
 // Mount Routes
 app.use("/", landingRouter);
@@ -72,14 +72,14 @@ app.use("/register", registerRouter);
 app.use("/login", loginRouter);  
 app.use("/home", authMiddleware, homeRouter);
 
-// Premium routes - изискват премиум абонамент
-app.use("/body", authMiddleware, requirePremium, bodyRouter);
-app.use('/mental', authMiddleware, requirePremium, mentalRouter);
-app.use("/work", authMiddleware, requirePremium, workRouter);
-app.use("/social", authMiddleware, requirePremium, socialRouter);
-app.use("/timeoff", authMiddleware, requirePremium, timeOffRouter);
-app.use("/calorieTracker", authMiddleware, requirePremium, calorieTrackerRouter);
-app.use("/profile", authMiddleware, requirePremium, profileRouter);
+// Premium routes - redirect free users to payments page
+app.use("/body", authMiddleware, redirectFreeUsers, bodyRouter);
+app.use('/mental', authMiddleware, redirectFreeUsers, mentalRouter);
+app.use("/work", authMiddleware, redirectFreeUsers, workRouter);
+app.use("/social", authMiddleware, redirectFreeUsers, socialRouter);
+app.use("/timeoff", authMiddleware, redirectFreeUsers, timeOffRouter);
+app.use("/calorieTracker", authMiddleware, redirectFreeUsers, calorieTrackerRouter);
+app.use("/profile", authMiddleware, redirectFreeUsers, profileRouter);
 
 // Auth and subscription routes
 app.use("/auth", authRouter);
@@ -101,7 +101,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start the server
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
