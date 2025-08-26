@@ -39,9 +39,9 @@ app.set('view engine', 'ejs');
 
 const db = mysql.createPool({
     host: process.env.DATABASE_HOST || 'localhost',
-    user: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE_NAME,
+    user: 'root',
+    password: null,
+    database: "productivityapp",
     waitForConnections: true,
     connectionLimit: 10000,
     queueLimit: 0
