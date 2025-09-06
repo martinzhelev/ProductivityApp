@@ -43,8 +43,8 @@ const db = mysql.createPool({
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE_NAME,
     waitForConnections: true,
-    connectionLimit: 10000,
-    queueLimit: 0
+    connectionLimit: 0,
+    queueLimit: 0,
 });
 
 module.exports = db;

@@ -44,12 +44,16 @@ router.get("/:userId", async (req, res) => {
 
         if (subscriptionRows.length > 0) {
             const subscription = subscriptionRows[0];
+            const isActive = subscription.status === 'active' && subscription.plan_type === 'premium';
+            const isCanceled = subscription.status === 'canceled';
+            const hasTimeLeft = subscription.current_period_end && new Date(subscription.current_period_end) > new Date();
+            
             subscriptionInfo = {
-                hasSubscription: hasPremium,
+                hasSubscription: isActive || (isCanceled && hasTimeLeft),
                 planType: subscription.plan_type || 'free',
                 status: subscription.status || 'free',
                 currentPeriodEnd: subscription.current_period_end,
-                cancelAtPeriodEnd: subscription.status === 'canceled' && subscription.current_period_end > new Date()
+                cancelAtPeriodEnd: isCanceled && hasTimeLeft
             };
         }
 

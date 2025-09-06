@@ -15,17 +15,36 @@ router.use((req, res, next) => {
 // Създаване на checkout session
 router.post('/create-checkout-session', async (req, res) => {
     try {
+        console.log('=== SUBSCRIPTION CREATION DEBUG ===');
+        console.log('User ID:', req.userId);
+        console.log('Stripe Secret Key exists:', !!process.env.STRIPE_SECRET_KEY);
+        console.log('Price ID exists:', !!process.env.STRIPE_PREMIUM_PRICE_ID);
+        console.log('Price ID value:', process.env.STRIPE_PREMIUM_PRICE_ID);
+        
+        // Проверка за наличието на Stripe ключовете
+        if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_PREMIUM_PRICE_ID) {
+            console.log('ERROR: Missing Stripe configuration');
+            return res.status(500).json({ 
+                error: 'Stripe configuration missing',
+                message: 'Моля, настройте Stripe ключовете в .env файла'
+            });
+        }
+
         const userId = req.userId;
         
         // Вземаме информация за потребителя
+        console.log('Fetching user data for ID:', userId);
         const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [userId]);
         if (userRows.length === 0) {
+            console.log('ERROR: User not found');
             return res.status(404).json({ error: 'User not found' });
         }
 
         const user = userRows[0];
+        console.log('User found:', user.username, user.email);
         
         // Създаваме или намираме Stripe customer
+        console.log('Creating/finding Stripe customer...');
         let customer;
         const [existingCustomerRows] = await db.execute(
             'SELECT stripe_customer_id FROM subscriptions WHERE user_id = ? AND stripe_customer_id IS NOT NULL LIMIT 1',
@@ -33,17 +52,21 @@ router.post('/create-checkout-session', async (req, res) => {
         );
 
         if (existingCustomerRows.length > 0) {
+            console.log('Found existing customer:', existingCustomerRows[0].stripe_customer_id);
             customer = await stripe.customers.retrieve(existingCustomerRows[0].stripe_customer_id);
         } else {
+            console.log('Creating new customer...');
             customer = await stripe.customers.create({
                 email: user.email,
                 metadata: {
                     user_id: userId.toString()
                 }
             });
+            console.log('Customer created:', customer.id);
         }
 
         // Създаваме checkout session
+        console.log('Creating checkout session with price:', PRODUCT_CONFIG.premium.price_id);
         const session = await stripe.checkout.sessions.create({
             customer: customer.id,
             payment_method_types: ['card'],
@@ -61,15 +84,30 @@ router.post('/create-checkout-session', async (req, res) => {
             }
         });
 
+        console.log('Checkout session created successfully:', session.id);
         res.json({ url: session.url });
     } catch (error) {
-        console.error('Error creating checkout session:', error);
-        res.status(500).json({ error: 'Failed to create checkout session' });
+        console.error('=== ERROR IN CHECKOUT SESSION CREATION ===');
+        console.error('Error type:', error.type);
+        console.error('Error message:', error.message);
+        console.error('Error code:', error.code);
+        console.error('Full error:', error);
+        res.status(500).json({ 
+            error: 'Failed to create checkout session',
+            details: error.message,
+            type: error.type || 'Unknown error'
+        });
     }
 });
 
 // Webhook за обработка на Stripe събития
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+    // Проверка за наличието на webhook secret
+    if (!process.env.STRIPE_WEBHOOK_SECRET) {
+        console.error('STRIPE_WEBHOOK_SECRET не е настроен');
+        return res.status(500).send('Webhook configuration missing');
+    }
+
     const sig = req.headers['stripe-signature'];
     let event;
 
@@ -113,77 +151,147 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 
 // Обработка на успешно завършен checkout
 async function handleCheckoutSessionCompleted(session) {
-    const userId = parseInt(session.metadata.user_id);
-    
-    // Обновяваме статуса на потребителя
-    await db.execute(
-        'UPDATE users SET subscription_status = ? WHERE user_id = ?',
-        ['premium', userId]
-    );
+    try {
+        const userId = parseInt(session.metadata.user_id);
+        console.log('Processing checkout session completed for user:', userId);
+        
+        // Проверяваме дали има subscription в session
+        if (!session.subscription) {
+            console.log('No subscription found in session, waiting for subscription.created event');
+            return;
+        }
 
-    // Записваме абонамента в базата данни
-    const subscription = await stripe.subscriptions.retrieve(session.subscription);
-    
-    await db.execute(`
-        INSERT INTO subscriptions (
-            user_id, stripe_subscription_id, stripe_customer_id, 
-            status, plan_type, current_period_start, current_period_end
-        ) VALUES (?, ?, ?, ?, ?, ?, ?)
-    `, [
-        userId,
-        subscription.id,
-        subscription.customer,
-        subscription.status,
-        'premium',
-        new Date(subscription.current_period_start * 1000),
-        new Date(subscription.current_period_end * 1000)
-    ]);
+        // Обновяваме статуса на потребителя
+        await db.execute(
+            'UPDATE users SET subscription_status = ? WHERE user_id = ?',
+            ['premium', userId]
+        );
+
+        // Записваме абонамента в базата данни
+        const subscription = await stripe.subscriptions.retrieve(session.subscription);
+        
+        await db.execute(`
+            INSERT INTO subscriptions (
+                user_id, stripe_subscription_id, stripe_customer_id, 
+                status, plan_type, current_period_start, current_period_end
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+            status = VALUES(status),
+            plan_type = VALUES(plan_type),
+            current_period_start = VALUES(current_period_start),
+            current_period_end = VALUES(current_period_end),
+            updated_at = CURRENT_TIMESTAMP
+        `, [
+            userId,
+            subscription.id,
+            subscription.customer,
+            subscription.status,
+            'premium',
+            new Date(subscription.current_period_start * 1000),
+            new Date(subscription.current_period_end * 1000)
+        ]);
+        
+        console.log('Checkout session completed successfully for user:', userId);
+    } catch (error) {
+        console.error('Error in handleCheckoutSessionCompleted:', error);
+        throw error;
+    }
 }
 
 // Обработка на създаден абонамент
 async function handleSubscriptionCreated(subscription) {
-    const customer = await stripe.customers.retrieve(subscription.customer);
-    const userId = parseInt(customer.metadata.user_id);
-    
-    await db.execute(`
-        INSERT INTO subscriptions (
-            user_id, stripe_subscription_id, stripe_customer_id, 
-            status, plan_type, current_period_start, current_period_end
-        ) VALUES (?, ?, ?, ?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE
-        status = VALUES(status),
-        plan_type = VALUES(plan_type),
-        current_period_start = VALUES(current_period_start),
-        current_period_end = VALUES(current_period_end)
-    `, [
-        userId,
-        subscription.id,
-        subscription.customer,
-        subscription.status,
-        'premium',
-        new Date(subscription.current_period_start * 1000),
-        new Date(subscription.current_period_end * 1000)
-    ]);
+    try {
+        console.log('Processing subscription created:', subscription.id);
+        
+        const customer = await stripe.customers.retrieve(subscription.customer);
+        const userId = parseInt(customer.metadata.user_id);
+        
+        if (!userId) {
+            console.error('No user_id found in customer metadata');
+            return;
+        }
+        
+        // Обновяваме статуса на потребителя
+        await db.execute(
+            'UPDATE users SET subscription_status = ? WHERE user_id = ?',
+            ['premium', userId]
+        );
+        
+        await db.execute(`
+            INSERT INTO subscriptions (
+                user_id, stripe_subscription_id, stripe_customer_id, 
+                status, plan_type, current_period_start, current_period_end
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+            status = VALUES(status),
+            plan_type = VALUES(plan_type),
+            current_period_start = VALUES(current_period_start),
+            current_period_end = VALUES(current_period_end),
+            updated_at = CURRENT_TIMESTAMP
+        `, [
+            userId,
+            subscription.id,
+            subscription.customer,
+            subscription.status,
+            'premium',
+            new Date(subscription.current_period_start * 1000),
+            new Date(subscription.current_period_end * 1000)
+        ]);
+        
+        console.log('Subscription created successfully for user:', userId);
+    } catch (error) {
+        console.error('Error in handleSubscriptionCreated:', error);
+        throw error;
+    }
 }
 
 // Обработка на обновен абонамент
 async function handleSubscriptionUpdated(subscription) {
-    await db.execute(`
-        UPDATE subscriptions 
-        SET status = ?, 
-            current_period_start = ?, 
-            current_period_end = ?,
-            updated_at = CURRENT_TIMESTAMP
-        WHERE stripe_subscription_id = ?
-    `, [
-        subscription.status,
-        new Date(subscription.current_period_start * 1000),
-        new Date(subscription.current_period_end * 1000),
-        subscription.id
-    ]);
+    try {
+        console.log('Processing subscription updated:', subscription.id, 'Status:', subscription.status);
+        
+        await db.execute(`
+            UPDATE subscriptions 
+            SET status = ?, 
+                current_period_start = ?, 
+                current_period_end = ?,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE stripe_subscription_id = ?
+        `, [
+            subscription.status,
+            new Date(subscription.current_period_start * 1000),
+            new Date(subscription.current_period_end * 1000),
+            subscription.id
+        ]);
 
-    // Ако абонаментът е отменен, връщаме потребителя към безплатен план
-    if (subscription.status === 'canceled') {
+        // Ако абонаментът е отменен, връщаме потребителя към безплатен план
+        if (subscription.status === 'canceled' || subscription.status === 'incomplete_expired') {
+            const [subscriptionRows] = await db.execute(
+                'SELECT user_id FROM subscriptions WHERE stripe_subscription_id = ?',
+                [subscription.id]
+            );
+            
+            if (subscriptionRows.length > 0) {
+                await db.execute(
+                    'UPDATE users SET subscription_status = ? WHERE user_id = ?',
+                    ['free', subscriptionRows[0].user_id]
+                );
+                console.log('User downgraded to free plan:', subscriptionRows[0].user_id);
+            }
+        }
+        
+        console.log('Subscription updated successfully:', subscription.id);
+    } catch (error) {
+        console.error('Error in handleSubscriptionUpdated:', error);
+        throw error;
+    }
+}
+
+// Обработка на изтрит абонамент
+async function handleSubscriptionDeleted(subscription) {
+    try {
+        console.log('Processing subscription deleted:', subscription.id);
+        
         const [subscriptionRows] = await db.execute(
             'SELECT user_id FROM subscriptions WHERE stripe_subscription_id = ?',
             [subscription.id]
@@ -194,22 +302,13 @@ async function handleSubscriptionUpdated(subscription) {
                 'UPDATE users SET subscription_status = ? WHERE user_id = ?',
                 ['free', subscriptionRows[0].user_id]
             );
+            console.log('User downgraded to free plan after subscription deletion:', subscriptionRows[0].user_id);
         }
-    }
-}
-
-// Обработка на изтрит абонамент
-async function handleSubscriptionDeleted(subscription) {
-    const [subscriptionRows] = await db.execute(
-        'SELECT user_id FROM subscriptions WHERE stripe_subscription_id = ?',
-        [subscription.id]
-    );
-    
-    if (subscriptionRows.length > 0) {
-        await db.execute(
-            'UPDATE users SET subscription_status = ? WHERE user_id = ?',
-            ['free', subscriptionRows[0].user_id]
-        );
+        
+        console.log('Subscription deleted successfully:', subscription.id);
+    } catch (error) {
+        console.error('Error in handleSubscriptionDeleted:', error);
+        throw error;
     }
 }
 
