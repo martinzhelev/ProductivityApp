@@ -43,6 +43,12 @@ router.post('/create-checkout-session', async (req, res) => {
         const user = userRows[0];
         console.log('User found:', user.username, user.email);
         
+        // Validate user email
+        if (!user.email) {
+            console.log('ERROR: User email is missing');
+            return res.status(400).json({ error: 'User email is required for subscription' });
+        }
+        
         // Създаваме или намираме Stripe customer
         console.log('Creating/finding Stripe customer...');
         let customer;
@@ -53,16 +59,34 @@ router.post('/create-checkout-session', async (req, res) => {
 
         if (existingCustomerRows.length > 0) {
             console.log('Found existing customer:', existingCustomerRows[0].stripe_customer_id);
-            customer = await stripe.customers.retrieve(existingCustomerRows[0].stripe_customer_id);
+            try {
+                customer = await stripe.customers.retrieve(existingCustomerRows[0].stripe_customer_id);
+                console.log('Existing customer retrieved:', customer.id);
+            } catch (error) {
+                console.log('ERROR: Failed to retrieve existing customer:', error.message);
+                console.log('Creating new customer instead...');
+                customer = await stripe.customers.create({
+                    email: user.email,
+                    metadata: {
+                        user_id: userId.toString()
+                    }
+                });
+                console.log('New customer created:', customer.id);
+            }
         } else {
             console.log('Creating new customer...');
-            customer = await stripe.customers.create({
-                email: user.email,
-                metadata: {
-                    user_id: userId.toString()
-                }
-            });
-            console.log('Customer created:', customer.id);
+            try {
+                customer = await stripe.customers.create({
+                    email: user.email,
+                    metadata: {
+                        user_id: userId.toString()
+                    }
+                });
+                console.log('Customer created:', customer.id);
+            } catch (error) {
+                console.log('ERROR: Failed to create customer:', error.message);
+                throw error;
+            }
         }
 
         // Създаваме checkout session
@@ -326,29 +350,66 @@ async function handleInvoicePaymentFailed(invoice) {
 // Отменяне на абонамент
 router.post('/cancel-subscription', async (req, res) => {
     try {
+        console.log('=== SUBSCRIPTION CANCELLATION DEBUG ===');
         const userId = req.userId;
+        console.log('User ID:', userId);
         
         // Намираме активния абонамент
+        console.log('Searching for active subscription...');
         const [subscriptionRows] = await db.execute(
-            'SELECT stripe_subscription_id FROM subscriptions WHERE user_id = ? AND status = "active" ORDER BY created_at DESC LIMIT 1',
+            'SELECT stripe_subscription_id, status, plan_type FROM subscriptions WHERE user_id = ? ORDER BY created_at DESC LIMIT 1',
             [userId]
         );
 
+        console.log('Found subscription rows:', subscriptionRows);
+
         if (subscriptionRows.length === 0) {
-            return res.status(404).json({ error: 'No active subscription found' });
+            console.log('ERROR: No subscription found for user');
+            return res.status(404).json({ error: 'No subscription found' });
         }
 
-        const subscriptionId = subscriptionRows[0].stripe_subscription_id;
+        const subscription = subscriptionRows[0];
+        console.log('Subscription details:', subscription);
+
+        if (!subscription.stripe_subscription_id) {
+            console.log('ERROR: No Stripe subscription ID found');
+            return res.status(404).json({ error: 'No Stripe subscription ID found' });
+        }
+
+        if (subscription.status !== 'active') {
+            console.log('ERROR: Subscription is not active, status:', subscription.status);
+            return res.status(400).json({ error: `Subscription status is: ${subscription.status}` });
+        }
+
+        const subscriptionId = subscription.stripe_subscription_id;
+        console.log('Attempting to cancel Stripe subscription:', subscriptionId);
         
         // Отменяме абонамента в Stripe
-        await stripe.subscriptions.update(subscriptionId, {
+        const updatedSubscription = await stripe.subscriptions.update(subscriptionId, {
             cancel_at_period_end: true
         });
 
-        res.json({ success: true, message: 'Subscription will be canceled at the end of the current period' });
+        console.log('Stripe subscription updated successfully:', updatedSubscription.id);
+        console.log('New subscription status:', updatedSubscription.status);
+
+        res.json({ 
+            success: true, 
+            message: 'Subscription will be canceled at the end of the current period',
+            subscriptionId: subscriptionId,
+            newStatus: updatedSubscription.status
+        });
     } catch (error) {
-        console.error('Error canceling subscription:', error);
-        res.status(500).json({ error: 'Failed to cancel subscription' });
+        console.error('=== ERROR IN SUBSCRIPTION CANCELLATION ===');
+        console.error('Error type:', error.type);
+        console.error('Error message:', error.message);
+        console.error('Error code:', error.code);
+        console.error('Full error:', error);
+        
+        res.status(500).json({ 
+            error: 'Failed to cancel subscription',
+            details: error.message,
+            type: error.type || 'Unknown error'
+        });
     }
 });
 
