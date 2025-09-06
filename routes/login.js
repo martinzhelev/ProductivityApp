@@ -35,19 +35,19 @@ router.post('/', async (req, res) => {
                         username: user.username
                     },
                     process.env.JWT_SECRET,
-                    { expiresIn: '24h' }
+                    { expiresIn: '1y' }
                 );
 
                 // Set the token in an HTTP-only cookie
                 res.cookie('token', token, { 
                     httpOnly: true,
                     secure: process.env.NODE_ENV === 'production',
-                    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+                    maxAge: 356 * 24 * 60 * 60 * 1000 // 1 year
                 });
 
                 // Also set userId cookie for compatibility
                 res.cookie('userId', user.user_id, {
-                    maxAge: 24 * 60 * 60 * 1000,
+                    maxAge: 356 * 24 * 60 * 60 * 1000,
                     httpOnly: false
                 });
 
