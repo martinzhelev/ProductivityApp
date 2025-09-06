@@ -3,8 +3,13 @@ const router = express.Router();
 const db = require('../server');
 const { stripe, PRODUCT_CONFIG, WEBHOOK_CONFIG } = require('../config/stripe');
 
-// Middleware за проверка на потребител
+// Middleware за проверка на потребител - изключваме webhook endpoint
 router.use((req, res, next) => {
+    // Webhook endpoint не се нуждае от аутентификация
+    if (req.path === '/webhook') {
+        return next();
+    }
+    
     req.userId = req.cookies.userId;
     if (!req.userId) {
         return res.status(401).json({ error: "Unauthorized: User ID not found in cookies" });
@@ -126,6 +131,10 @@ router.post('/create-checkout-session', async (req, res) => {
 
 // Webhook за обработка на Stripe събития
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+    console.log('=== WEBHOOK RECEIVED ===');
+    console.log('Headers:', req.headers);
+    console.log('Body length:', req.body.length);
+    
     // Проверка за наличието на webhook secret
     if (!process.env.STRIPE_WEBHOOK_SECRET) {
         console.error('STRIPE_WEBHOOK_SECRET не е настроен');
@@ -137,35 +146,46 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 
     try {
         event = stripe.webhooks.constructEvent(req.body, sig, WEBHOOK_CONFIG.endpoint_secret);
+        console.log('Webhook signature verified successfully');
+        console.log('Event type:', event.type);
+        console.log('Event ID:', event.id);
     } catch (err) {
         console.error('Webhook signature verification failed:', err.message);
         return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
     try {
+        console.log('Processing webhook event:', event.type);
         switch (event.type) {
             case 'checkout.session.completed':
+                console.log('Handling checkout.session.completed');
                 await handleCheckoutSessionCompleted(event.data.object);
                 break;
             case 'customer.subscription.created':
+                console.log('Handling customer.subscription.created');
                 await handleSubscriptionCreated(event.data.object);
                 break;
             case 'customer.subscription.updated':
+                console.log('Handling customer.subscription.updated');
                 await handleSubscriptionUpdated(event.data.object);
                 break;
             case 'customer.subscription.deleted':
+                console.log('Handling customer.subscription.deleted');
                 await handleSubscriptionDeleted(event.data.object);
                 break;
             case 'invoice.payment_succeeded':
+                console.log('Handling invoice.payment_succeeded');
                 await handleInvoicePaymentSucceeded(event.data.object);
                 break;
             case 'invoice.payment_failed':
+                console.log('Handling invoice.payment_failed');
                 await handleInvoicePaymentFailed(event.data.object);
                 break;
             default:
                 console.log(`Unhandled event type: ${event.type}`);
         }
 
+        console.log('Webhook processed successfully');
         res.json({ received: true });
     } catch (error) {
         console.error('Webhook handler error:', error);
@@ -176,6 +196,11 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 // Обработка на успешно завършен checkout
 async function handleCheckoutSessionCompleted(session) {
     try {
+        console.log('=== HANDLING CHECKOUT SESSION COMPLETED ===');
+        console.log('Session ID:', session.id);
+        console.log('Session metadata:', session.metadata);
+        console.log('Session subscription:', session.subscription);
+        
         const userId = parseInt(session.metadata.user_id);
         console.log('Processing checkout session completed for user:', userId);
         
@@ -185,15 +210,22 @@ async function handleCheckoutSessionCompleted(session) {
             return;
         }
 
+        console.log('Found subscription in session:', session.subscription);
+
         // Обновяваме статуса на потребителя
+        console.log('Updating user subscription status to premium...');
         await db.execute(
             'UPDATE users SET subscription_status = ? WHERE user_id = ?',
             ['premium', userId]
         );
+        console.log('User subscription status updated successfully');
 
         // Записваме абонамента в базата данни
+        console.log('Retrieving subscription from Stripe...');
         const subscription = await stripe.subscriptions.retrieve(session.subscription);
+        console.log('Subscription retrieved:', subscription.id, 'Status:', subscription.status);
         
+        console.log('Inserting subscription into database...');
         await db.execute(`
             INSERT INTO subscriptions (
                 user_id, stripe_subscription_id, stripe_customer_id, 
@@ -225,10 +257,18 @@ async function handleCheckoutSessionCompleted(session) {
 // Обработка на създаден абонамент
 async function handleSubscriptionCreated(subscription) {
     try {
-        console.log('Processing subscription created:', subscription.id);
+        console.log('=== HANDLING SUBSCRIPTION CREATED ===');
+        console.log('Subscription ID:', subscription.id);
+        console.log('Subscription status:', subscription.status);
+        console.log('Customer ID:', subscription.customer);
         
+        console.log('Retrieving customer from Stripe...');
         const customer = await stripe.customers.retrieve(subscription.customer);
+        console.log('Customer retrieved:', customer.id);
+        console.log('Customer metadata:', customer.metadata);
+        
         const userId = parseInt(customer.metadata.user_id);
+        console.log('User ID from customer metadata:', userId);
         
         if (!userId) {
             console.error('No user_id found in customer metadata');
@@ -236,11 +276,14 @@ async function handleSubscriptionCreated(subscription) {
         }
         
         // Обновяваме статуса на потребителя
+        console.log('Updating user subscription status to premium...');
         await db.execute(
             'UPDATE users SET subscription_status = ? WHERE user_id = ?',
             ['premium', userId]
         );
+        console.log('User subscription status updated successfully');
         
+        console.log('Inserting subscription into database...');
         await db.execute(`
             INSERT INTO subscriptions (
                 user_id, stripe_subscription_id, stripe_customer_id, 

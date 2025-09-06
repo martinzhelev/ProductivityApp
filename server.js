@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(cookieParser());
 
-// Raw body parser for Stripe webhooks
+// Raw body parser for Stripe webhooks - must be before stripe router
 app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
 
 // JWT middleware
