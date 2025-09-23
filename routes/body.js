@@ -16,7 +16,7 @@ router.get('/:userId', async (req, res) => {
     }
 
     try {
-        const userId = req.cookies.userId;
+        const userId = req.user.userId;
         if (!userId) {
             return res.status(400).json({ message: "User ID is missing" });
         }
@@ -135,7 +135,7 @@ router.get('/:userId', async (req, res) => {
 // POST /:userId - Handle various workout actions
 router.post('/:userId', async (req, res) => {
     try {
-        const userId = req.cookies.userId;
+        const userId = req.user.userId;
         const { action, exerciseName, workoutDate, category, workoutId, reps, date, isCompleted, exercise_id: exerciseId } = req.body;
 
 
@@ -256,7 +256,7 @@ router.post('/:userId', async (req, res) => {
 
 router.patch('/:userId', async (req, res) => {
     const { category, action } = req.body;
-    const userId = req.cookies.userId
+    const userId = req.user.userId
     switch (action) {
         case "finishWorkout": {
             const [statRows] = await db.execute(

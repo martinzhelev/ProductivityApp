@@ -5,7 +5,7 @@ const axios = require("axios");
 require('dotenv').config();
 
 router.use((req, res, next) => {
-    req.userId = req.cookies.userId;
+    req.userId = req.user.userId;
     if (!req.userId) return res.status(401).json({ error: "Unauthorized: User ID not found" });
     next();
 });

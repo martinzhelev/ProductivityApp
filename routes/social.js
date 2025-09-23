@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require("../server");
 
 router.use((req, res, next) => {
-    req.userId = req.cookies.userId;
+    req.userId = req.user.userId;
     if (!req.userId) {
         return res.status(401).json({ error: "Unauthorized: User ID not found in cookies" });
     }
@@ -121,7 +121,7 @@ router.delete("/delete", async (req, res) => {
 
 router.patch("/:userId/completeEvent", async (req, res) => {
     const { eventId } = req.body; // Changed from type to eventId for clarity
-    const userId = req.cookies.userId;
+    const userId = req.user.userId;
 
     try {
         // Check if the event exists and belongs to the user

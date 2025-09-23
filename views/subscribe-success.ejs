@@ -32,9 +32,14 @@
     </div>
     <div class="offcanvas-body">
       <ul class="nav flex-column">
-        <li class="nav-item"><a class="nav-link" href="/home/<%= userId %>">🏠 Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link" href="/subscribe/<%= userId %>">💳 Payments</a></li>
-        <li class="nav-item"><a class="nav-link" href="/auth/logout">🚪 Logout</a></li>
+        <% if (userId) { %>
+          <li class="nav-item"><a class="nav-link" href="/home/<%= userId %>">🏠 Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="/subscribe/<%= userId %>">💳 Payments</a></li>
+          <li class="nav-item"><a class="nav-link" href="/auth/logout">🚪 Logout</a></li>
+        <% } else { %>
+          <li class="nav-item"><a class="nav-link" href="/login">🔐 Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="/">🏠 Home</a></li>
+        <% } %>
       </ul>
     </div>
   </div>
@@ -55,6 +60,13 @@
             <div class="alert alert-success" role="alert">
               <h5 class="alert-heading">✅ Welcome to Premium!</h5>
               <p class="mb-0">Your subscription is now active. You can access all modules and features.</p>
+              <% if (subscriptionStatus) { %>
+                <hr>
+                <small class="text-muted">
+                  <strong>Status:</strong> <%= subscriptionStatus.status %> | 
+                  <strong>Plan:</strong> <%= subscriptionStatus.plan_type %>
+                </small>
+              <% } %>
             </div>
 
             <% if (sessionId) { %>
@@ -67,12 +79,21 @@
             <% } %>
 
             <div class="mt-4">
-              <a href="/home/<%= userId %>" class="btn btn-primary btn-lg me-3">
-                <i class="fas fa-home me-2"></i>Go to Dashboard
-              </a>
-              <a href="/subscribe/<%= userId %>" class="btn btn-outline-secondary btn-lg">
-                <i class="fas fa-cog me-2"></i>Manage Subscription
-              </a>
+              <% if (userId) { %>
+                <a href="/home/<%= userId %>" class="btn btn-primary btn-lg me-3">
+                  <i class="fas fa-home me-2"></i>Go to Dashboard
+                </a>
+                <a href="/subscribe/<%= userId %>" class="btn btn-outline-secondary btn-lg">
+                  <i class="fas fa-cog me-2"></i>Manage Subscription
+                </a>
+              <% } else { %>
+                <a href="/login" class="btn btn-primary btn-lg me-3">
+                  <i class="fas fa-sign-in-alt me-2"></i>Login to Continue
+                </a>
+                <a href="/" class="btn btn-outline-secondary btn-lg">
+                  <i class="fas fa-home me-2"></i>Go to Home
+                </a>
+              <% } %>
             </div>
 
             <div class="mt-4">

@@ -106,7 +106,7 @@ router.post('/create-checkout-session', async (req, res) => {
                 },
             ],
             mode: 'subscription',
-            success_url: `${req.protocol}://${req.get('host')}/subscribe/success?session_id={CHECKOUT_SESSION_ID}`,
+            success_url: `${req.protocol}://${req.get('host')}/subscribe/${userId}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${req.protocol}://${req.get('host')}/subscribe/cancel`,
             metadata: {
                 user_id: userId.toString()
@@ -130,7 +130,7 @@ router.post('/create-checkout-session', async (req, res) => {
 });
 
 // Webhook за обработка на Stripe събития
-router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+router.post('/webhook', async (req, res) => {
     console.log('=== WEBHOOK RECEIVED ===');
     console.log('Headers:', req.headers);
     console.log('Body length:', req.body.length);
@@ -381,8 +381,53 @@ async function handleSubscriptionDeleted(subscription) {
 
 // Обработка на успешно плащане
 async function handleInvoicePaymentSucceeded(invoice) {
-    // Можем да добавим допълнителна логика тук
-    console.log('Payment succeeded for invoice:', invoice.id);
+    try {
+        console.log('=== HANDLING INVOICE PAYMENT SUCCEEDED ===');
+        console.log('Invoice ID:', invoice.id);
+        console.log('Subscription ID:', invoice.subscription);
+        console.log('Amount Paid:', invoice.amount_paid);
+        console.log('Status:', invoice.status);
+        
+        if (invoice.subscription) {
+            // Get the subscription to find the user
+            const subscription = await stripe.subscriptions.retrieve(invoice.subscription);
+            console.log('Retrieved subscription:', subscription.id, 'Status:', subscription.status);
+            
+            // Get customer to find user_id
+            const customer = await stripe.customers.retrieve(subscription.customer);
+            console.log('Retrieved customer:', customer.id);
+            console.log('Customer metadata:', customer.metadata);
+            
+            const userId = parseInt(customer.metadata.user_id);
+            if (userId) {
+                console.log('Found user_id in customer metadata:', userId);
+                
+                // Update subscription status in database
+                await db.execute(`
+                    UPDATE subscriptions 
+                    SET status = ?, updated_at = CURRENT_TIMESTAMP
+                    WHERE stripe_subscription_id = ?
+                `, [subscription.status, subscription.id]);
+                console.log('Updated subscription status in database to:', subscription.status);
+                
+                // Update user subscription status if subscription is now active
+                if (subscription.status === 'active') {
+                    await db.execute(
+                        'UPDATE users SET subscription_status = ? WHERE user_id = ?',
+                        ['premium', userId]
+                    );
+                    console.log('Updated user subscription status to premium');
+                }
+            } else {
+                console.log('No user_id found in customer metadata');
+            }
+        }
+        
+        console.log('Invoice payment succeeded processed successfully');
+    } catch (error) {
+        console.error('Error in handleInvoicePaymentSucceeded:', error);
+        throw error;
+    }
 }
 
 // Обработка на неуспешно плащане

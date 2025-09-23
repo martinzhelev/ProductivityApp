@@ -7,7 +7,7 @@ const db = require("../server");
 
 router.get('/:userId', async (req, res) => {
     try {
-        const userId = req.cookies.userId; // Assuming userId is stored in cookies
+        const userId = req.user.userId; // Get userId from JWT token
 
         // Fetch user details
         const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [userId]);
@@ -49,7 +49,7 @@ router.get('/:userId', async (req, res) => {
 
 router.post('/:userId', async (req, res) => {
     const { task, habit, taskCategory, habitCategory } = req.body;
-    const user_id = req.cookies.userId;
+    const user_id = req.user.userId;
 
     if (!user_id) {
         return res.status(401).json({ message: 'User ID is not available in cookies' });
@@ -89,7 +89,7 @@ router.post('/:userId', async (req, res) => {
 
 router.delete('/:userId', async (req, res) => {
     const { type, id } = req.body; // Expect `type` ("task" or "habit") and `id` (taskId or habitId)
-    const user_id = req.cookies.userId;
+    const user_id = req.user.userId;
 
     if (!type || !id) {
         return res.status(400).json({ message: 'Invalid input: "type" and "id" are required' });
@@ -130,7 +130,7 @@ router.delete('/:userId', async (req, res) => {
  */
 router.patch('/:userId', async (req, res) => {
     const { type, id, completed, taskCategory, habitCategory } = req.body; // Expect `type`, `id`, `completed`, and `taskCategory` or `habitCategory`
-    const user_id = req.cookies.userId;
+    const user_id = req.user.userId;
 
     if (!type || !id || typeof completed === 'undefined') {
         return res.status(400).json({ message: 'Invalid input: "type", "id", and "completed" are required' });
@@ -343,7 +343,7 @@ router.patch('/:userId', async (req, res) => {
 
     router.delete("/:userId/deleteTask/:id", (req, res) => {
         const taskId = req.params.id;
-        const userId = req.cookies.userId;
+        const userId = req.user.userId;
     
         const sql = "DELETE FROM tasks WHERE task_id = ? AND user_id = ?";
         db.query(sql, [taskId, userId], (err, result) => {
@@ -357,7 +357,7 @@ router.patch('/:userId', async (req, res) => {
 
     router.delete("/:userId/deleteHabit/:id", (req, res) => {
         const taskId = req.params.id;
-        const userId = req.cookies.userId;
+        const userId = req.user.userId;
     
         const sql = "DELETE FROM habits WHERE habit_id = ? AND user_id = ?";
         db.query(sql, [taskId, userId], (err, result) => {

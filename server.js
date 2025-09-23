@@ -7,14 +7,14 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { startScheduler } = require('./utils/scheduler');
 
+// Raw body parser for Stripe webhooks - MUST be before JSON parser
+app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
+
 // Middleware for JSON and URL-encoded form data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(cookieParser());
-
-// Raw body parser for Stripe webhooks - must be before stripe router
-app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
 
 // JWT middleware
 const authMiddleware = (req, res, next) => {
@@ -83,7 +83,7 @@ app.use("/profile", authMiddleware, redirectFreeUsers, profileRouter);
 
 // Auth and subscription routes
 app.use("/auth", authRouter);
-app.use("/subscribe", authMiddleware, subscribeRouter);
+app.use("/subscribe", subscribeRouter); // Removed authMiddleware to allow success/cancel pages
 app.use("/stripe", stripeRouter); // Активирано
 
 // Start the email reminder scheduler

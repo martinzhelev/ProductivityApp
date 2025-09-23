@@ -4,7 +4,7 @@ const db = require('../server'); // Database connection
 
 // Middleware to get userId from cookies
 router.use((req, res, next) => {
-    req.userId = req.cookies.userId;
+    req.userId = req.user.userId;
     if (!req.userId) {
         return res.status(401).json({ error: "Unauthorized: User ID not found in cookies" });
     }
@@ -191,7 +191,7 @@ router.post('/:userId/saveMeditationProgress', async (req, res) => {
 
 router.patch('/:userId/updateStats', async (req, res) => {
     const { type } = req.body;
-    const userId = req.cookies.userId;
+    const userId = req.user.userId;
 
     try {
         // Check if the "mental" stat exists for the user
