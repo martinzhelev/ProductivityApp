@@ -7,15 +7,16 @@
     <title>User Dashboard with Bootstrap</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/amblezio.css">
     <link rel="stylesheet" href="/css/home.css">
 </head>
 
 <body>
 
-    <header class="bg-dark text-white p-3">
+    <header class="bg-dark text-white p-3 rounded-xl glow">
         <div class="container d-flex justify-content-between align-items-center">
             <div class="profile d-flex align-items-center">
-                <!-- <img src="profile.jpg" alt="Profile Picture"> -->
+                <span class="avatar me-2">M</span>
                 <span class="ms-2">
                     <%= username %>
                 </span>
@@ -28,7 +29,7 @@
     </header>
 
     <!-- Offcanvas Menu -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar">
+    <div class="offcanvas offcanvas-end rounded-xl" tabindex="-1" id="offcanvasNavbar">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title">Menu</h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
@@ -72,76 +73,91 @@
     <main class="container mt-4">
         <div class="row">
             <!-- Left Column: Tasks -->
-            <div class="col-md-4">
-                <div class="column">
-                    <h2>Tasks</h2>
+            <div class="col-md-4 position-relative">
+                <div class="column glass p-4">
+                    <h2 class="mb-3">Tasks</h2>
                     <ul class="tasks list-unstyled" id="tasks-list">
                         <% if (tasks.length> 0) { %>
                             <% tasks.forEach(function(task) { %>
-                                <li data-task-id="<%= task.task_id %>">
-                                    <div>
+                                <li data-task-id="<%= task.task_id %>" class="<%= task.completed ? 'completed' : '' %>">
+                                    <div class="d-flex align-items-center">
                                         <input type="checkbox" class="checkbox me-2" <%=task.completed ? 'checked' : '' %> >
-                                        <%= task.task %>
+                                        <span><%= task.task %></span>
                                     </div>
-                                    <button class="btn btn-danger btn-sm delete-task" data-id="<%= task.task_id %>">Delete</button>
+                                    <button class="btn btn-icon btn-danger delete-task" data-id="<%= task.task_id %>" title="Delete"><i class="fas fa-trash"></i></button>
                                 </li>
                             <% }); %>
                         <% } else { %>
                             <li>No tasks found</li>
                         <% } %>
                     </ul>
-
-                    <button class="btn btn-primary mt-2" id="addTask">Add Task</button>
-                    <button class="btn btn-danger mt-2" id="removeTask">Remove Done Tasks</button>
+                    <button class="fab" id="addTask">+</button>
+                    <button class="btn btn-danger mt-2 w-100" id="removeTask">Remove Done Tasks</button>
                 </div>
             </div>
 
 
             <!-- Middle Column: Habits -->
-            <div class="col-md-4">
-                <div class="column">
-                    <h2>Habits</h2>
-                    <ul class="habits list-unstyled" id="habits-list">
+            <div class="col-md-4 position-relative">
+                <div class="column glass p-4">
+                    <h2 class="mb-3">Habits</h2>
+                    <ul class="habits list-unstyled d-grid gap-2" id="habits-list">
                         <% if (habits.length> 0) { %>
                             <% habits.forEach(function(habit) { %>
                                 <li data-habit-id="<%= habit.habit_id %>">
-                                    <div>
-                                        <input type="checkbox" class="checkbox me-2" <%=habit.completed ? 'checked' : '' %> >
-                                        <%= habit.habit %>
+                                    <div class="chip <%= habit.category === 'Mental' ? 'purple' : (habit.category === 'Strength' ? 'green' : 'blue') %>">
+                                        <span class="icon">💠</span>
+                                        <label class="m-0 d-flex align-items-center">
+                                            <input type="checkbox" class="checkbox me-2" <%=habit.completed ? 'checked' : '' %> >
+                                            <span><%= habit.habit %></span>
+                                        </label>
                                     </div>
-                                    <button class="btn btn-danger btn-sm delete-task" data-id="<%= habit.habit_id %>">Delete</button>
+                                    <button class="btn btn-icon btn-danger delete-task" data-id="<%= habit.habit_id %>" title="Delete"><i class="fas fa-trash"></i></button>
                                 </li>
                             <% }); %>
                         <% } else { %>
                             <li>No habits found</li>
                         <% } %>
                     </ul>
-
-                    <button class="btn btn-primary mt-2" id="addHabit">Add Habit</button>
-                    <button class="btn btn-danger mt-2" id="removeHabit">Remove Habits</button>
+                    <button class="fab" id="addHabit">+</button>
+                    <button class="btn btn-danger mt-2 w-100" id="removeHabit">Remove Habits</button>
                 </div>
             </div>
 
             <!-- Right Column: Stats -->
             <div class="col-md-4">
-                <div class="column">
-                    <h2>Player Stats</h2>
-                    <div class="stats">
+                <div class="column glass p-4">
+                    <h2 class="mb-3">Player Stats</h2>
+                    <div class="stats d-grid gap-3">
                         <% if (stats) { %>
-                            <p>Strength: <%= stats.strength || 0 %>
-                            </p>
-                            <p>Agility: <%= stats.agility || 0 %>
-                            </p>
-                            <p>Mental: <%= stats.mental || 0 %>
-                            </p>
-                            <p>Work: <%= stats.work || 0 %>
-                            </p>
-                            <p>Social: <%= stats.social || 0 %>
-                            </p>
-                            <p>Financial: <%= stats.financial || 0 %>
-                            </p>
-                            <p>Speed: <%= stats.speed || 0 %>
-                            </p>
+                            <div>
+                                <div class="d-flex justify-content-between mb-1"><span>Strength</span><span><%= stats.strength || 0 %>%</span></div>
+                                <div class="stat-bar"><span class="stat-red" style="--p:<%= stats.strength || 0 %>;"></span></div>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-between mb-1"><span>Agility</span><span><%= stats.agility || 0 %>%</span></div>
+                                <div class="stat-bar"><span class="stat-orange" style="--p:<%= stats.agility || 0 %>;"></span></div>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-between mb-1"><span>Mental</span><span><%= stats.mental || 0 %>%</span></div>
+                                <div class="stat-bar"><span class="stat-purple" style="--p:<%= stats.mental || 0 %>;"></span></div>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-between mb-1"><span>Work</span><span><%= stats.work || 0 %>%</span></div>
+                                <div class="stat-bar"><span class="stat-blue" style="--p:<%= stats.work || 0 %>;"></span></div>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-between mb-1"><span>Social</span><span><%= stats.social || 0 %>%</span></div>
+                                <div class="stat-bar"><span class="stat-teal" style="--p:<%= stats.social || 0 %>;"></span></div>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-between mb-1"><span>Financial</span><span><%= stats.financial || 0 %>%</span></div>
+                                <div class="stat-bar"><span class="stat-green" style="--p:<%= stats.financial || 0 %>;"></span></div>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-between mb-1"><span>Speed</span><span><%= stats.speed || 0 %>%</span></div>
+                                <div class="stat-bar"><span class="stat-yellow" style="--p:<%= stats.speed || 0 %>;"></span></div>
+                            </div>
                             <% } else { %>
                                 <p>No stats available</p>
                                 <% } %>

@@ -30,46 +30,7 @@ router.get("/:userId", async (req, res) => {
         const userId = req.userId;
         const { hasPremium, planType } = req.subscriptionStatus;
         
-        // Check if this is a payment success redirect from Stripe
-        if (req.query.payment === 'success' && req.query.session_id) {
-            console.log('Processing payment success from Stripe for user:', userId);
-            
-            try {
-                // Set authentication cookies to maintain session
-                const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [userId]);
-                if (userRows.length > 0) {
-                    const user = userRows[0];
-                    const jwt = require('jsonwebtoken');
-                    const token = jwt.sign(
-                        { 
-                            userId: userId, 
-                            username: user.username,
-                            email: user.email 
-                        }, 
-                        process.env.JWT_SECRET, 
-                        { expiresIn: '24h' }
-                    );
-                    
-                    // Set both token and userId cookies
-                    res.cookie('token', token, { 
-                        httpOnly: true, 
-                        secure: process.env.NODE_ENV === 'production',
-                        sameSite: 'lax',
-                        maxAge: 24 * 60 * 60 * 1000 // 24 hours
-                    });
-                    res.cookie('userId', userId.toString(), { 
-                        httpOnly: false, // Allow client-side access
-                        secure: process.env.NODE_ENV === 'production',
-                        sameSite: 'lax',
-                        maxAge: 24 * 60 * 60 * 1000 // 24 hours
-                    });
-                    
-                    console.log('Authentication cookies set for user after payment:', userId);
-                }
-            } catch (error) {
-                console.error('Error setting authentication cookies after payment:', error);
-            }
-        }
+        // Simplified: no special handling of payment success query params
 
         // Fetch user details
         const [userRows] = await db.execute('SELECT * FROM users WHERE user_id = ?', [userId]);
@@ -112,10 +73,7 @@ router.get("/:userId", async (req, res) => {
         res.render("subscribe", {
             username: userRows[0].username,
             userId: userId,
-            subscriptionInfo: subscriptionInfo,
-            redirected: req.query.redirected === 'true',
-            paymentSuccess: req.query.payment === 'success',
-            sessionId: req.query.session_id
+            subscriptionInfo: subscriptionInfo
         });
     } catch (error) {
         console.error('Error in subscribe route:', error);

@@ -106,7 +106,7 @@ router.post('/create-checkout-session', async (req, res) => {
                 },
             ],
             mode: 'subscription',
-            success_url: `${req.protocol}://${req.get('host')}/subscribe/${userId}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+            success_url: `${req.protocol}://${req.get('host')}/subscribe/${userId}`,
             cancel_url: `${req.protocol}://${req.get('host')}/subscribe/cancel`,
             metadata: {
                 user_id: userId.toString()
