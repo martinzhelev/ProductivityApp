@@ -33,7 +33,6 @@ body {
   background-attachment: fixed;
 }
 
-.gradient-bg { /* optional hook for pages still using class on body */ }
 
 /* Glass panels */
 .glass, .card, .column, header.bg-dark, .offcanvas {

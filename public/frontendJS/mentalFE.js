@@ -21,14 +21,14 @@ document.addEventListener("DOMContentLoaded", function () {
     
         books.forEach(book => {
             const bookDiv = document.createElement("div");
-            bookDiv.classList.add("border", "p-3", "mb-3");
+            bookDiv.classList.add("border", "p-3", "mb-3", "glass", "rounded");
             bookDiv.id = `book-${book.book_id}`;
             bookDiv.innerHTML = `
-                <h4>${book.title}</h4>
-                ${!book.completed ? `<input type="checkbox" class="markAsRead" data-id="${book.book_id}"> Mark as Read` : ''}
-                ${book.completed ? `<button class="btn btn-info btn-sm info-btn" data-id="${book.book_id}" data-title="${book.title}" data-summary="${book.summary}" data-review="${book.review}">Info</button>` : ''}
-                <button id="deleteBook" class="btn btn-danger btn-sm delete-btn" data-id="${book.book_id}">Delete</button> <!-- Delete Button 
- `;
+                <h4 class="mb-2">${book.title}</h4>
+                ${!book.completed ? `<input type="checkbox" class="markAsRead me-2" data-id="${book.book_id}"> <span>Mark as Read</span>` : ''}
+                ${book.completed ? `<button class="btn btn-outline-info btn-sm info-btn ms-2" data-id="${book.book_id}" data-title="${book.title}" data-summary="${book.summary}" data-review="${book.review}">Info</button>` : ''}
+                <button id="deleteBook" class="btn btn-danger btn-sm delete-btn ms-2" data-id="${book.book_id}">Delete</button>
+`;
             bookListContainer.appendChild(bookDiv);
         });
     }

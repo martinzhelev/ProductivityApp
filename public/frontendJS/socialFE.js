@@ -27,6 +27,16 @@ document.addEventListener("DOMContentLoaded", function () {
     let peoplePage = parseInt("<%= peoplePage %>") || 1;
     const peopleLimit = parseInt("<%= peopleLimit %>") || 5;
 
+    function applyDarkClasses(container) {
+        if (!container) return;
+        container.querySelectorAll('.list-group-item').forEach(el => {
+            el.classList.add('glass');
+        });
+        container.querySelectorAll('.gift-list li').forEach(li => {
+            li.classList.add('glass');
+        });
+    }
+
     // Social Events
     saveEventBtn.addEventListener("click", function () {
         const eventName = document.getElementById("eventName").value;
@@ -66,6 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
             eventList.innerHTML = doc.getElementById("eventList").innerHTML;
+            applyDarkClasses(eventList);
             eventPageInfo.textContent = doc.getElementById("eventPageInfo").textContent;
             prevEventPageBtn.disabled = doc.getElementById("prevEventPage").hasAttribute("disabled");
             nextEventPageBtn.disabled = doc.getElementById("nextEventPage").hasAttribute("disabled");
@@ -175,6 +186,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
             peopleList.innerHTML = doc.getElementById("peopleList").innerHTML;
+            applyDarkClasses(peopleList);
             peoplePageInfo.textContent = doc.getElementById("peoplePageInfo").textContent;
             prevPeoplePageBtn.disabled = doc.getElementById("prevPeoplePage").hasAttribute("disabled");
             nextPeoplePageBtn.disabled = doc.getElementById("nextPeoplePage").hasAttribute("disabled");
@@ -322,4 +334,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initial setup
     addEventListeners(); // Updated name
     addPeopleListeners();
+    applyDarkClasses(eventList);
+    applyDarkClasses(peopleList);
+
+    // Observe dynamic changes to keep styles consistent
+    const observer = new MutationObserver(() => applyDarkClasses(peopleList));
+    if (peopleList) {
+        observer.observe(peopleList, { childList: true, subtree: true });
+    }
 });

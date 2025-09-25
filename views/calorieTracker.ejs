@@ -10,8 +10,50 @@
     <link rel="stylesheet" href="/css/amblezio.css">
     <link rel="stylesheet" href="/css/calorieTracker.css">  
 
+    <style>
+        /* Scoped dark theme */
+        .dark-theme { background: #0b0f14; color: #e6edf3; }
+        .dark-theme a { color: #7dd3fc; }
+        .dark-theme a:hover { color: #38bdf8; }
+
+        /* Glass containers */
+        .dark-theme .glass { background: rgba(2, 6, 23, 0.6); border: 1px solid rgba(148,163,184,0.2); color: #e6edf3; box-shadow: 0 6px 24px rgba(0,0,0,.4); backdrop-filter: blur(8px); }
+        .dark-theme .rounded-xl { border-radius: 16px; }
+        .dark-theme .glow { box-shadow: 0 8px 30px rgba(2,6,23,.6); }
+
+        /* Offcanvas */
+        .dark-theme .offcanvas { background: rgba(2, 6, 23, 0.85); color: #e6edf3; border-left: 1px solid rgba(148,163,184,0.2); backdrop-filter: blur(6px); }
+        .dark-theme .offcanvas-title { color: #f1f5f9; }
+        .dark-theme .btn-close { filter: invert(1) grayscale(1); opacity: .8; }
+        .dark-theme .nav-link { color: #cbd5e1; }
+        .dark-theme .nav-link:hover { color: #7dd3fc; background: rgba(125,211,252,.08); border-radius: 8px; }
+
+        /* Forms */
+        .dark-theme .form-control,
+        .dark-theme .form-select,
+        .dark-theme textarea { background: #0b1220; color: #e6edf3; border: 1px solid rgba(148,163,184,0.25); }
+        .dark-theme .form-control::placeholder,
+        .dark-theme textarea::placeholder { color: #94a3b8; }
+
+        /* Tracker card & logs */
+        .dark-theme .tracker-card { background: rgba(2, 6, 23, 0.6); border: 1px solid rgba(148,163,184,0.2); color: #e6edf3; box-shadow: 0 6px 24px rgba(0,0,0,.4); border-radius: 16px; padding: 1.5rem; }
+        .dark-theme .log-list { color: #e6edf3; }
+        .dark-theme .log-day { border: 1px solid rgba(148,163,184,0.2); border-radius: 12px; padding: 10px; margin-bottom: 12px; background: rgba(2,6,23,0.45); }
+        .dark-theme .log-day-header { color: #e6edf3; background: rgba(2,6,23,0.6); border: 1px solid rgba(148,163,184,0.25); border-radius: 10px; padding: 8px 10px; }
+        .dark-theme .log-entry { background: rgba(2,6,23,0.6); border: 1px solid rgba(148,163,184,0.2); border-radius: 10px; padding: 8px 10px; margin-top: 8px; }
+        .dark-theme .log-time { color: #94a3b8; }
+        .dark-theme .nutrient-info { color: #cbd5e1; }
+        .dark-theme .suggestion { background: rgba(2,6,23,0.6); border: 1px solid rgba(148,163,184,0.25); border-radius: 12px; padding: 12px; color: #e6edf3; }
+
+        /* Pagination */
+        .dark-theme .pagination .page-link { background: rgba(2,6,23,0.6); color: #e6edf3; border-color: rgba(148,163,184,0.25); }
+        .dark-theme .pagination .page-item.active .page-link { background: #0ea5e9; border-color: #0ea5e9; color: #0b0f14; }
+        .dark-theme .pagination .page-link:hover { background: rgba(125,211,252,.12); color: #7dd3fc; }
+
+        footer small, footer a { color: #94a3b8; }
+    </style>
 </head>
-<body>
+<body class="dark-theme">
     <!-- Header -->
     <header class="bg-dark text-white p-3 rounded-xl glow">
         <div class="container d-flex justify-content-between align-items-center">
@@ -29,7 +71,7 @@
     </header>
 
     <!-- Offcanvas Menu -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar">
+    <div class="offcanvas offcanvas-end rounded-xl" tabindex="-1" id="offcanvasNavbar">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title">Menu</h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
@@ -74,7 +116,7 @@
         <h2 class="text-center mb-4 text-primary">🍽️ Calorie Tracker</h2>
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="tracker-card">
+                <div class="tracker-card glass">
                     <h5 class="text-primary mb-3">Log What You're Eating</h5>
                     <form id="calorieForm">
                         <div class="mb-3">
@@ -84,7 +126,7 @@
                         <div id="ingredientsInput" class="collapse mb-3">
                             <label class="form-label">Ingredients (add as needed)</label>
                             <div id="ingredientFields">
-                                <div class="ingredient-field">
+                                <div class="ingredient-field glass rounded p-2">
                                     <input type="text" class="form-control" name="ingredient" placeholder="e.g., 200g spaghetti">
                                 </div>
                             </div>

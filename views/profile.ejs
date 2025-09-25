@@ -8,8 +8,71 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="/css/amblezio.css">
     <link rel="stylesheet" href="/css/profile.css">
+    <style>
+        /* Scoped dark theme for this page */
+        .dark-theme { background: #0b0f14; color: #e6edf3; }
+        .dark-theme a { color: #7dd3fc; }
+        .dark-theme a:hover { color: #38bdf8; }
+
+        /* Sections */
+        .dark-theme .core-stats-section,
+        .dark-theme .progress-section,
+        .dark-theme .health-section,
+        .dark-theme .growth-section { color: #e6edf3; }
+        .dark-theme .core-stats-title,
+        .dark-theme .progress-title,
+        .dark-theme .health-title,
+        .dark-theme .growth-title { color: #f1f5f9; }
+
+        /* Cards / Glass containers */
+        .dark-theme .profile-card,
+        .dark-theme .progress-card,
+        .dark-theme .health-card,
+        .dark-theme .growth-card,
+        .dark-theme .glass { background: rgba(2, 6, 23, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #e6edf3; box-shadow: 0 6px 24px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,0.02); backdrop-filter: blur(8px); }
+        .dark-theme .progress-header .progress-label,
+        .dark-theme .progress-header .progress-value,
+        .dark-theme .growth-value,
+        .dark-theme .health-value { color: #e6edf3; }
+        .dark-theme .progress-details span,
+        .dark-theme .growth-details,
+        .dark-theme .health-label { color: #cbd5e1; }
+        .dark-theme .health-trend { color: #86efac; }
+        .dark-theme .health-trend.negative { color: #fca5a5; }
+
+        /* Chart containers */
+        .dark-theme .core-stats-chart,
+        .dark-theme .chart-container { background: rgba(2, 6, 23, 0.6); border: 1px solid rgba(148, 163, 184, 0.16); border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.45); }
+        .dark-theme .chart-legend { color: #cbd5e1; }
+        .dark-theme .legend-item span { color: #e2e8f0; }
+
+        /* Offcanvas */
+        .dark-theme .offcanvas { background: rgba(2, 6, 23, 0.85); color: #e6edf3; border-left: 1px solid rgba(148,163,184,0.2); backdrop-filter: blur(6px); }
+        .dark-theme .offcanvas-title { color: #f1f5f9; }
+        .dark-theme .btn-close { filter: invert(1) grayscale(1); opacity: .8; }
+        .dark-theme .nav-link { color: #cbd5e1; }
+        .dark-theme .nav-link:hover { color: #7dd3fc; background: rgba(125, 211, 252, 0.08); border-radius: 8px; }
+
+        /* Header tweaks */
+        .dark-theme header.bg-dark { background-color: #0b1220 !important; border: 1px solid rgba(148, 163, 184, 0.18); }
+        .dark-theme .avatar { background: #111827; color: #e5e7eb; border: 1px solid rgba(148, 163, 184, 0.2); }
+
+        /* Radial progress */
+        .dark-theme .radial-progress svg { overflow: visible; }
+        .dark-theme .radial-progress svg .bg { stroke: rgba(255,255,255,0.12); }
+        .dark-theme .radial-progress svg .progress { stroke: #22d3ee; filter: drop-shadow(0 0 8px rgba(34,211,238,.35)); }
+        .dark-theme .radial-progress span { color: #f1f5f9; }
+
+        /* Floating refresh */
+        .dark-theme #dataRefresh { position: fixed; right: 20px; bottom: 20px; background: rgba(15, 23, 42, 0.85); color: #e6edf3; border: 1px solid rgba(148,163,184,0.25); box-shadow: 0 10px 30px rgba(0,0,0,.5); backdrop-filter: blur(8px); }
+        .dark-theme #dataRefresh:hover { background: rgba(2, 6, 23, 0.9); color: #7dd3fc; border-color: rgba(125, 211, 252, 0.35); }
+
+        /* Small utility accents */
+        .dark-theme .glow { box-shadow: 0 8px 30px rgba(2,6,23,.6); }
+        .dark-theme .rounded-xl { border-radius: 16px; }
+    </style>
 </head>
-<body>
+<body class="dark-theme">
     <!-- Header -->
     <header class="bg-dark text-white p-3 rounded-xl glow">
         <div class="container d-flex justify-content-between align-items-center">
@@ -27,7 +90,7 @@
     </header>
 
     <!-- Offcanvas Menu -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar">
+    <div class="offcanvas offcanvas-end rounded-xl" tabindex="-1" id="offcanvasNavbar">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title">Menu</h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
@@ -71,9 +134,9 @@
     <!-- Profile Content -->
     <div class="container mt-4">
         <!-- Core Stats Graph Section -->
-        <div class="core-stats-section section-fade-in">
+        <div class="core-stats-section section-fade-in p-4 rounded-xl glass">
             <h2 class="core-stats-title">Core Stats</h2>
-            <div class="core-stats-chart">
+            <div class="core-stats-chart glass p-3 rounded-xl">
                 <canvas id="coreStatsChart"></canvas>
             </div>
             <div class="chart-legend">
@@ -109,12 +172,12 @@
         </div>
 
         <!-- Progress Tracking Section -->
-        <div class="progress-section section-fade-in">
+        <div class="progress-section section-fade-in p-4 rounded-xl glass">
             <h2 class="progress-title">Progress Tracking</h2>
                     <div class="row">
                 <!-- Task Completion -->
                         <div class="col-md-6">
-                    <div class="progress-card">
+                    <div class="progress-card glass">
                         <div class="progress-header">
                             <span class="progress-label">Task Completion</span>
                             <span class="progress-value"><%= taskCompletion.toFixed(1) %>%</span>
@@ -137,7 +200,7 @@
                 </div>
                 <!-- Habit Tracking -->
                         <div class="col-md-6">
-                    <div class="progress-card">
+                    <div class="progress-card glass">
                         <div class="progress-header">
                             <span class="progress-label">Habit Completion</span>
                             <span class="progress-value"><%= habitCompletion.toFixed(1) %>%</span>
@@ -162,12 +225,12 @@
         </div>
 
         <!-- Health Dashboard Section -->
-        <div class="health-section section-fade-in">
+        <div class="health-section section-fade-in p-4 rounded-xl glass">
             <h2 class="health-title">Health </h2>
             <div class="row">
                 <!-- Monthly Calories -->
                 <div class="col-md-6">
-                    <div class="health-card">
+                    <div class="health-card glass">
                         <div class="health-icon">🔥</div>
                         <div class="health-value"><%= monthlyCalories.toLocaleString() %> kcal</div>
                         <div class="health-label">Monthly Calories</div>
@@ -178,7 +241,7 @@
                 </div>
                 <!-- Monthly Workouts -->
                 <div class="col-md-6">
-                    <div class="health-card">
+                    <div class="health-card glass">
                         <div class="health-icon">💪</div>
                         <div class="health-value"><%= monthlyWorkouts %></div>
                         <div class="health-label">Monthly Workouts</div>
@@ -189,7 +252,7 @@
                             </div>
                 <!-- Nutrient Chart -->
                 <div class="col-12 mt-4">
-                    <div class="profile-card">
+                    <div class="profile-card glass">
                         <h5 class="mb-3">Today's Nutrients</h5>
                         <div class="chart-container" style="height: 300px;">
                             <canvas id="nutrientChart"></canvas>
@@ -200,12 +263,12 @@
         </div>
 
         <!-- Personal Growth Section -->
-        <div class="growth-section section-fade-in">
+        <div class="growth-section section-fade-in p-4 rounded-xl glass">
             <h2 class="growth-title">Personal Growth</h2>
             <div class="row">
                 <!-- Monthly Books -->
                 <div class="col-md-6">
-                    <div class="growth-card">
+                    <div class="growth-card glass">
                         <div class="growth-icon">📚</div>
                         <div class="growth-value"><%= monthlySessions %></div>
                         <div class="growth-label">Reading Sessions This Month</div>
@@ -219,7 +282,7 @@
                 </div>
                 <!-- Monthly Meditation -->
                 <div class="col-md-6">
-                    <div class="growth-card">
+                    <div class="growth-card glass">
                         <div class="growth-icon">🧘</div>
                         <div class="growth-value"><%= monthlyMeditation %></div>
                         <div class="growth-label">Meditation Minutes</div>
