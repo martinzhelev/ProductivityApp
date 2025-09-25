@@ -106,12 +106,13 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
         const newTaskItem = document.createElement('li');
         newTaskItem.setAttribute('data-task-id', task.task_id);
+        newTaskItem.className = 'bg-body-tertiary text-light border border-secondary rounded-3 p-2 d-flex justify-content-between align-items-center mb-2';
         newTaskItem.innerHTML = `
-            <div>
-                <input type="checkbox" class="checkbox me-2" ${task.completed ? 'checked' : ''}>
-                ${task.task}
+            <div class="d-flex align-items-center flex-grow-1">
+                <input type="checkbox" class="checkbox form-check-input me-2" ${task.completed ? 'checked' : ''}>
+                <span class="text-light">${task.task}</span>
             </div>
-            <button class="btn btn-danger btn-sm delete-task" data-id="${task.task_id}">Delete</button>
+            <button class="btn btn-sm btn-outline-danger delete-task ms-2" data-id="${task.task_id}" title="Delete"><i class="fas fa-trash"></i></button>
         `;
 
         // Add event listener to the checkbox for task status updates
@@ -129,12 +130,13 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
         const newHabitItem = document.createElement('li');
         newHabitItem.setAttribute('data-habit-id', habit.habit_id);
+        newHabitItem.className = 'bg-body-tertiary text-light border border-secondary rounded-3 p-2 d-flex justify-content-between align-items-center mb-2';
         newHabitItem.innerHTML = `
-            <div>
-                <input type="checkbox" class="checkbox me-2" ${habit.completed ? 'checked' : ''}>
-                ${habit.habit}
+            <div class="d-flex align-items-center flex-grow-1">
+                <input type="checkbox" class="checkbox form-check-input me-2" ${habit.completed ? 'checked' : ''}>
+                <span class="text-light">${habit.habit}</span>
             </div>
-            <button class="btn btn-danger btn-sm delete-task" data-id="${habit.habit_id}">Delete</button>
+            <button class="btn btn-sm btn-outline-danger delete-task ms-2" data-id="${habit.habit_id}" title="Delete"><i class="fas fa-trash"></i></button>
         `;
 
         // Add event listener to the checkbox for habit status updates
@@ -146,8 +148,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
     // Function to update task completion status
     function updateTaskStatus(taskId, isChecked) {
-        event.preventDefault();
-        const taskCategory = document.getElementById('task-category').value
+        const categorySelect = document.getElementById('task-category');
+        const taskCategory = categorySelect ? categorySelect.value : undefined;
         console.log("task category: " + taskCategory)
         fetch(`/home/${userId}`, {  // Only userId in the URL
             method: 'PATCH',
@@ -160,8 +162,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
     }
 
     function updateHabitStatus(habitId, isChecked) {
-        event.preventDefault();
-        habitCategory = document.getElementById('habit-category').value
+        const habitSelect = document.getElementById('habit-category');
+        habitCategory = habitSelect ? habitSelect.value : undefined;
 
         fetch(`/home/${userId}`, {  // Only userId in the URL
             method: 'PATCH',
@@ -261,9 +263,10 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
     // Single delete handler for all delete buttons
     document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('delete-task')) {
-            const id = e.target.getAttribute('data-id');
-            const li = e.target.closest('li');
+        const deleteBtn = e.target.closest('.delete-task');
+        if (deleteBtn) {
+            const id = deleteBtn.getAttribute('data-id');
+            const li = deleteBtn.closest('li');
             
             // Determine if it's a task or habit
             const isTask = li.hasAttribute('data-task-id');

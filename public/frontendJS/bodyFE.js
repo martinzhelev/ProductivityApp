@@ -111,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Mark workout as complete/incomplete
     document.querySelectorAll('.workout-checkbox').forEach(checkbox => {
+        checkbox.classList.add('form-check-input');
         checkbox.addEventListener('change', async (event) => {
             const isCompleted = event.target.checked;
             const date = event.target.getAttribute('data-date');

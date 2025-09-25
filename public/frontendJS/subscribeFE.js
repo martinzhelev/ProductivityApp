@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Disable button and show loading state
             subscribeBtn.disabled = true;
             subscribeBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+            subscribeBtn.classList.add('btn','btn-primary');
 
             try {
                 console.log("Creating checkout session...");
@@ -61,6 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Re-enable button
                 subscribeBtn.disabled = false;
                 subscribeBtn.innerHTML = '<i class="fas fa-credit-card me-2"></i>Subscribe via Stripe';
+                subscribeBtn.classList.add('btn','btn-success');
             }
         });
     } else {
@@ -78,6 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Disable button and show loading state
                 cancelSubscriptionBtn.disabled = true;
                 cancelSubscriptionBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Canceling...';
+                cancelSubscriptionBtn.classList.add('btn','btn-outline-danger');
 
                 try {
                     console.log("Canceling subscription...");
@@ -113,6 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     // Re-enable button
                     cancelSubscriptionBtn.disabled = false;
                     cancelSubscriptionBtn.innerHTML = '<i class="fas fa-times me-2"></i>Cancel Subscription';
+                    cancelSubscriptionBtn.classList.add('btn','btn-outline-danger');
                 }
             }
         });
@@ -131,6 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Disable button and show loading state
                 reactivateSubscriptionBtn.disabled = true;
                 reactivateSubscriptionBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Reactivating...';
+                reactivateSubscriptionBtn.classList.add('btn','btn-outline-success');
 
                 try {
                     console.log("Reactivating subscription...");
@@ -166,6 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     // Re-enable button
                     reactivateSubscriptionBtn.disabled = false;
                     reactivateSubscriptionBtn.innerHTML = '<i class="fas fa-play me-2"></i>Reactivate Subscription';
+                    reactivateSubscriptionBtn.classList.add('btn','btn-outline-success');
                 }
             }
         });

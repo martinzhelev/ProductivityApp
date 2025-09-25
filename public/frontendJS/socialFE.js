@@ -66,6 +66,10 @@ document.addEventListener("DOMContentLoaded", function () {
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
             eventList.innerHTML = doc.getElementById("eventList").innerHTML;
+            // enforce dark styles on dynamic list items
+            eventList.querySelectorAll('.list-group-item').forEach(li => {
+                li.classList.add('bg-body-tertiary','text-light','border','border-secondary','rounded-3');
+            });
             eventPageInfo.textContent = doc.getElementById("eventPageInfo").textContent;
             prevEventPageBtn.disabled = doc.getElementById("prevEventPage").hasAttribute("disabled");
             nextEventPageBtn.disabled = doc.getElementById("nextEventPage").hasAttribute("disabled");
@@ -175,6 +179,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
             peopleList.innerHTML = doc.getElementById("peopleList").innerHTML;
+            peopleList.querySelectorAll('.list-group-item').forEach(li => {
+                li.classList.add('bg-body-tertiary','text-light','border','border-secondary','rounded-3');
+            });
             peoplePageInfo.textContent = doc.getElementById("peoplePageInfo").textContent;
             prevPeoplePageBtn.disabled = doc.getElementById("prevPeoplePage").hasAttribute("disabled");
             nextPeoplePageBtn.disabled = doc.getElementById("nextPeoplePage").hasAttribute("disabled");

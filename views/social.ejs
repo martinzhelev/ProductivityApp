@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/css/amblezio.css">
     <link rel="stylesheet" href="/css/social.css">
 </head>
-<body>
+<body class="bg-dark text-light">
     <!-- Header -->
     <header class="bg-dark text-white p-3 rounded-xl glow">
         <div class="container d-flex justify-content-between align-items-center">
@@ -27,42 +27,42 @@
     </header>
 
     <!-- Offcanvas Menu -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar">
+    <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasNavbar">
         <div class="offcanvas-header">
-            <h5 class="offcanvas-title">Menu</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+            <h5 class="offcanvas-title text-light">Menu</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
         </div>
         <div class="offcanvas-body">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="/home/<%= userId %>">🏠 Dashboard</a>
+                    <a class="nav-link text-light" href="/home/<%= userId %>">🏠 Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/subscribe/<%= userId %>">💳 Payments</a>
+                    <a class="nav-link text-light" href="/subscribe/<%= userId %>">💳 Payments</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/profile/<%= userId %>">👤 Profile</a>
+                    <a class="nav-link text-light" href="/profile/<%= userId %>">👤 Profile</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/work/<%= userId %>">💼 Work</a>
+                    <a class="nav-link text-light" href="/work/<%= userId %>">💼 Work</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/mental/<%= userId %>">🧠 Mental</a>
+                    <a class="nav-link text-light" href="/mental/<%= userId %>">🧠 Mental</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/calorietracker/<%= userId %>">🍽️ Calorie Tracker</a>
+                    <a class="nav-link text-light" href="/calorietracker/<%= userId %>">🍽️ Calorie Tracker</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/social/<%= userId %>">👥 Social</a>
+                    <a class="nav-link text-light" href="/social/<%= userId %>">👥 Social</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/timeoff/<%= userId %>">⏰ Time Off</a>
+                    <a class="nav-link text-light" href="/timeoff/<%= userId %>">⏰ Time Off</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/body/<%= userId %>">💪 Body</a>
+                    <a class="nav-link text-light" href="/body/<%= userId %>">💪 Body</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/auth/logout">🚪 Logout</a>
+                    <a class="nav-link text-light" href="/auth/logout">🚪 Logout</a>
                 </li>
             </ul>
         </div>
