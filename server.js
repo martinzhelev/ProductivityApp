@@ -61,6 +61,7 @@ const socialRouter = require('./routes/social')
 const timeOffRouter = require('./routes/timeOff');
 const calorieTrackerRouter = require("./routes/calorieTracker");
 const profileRouter = require("./routes/profile");
+const financeRouter = require("./routes/finance");
 const authRouter = require("./routes/auth");
 const subscribeRouter = require("./routes/subscribe");
 const stripeRouter = require("./routes/stripe"); // Активирано
@@ -79,6 +80,7 @@ app.use("/work", authMiddleware, redirectFreeUsers, workRouter);
 app.use("/social", authMiddleware, redirectFreeUsers, socialRouter);
 app.use("/timeoff", authMiddleware, redirectFreeUsers, timeOffRouter);
 app.use("/calorieTracker", authMiddleware, redirectFreeUsers, calorieTrackerRouter);
+app.use("/finance", authMiddleware, redirectFreeUsers, financeRouter);
 app.use("/profile", authMiddleware, redirectFreeUsers, profileRouter);
 
 // Auth and subscription routes
