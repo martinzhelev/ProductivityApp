@@ -48,6 +48,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // Enforce dark styling on dynamically updated elements if needed
+    document.querySelectorAll('.table, .form-control, .form-select').forEach(el => {
+        if (el.classList.contains('form-control') || el.classList.contains('form-select')) {
+            el.classList.add('bg-dark','text-light','border','border-secondary');
+        }
+    });
 });
 
 

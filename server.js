@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { startScheduler } = require('./utils/scheduler');
 
-// Raw body parser for Stripe webhooks - MUST be before JSON parser
+// Raw body parser for Stripe webhooks - must be before stripe router
 app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
 
 // Middleware for JSON and URL-encoded form data
@@ -15,6 +15,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(cookieParser());
+
+
 
 // JWT middleware
 const authMiddleware = (req, res, next) => {
@@ -39,9 +41,9 @@ app.set('view engine', 'ejs');
 
 const db = mysql.createPool({
     host: process.env.DATABASE_HOST || 'localhost',
-    user: 'root',
-    password: null,
-    database: "productivityapp",
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE_NAME,
     waitForConnections: true,
     connectionLimit: 0,
     queueLimit: 0,
@@ -61,6 +63,7 @@ const socialRouter = require('./routes/social')
 const timeOffRouter = require('./routes/timeOff');
 const calorieTrackerRouter = require("./routes/calorieTracker");
 const profileRouter = require("./routes/profile");
+const financeRouter = require("./routes/finance");
 const authRouter = require("./routes/auth");
 const subscribeRouter = require("./routes/subscribe");
 const stripeRouter = require("./routes/stripe"); // Активирано
@@ -79,6 +82,7 @@ app.use("/work", authMiddleware, redirectFreeUsers, workRouter);
 app.use("/social", authMiddleware, redirectFreeUsers, socialRouter);
 app.use("/timeoff", authMiddleware, redirectFreeUsers, timeOffRouter);
 app.use("/calorieTracker", authMiddleware, redirectFreeUsers, calorieTrackerRouter);
+app.use("/finance", authMiddleware, redirectFreeUsers, financeRouter);
 app.use("/profile", authMiddleware, redirectFreeUsers, profileRouter);
 
 // Auth and subscription routes
