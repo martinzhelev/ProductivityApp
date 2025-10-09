@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Tracker</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/amblezio.css">
+    <style>
+        .dark-theme { background: #0b0f14; color: #e6edf3; }
+        .dark-theme a { color: #7dd3fc; }
+        .dark-theme a:hover { color: #38bdf8; }
+        .dark-theme .glass { background: rgba(2,6,23,.6); border: 1px solid rgba(148,163,184,.2); color: #e6edf3; box-shadow: 0 6px 24px rgba(0,0,0,.4); backdrop-filter: blur(8px); }
+        .dark-theme .rounded-xl { border-radius: 16px; }
+        .dark-theme .glow { box-shadow: 0 8px 30px rgba(2,6,23,.6); }
+        .dark-theme .offcanvas { background: rgba(2,6,23,.85); color: #e6edf3; border-left: 1px solid rgba(148,163,184,.2); backdrop-filter: blur(6px); }
+        .dark-theme .nav-link { color: #cbd5e1; }
+        .dark-theme .nav-link:hover { color: #7dd3fc; background: rgba(125,211,252,.08); border-radius: 8px; }
+        .dark-theme .form-control, .dark-theme .form-select { background: #0b1220; color: #e6edf3; border: 1px solid rgba(148,163,184,.25); }
+        .dark-theme .table { color: #e6edf3; }
+        .dark-theme .table-bordered { border-color: rgba(148,163,184,.25); }
+        .dark-theme .table-striped tbody tr:nth-of-type(odd) { background: rgba(2,6,23,.35); }
+        .dark-theme .summary-card { background: rgba(2,6,23,.6); border: 1px solid rgba(148,163,184,.2); border-radius: 16px; }
+    </style>
+    </head>
+<body class="dark-theme">
+    <header class="bg-dark text-white p-3 rounded-xl glow">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="profile d-flex align-items-center">
+                <span class="avatar me-2">M</span>
+                <span class="ms-2"><%= username %></span>
+            </div>
+            <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
+                ☰
+            </button>
+        </div>
+    </header>
+
+    <div class="offcanvas offcanvas-end rounded-xl" tabindex="-1" id="offcanvasNavbar">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Menu</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="/home/<%= userId %>">🏠 Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/subscribe/<%= userId %>">💳 Payments</a></li>
+                <li class="nav-item"><a class="nav-link" href="/profile/<%= userId %>">👤 Profile</a></li>
+                <li class="nav-item"><a class="nav-link" href="/work/<%= userId %>">💼 Work</a></li>
+                <li class="nav-item"><a class="nav-link" href="/mental/<%= userId %>">🧠 Mental</a></li>
+                <li class="nav-item"><a class="nav-link" href="/calorietracker/<%= userId %>">🍽️ Calorie Tracker</a></li>
+                <li class="nav-item"><a class="nav-link" href="/social/<%= userId %>">👥 Social</a></li>
+                <li class="nav-item"><a class="nav-link" href="/timeoff/<%= userId %>">⏰ Time Off</a></li>
+                <li class="nav-item"><a class="nav-link" href="/body/<%= userId %>">💪 Body</a></li>
+                <li class="nav-item"><a class="nav-link" href="/finance/<%= userId %>">💰 Finance</a></li>
+                <li class="nav-item"><a class="nav-link" href="/auth/logout">🚪 Logout</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <h2 class="text-center mb-4 text-success">💰 Finance Tracker</h2>
+
+        <div class="row g-4">
+            <div class="col-md-5">
+                <div class="p-4 glass rounded-xl">
+                    <h4 class="mb-3">Add Entry</h4>
+                    <form id="financeForm">
+                        <div class="mb-3">
+                            <label class="form-label">Type</label>
+                            <select id="type" class="form-select" required>
+                                <option value="income">Income</option>
+                                <option value="expense">Expense</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Amount</label>
+                            <input type="number" id="amount" class="form-control" min="0.01" step="0.01" placeholder="e.g., 120.50" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select id="category" class="form-select">
+                                <option>General</option>
+                                <option>Salary</option>
+                                <option>Food</option>
+                                <option>Transport</option>
+                                <option>Rent</option>
+                                <option>Bills</option>
+                                <option>Entertainment</option>
+                                <option>Health</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Date</label>
+                            <input type="date" id="date" class="form-control" value="<%= new Date().toISOString().split('T')[0] %>">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Note (optional)</label>
+                            <input type="text" id="note" class="form-control" placeholder="Short note">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Save</button>
+                    </form>
+                </div>
+
+                <div class="p-4 mt-4 summary-card">
+                    <h5 class="mb-3">This Month</h5>
+                    <div class="d-flex justify-content-between">
+                        <div>Income</div>
+                        <div class="text-success fw-bold">+ <%= monthIncome.toFixed(2) %></div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <div>Expense</div>
+                        <div class="text-danger fw-bold">- <%= monthExpense.toFixed(2) %></div>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <div>Net</div>
+                        <div class="fw-bold"><%= (monthIncome - monthExpense).toFixed(2) %></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <div class="p-4 glass rounded-xl">
+                    <h4 class="mb-3">Recent Entries</h4>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped text-center">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>Note</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (logs && logs.length > 0) { %>
+                                    <% logs.forEach(row => { %>
+                                        <tr>
+                                            <td><%= new Date(row.log_date).toLocaleDateString('en-GB') %></td>
+                                            <td><%= row.type %></td>
+                                            <td><%= row.category %></td>
+                                            <td class="<%= row.type === 'expense' ? 'text-danger' : 'text-success' %>"><%= row.type === 'expense' ? '-' : '+' %><%= Number(row.amount).toFixed(2) %></td>
+                                            <td><%= row.note || '' %></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-danger delete-log" data-id="<%= row.id %>">Delete</button>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr><td colspan="6" class="text-muted">No entries yet.</td></tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <nav class="mt-2">
+                        <ul class="pagination justify-content-center">
+                            <% if (page > 1) { %>
+                                <li class="page-item"><a class="page-link" href="?page=<%= page - 1 %>">Previous</a></li>
+                            <% } %>
+                            <% for (let i=1;i<=totalPages;i++) { %>
+                                <li class="page-item <%= i === page ? 'active' : '' %>"><a class="page-link" href="?page=<%= i %>"><%= i %></a></li>
+                            <% } %>
+                            <% if (page < totalPages) { %>
+                                <li class="page-item"><a class="page-link" href="?page=<%= page + 1 %>">Next</a></li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.userId = '<%= userId %>';
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/frontendJS/financeFE.js"></script>
+    </body>
+    </html>
+
+

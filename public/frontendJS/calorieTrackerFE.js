@@ -5,8 +5,8 @@ const addIngredientBtn = document.getElementById("addIngredient");
 
 addIngredientBtn.addEventListener("click", () => {
     const newField = document.createElement("div");
-    newField.className = "ingredient-field bg-body-tertiary text-light border border-secondary rounded-3 p-2 mt-2";
-    newField.innerHTML = `<input type="text" class="form-control bg-dark text-light border-secondary" name="ingredient" placeholder="e.g., 50g pancetta">`;
+    newField.className = "ingredient-field glass rounded p-2 mt-2";
+    newField.innerHTML = `<input type="text" class="form-control" name="ingredient" placeholder="e.g., 50g pancetta">`;
     ingredientFields.appendChild(newField);
 });
 
@@ -27,7 +27,7 @@ form.addEventListener("submit", async (e) => {
 
         if (data.success) {
             document.getElementById("foodText").value = "";
-            ingredientFields.innerHTML = `<div class="ingredient-field bg-body-tertiary text-light border border-secondary rounded-3 p-2"><input type="text" class="form-control bg-dark text-light border-secondary" name="ingredient" placeholder="e.g., 200g spaghetti"></div>`;
+            ingredientFields.innerHTML = `<div class="ingredient-field glass rounded p-2"><input type="text" class="form-control" name="ingredient" placeholder="e.g., 200g spaghetti"></div>`;
             bootstrap.Collapse.getOrCreateInstance(ingredientsInput).hide();
             window.location.reload();
         } else if (data.needsIngredients) {
