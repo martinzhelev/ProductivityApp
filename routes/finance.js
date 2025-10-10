@@ -37,7 +37,7 @@ router.get('/:userId', async (req, res) => {
 
         // Recent logs, most recent first
         const [logs] = await db.execute(
-            `SELECT id, type, amount, category, note, log_date, created_at
+            `SELECT id, user_id, type, amount, category, note, log_date, created_at
              FROM finance_logs
              WHERE user_id = ?
              ORDER BY log_date DESC, created_at DESC

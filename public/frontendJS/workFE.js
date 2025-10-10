@@ -153,7 +153,10 @@ document.addEventListener("DOMContentLoaded", () => {
     
     
     // Attach event listeners to existing checkboxes
-    document.querySelectorAll(".checkbox").forEach(attachCheckboxEvent);
+    document.querySelectorAll(".checkbox").forEach(cb => {
+        cb.classList.add('form-check-input');
+        attachCheckboxEvent(cb);
+    });
     
     const tasksList = document.getElementById("tasks-list");
 

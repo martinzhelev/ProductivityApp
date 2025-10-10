@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { startScheduler } = require('./utils/scheduler');
 
-// Raw body parser for Stripe webhooks - MUST be before JSON parser
+// Raw body parser for Stripe webhooks - must be before stripe router
 app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
 
 // Middleware for JSON and URL-encoded form data
@@ -15,6 +15,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(cookieParser());
+
+
 
 // JWT middleware
 const authMiddleware = (req, res, next) => {
@@ -39,9 +41,9 @@ app.set('view engine', 'ejs');
 
 const db = mysql.createPool({
     host: process.env.DATABASE_HOST || 'localhost',
-    user: 'root',
-    password: null,
-    database: "productivityapp",
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE_NAME,
     waitForConnections: true,
     connectionLimit: 0,
     queueLimit: 0,

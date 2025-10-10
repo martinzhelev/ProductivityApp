@@ -144,6 +144,12 @@ document.addEventListener("DOMContentLoaded", function () {
             weeklyList.innerHTML = doc.getElementById("weeklyList").innerHTML;
             monthlyList.innerHTML = doc.getElementById("monthlyList").innerHTML;
             yearlyList.innerHTML = doc.getElementById("yearlyList").innerHTML;
+            [dailyList, weeklyList, monthlyList, yearlyList].forEach(list => {
+                list.querySelectorAll('.list-group-item').forEach(item => {
+                    item.classList.add('bg-body-tertiary','text-light','border','border-secondary','rounded-3');
+                });
+                list.querySelectorAll('.btn-danger').forEach(btn => btn.classList.add('btn','btn-sm','btn-outline-danger'));
+            });
             addDeleteListeners();
         })
         .catch(error => console.error("Error fetching time off lists:", error));

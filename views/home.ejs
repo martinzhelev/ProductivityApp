@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="/css/home.css">
 </head>
 
-<body>
+<body class="bg-dark text-light">
 
     <header class="bg-dark text-white p-3 rounded-xl glow">
         <div class="container d-flex justify-content-between align-items-center">
@@ -29,42 +29,42 @@
     </header>
 
     <!-- Offcanvas Menu -->
-    <div class="offcanvas offcanvas-end rounded-xl" tabindex="-1" id="offcanvasNavbar">
+    <div class="offcanvas offcanvas-end rounded-xl text-bg-dark" tabindex="-1" id="offcanvasNavbar">
         <div class="offcanvas-header">
-            <h5 class="offcanvas-title">Menu</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+            <h5 class="offcanvas-title text-light">Menu</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
         </div>
         <div class="offcanvas-body">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="/home/<%= userId %>">🏠 Dashboard</a>
+                    <a class="nav-link text-light" href="/home/<%= userId %>">🏠 Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/subscribe/<%= userId %>">💳 Payments</a>
+                    <a class="nav-link text-light" href="/subscribe/<%= userId %>">💳 Payments</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/profile/<%= userId %>">👤 Profile</a>
+                    <a class="nav-link text-light" href="/profile/<%= userId %>">👤 Profile</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/work/<%= userId %>">💼 Work</a>
+                    <a class="nav-link text-light" href="/work/<%= userId %>">💼 Work</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/mental/<%= userId %>">🧠 Mental</a>
+                    <a class="nav-link text-light" href="/mental/<%= userId %>">🧠 Mental</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/calorietracker/<%= userId %>">🍽️ Calorie Tracker</a>
+                    <a class="nav-link text-light" href="/calorietracker/<%= userId %>">🍽️ Calorie Tracker</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/social/<%= userId %>">👥 Social</a>
+                    <a class="nav-link text-light" href="/social/<%= userId %>">👥 Social</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/timeoff/<%= userId %>">⏰ Time Off</a>
+                    <a class="nav-link text-light" href="/timeoff/<%= userId %>">⏰ Time Off</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/body/<%= userId %>">💪 Body</a>
+                    <a class="nav-link text-light" href="/body/<%= userId %>">💪 Body</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/auth/logout">🚪 Logout</a>
+                    <a class="nav-link text-light" href="/auth/logout">🚪 Logout</a>
                 </li>
             </ul>
         </div>
@@ -74,106 +74,105 @@
         <div class="row">
             <!-- Left Column: Tasks -->
             <div class="col-md-4 position-relative">
-                <div class="column glass p-4">
-                    <h2 class="mb-3">Tasks</h2>
+                <div class="column glass p-4 bg-dark text-light border border-secondary rounded-3">
+                    <h2 class="mb-3 text-light">Tasks</h2>
                     <ul class="tasks list-unstyled" id="tasks-list">
                         <% if (tasks.length> 0) { %>
                             <% tasks.forEach(function(task) { %>
-                                <li data-task-id="<%= task.task_id %>" class="<%= task.completed ? 'completed' : '' %>">
-                                    <div class="d-flex align-items-center">
-                                        <input type="checkbox" class="checkbox me-2" <%=task.completed ? 'checked' : '' %> >
-                                        <span><%= task.task %></span>
+                                <li data-task-id="<%= task.task_id %>" class="<%= task.completed ? 'completed ' : '' %>bg-body-tertiary text-light border border-secondary rounded-3 p-2 d-flex justify-content-between align-items-center mb-2">
+                                    <div class="d-flex align-items-center flex-grow-1">
+                                        <input type="checkbox" class="checkbox form-check-input me-2" <%=task.completed ? 'checked' : '' %> >
+                                        <span class="text-light"><%= task.task %></span>
                                     </div>
-                                    <button class="btn btn-icon btn-danger delete-task" data-id="<%= task.task_id %>" title="Delete"><i class="fas fa-trash"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger delete-task ms-2" data-id="<%= task.task_id %>" title="Delete"><i class="fas fa-trash"></i></button>
                                 </li>
                             <% }); %>
                         <% } else { %>
-                            <li>No tasks found</li>
+                            <li class="bg-body-tertiary text-light border border-secondary rounded-3 p-2 d-flex justify-content-between align-items-center mb-2">No tasks found</li>
                         <% } %>
                     </ul>
-                    <button class="fab" id="addTask">+</button>
                     <button class="btn btn-danger mt-2 w-100" id="removeTask">Remove Done Tasks</button>
+                    <button class="fab btn btn-primary position-absolute end-0 bottom-0 me-3 mb-3 rounded-circle shadow" id="addTask" aria-label="Add task">+</button>
                 </div>
             </div>
 
 
             <!-- Middle Column: Habits -->
             <div class="col-md-4 position-relative">
-                <div class="column glass p-4">
-                    <h2 class="mb-3">Habits</h2>
+                <div class="column glass p-4 bg-dark text-light border border-secondary rounded-3">
+                    <h2 class="mb-3 text-light">Habits</h2>
                     <ul class="habits list-unstyled d-grid gap-2" id="habits-list">
                         <% if (habits.length> 0) { %>
                             <% habits.forEach(function(habit) { %>
-                                <li data-habit-id="<%= habit.habit_id %>">
-                                    <div class="chip <%= habit.category === 'Mental' ? 'purple' : (habit.category === 'Strength' ? 'green' : 'blue') %>">
-                                        <span class="icon">💠</span>
+                                <li data-habit-id="<%= habit.habit_id %>" class="bg-body-tertiary text-light border border-secondary rounded-3 p-2 d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center flex-grow-1">
                                         <label class="m-0 d-flex align-items-center">
-                                            <input type="checkbox" class="checkbox me-2" <%=habit.completed ? 'checked' : '' %> >
-                                            <span><%= habit.habit %></span>
+                                            <input type="checkbox" class="checkbox form-check-input me-2" <%=habit.completed ? 'checked' : '' %> >
+                                            <span class="text-light"><%= habit.habit %></span>
                                         </label>
                                     </div>
-                                    <button class="btn btn-icon btn-danger delete-task" data-id="<%= habit.habit_id %>" title="Delete"><i class="fas fa-trash"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger delete-task ms-2" data-id="<%= habit.habit_id %>" title="Delete"><i class="fas fa-trash"></i></button>
                                 </li>
                             <% }); %>
                         <% } else { %>
-                            <li>No habits found</li>
+                            <li class="bg-body-tertiary text-light border border-secondary rounded-3 p-2 d-flex justify-content-between align-items-center mb-2">No habits found</li>
                         <% } %>
                     </ul>
-                    <button class="fab" id="addHabit">+</button>
                     <button class="btn btn-danger mt-2 w-100" id="removeHabit">Remove Habits</button>
+                    <button class="fab btn btn-primary position-absolute end-0 bottom-0 me-3 mb-3 rounded-circle shadow" id="addHabit" aria-label="Add habit">+</button>
                 </div>
             </div>
 
             <!-- Right Column: Stats -->
             <div class="col-md-4">
-                <div class="column glass p-4">
-                    <h2 class="mb-3">Player Stats</h2>
+                <div class="column glass p-4 bg-dark text-light border border-secondary rounded-3">
+                    <h2 class="mb-3 text-light">Player Stats</h2>
                     <div class="stats d-grid gap-3">
                         <% if (stats) { %>
                             <div>
-                                <div class="d-flex justify-content-between mb-1"><span>Strength</span><span><%= stats.strength || 0 %>%</span></div>
+                                <div class="d-flex justify-content-between mb-1"><span class="text-light">Strength</span><span class="text-light"><%= stats.strength || 0 %>%</span></div>
                                 <div class="stat-bar"><span class="stat-red" style="--p:<%= stats.strength || 0 %>;"></span></div>
                             </div>
                             <div>
-                                <div class="d-flex justify-content-between mb-1"><span>Agility</span><span><%= stats.agility || 0 %>%</span></div>
+                                <div class="d-flex justify-content-between mb-1"><span class="text-light">Agility</span><span class="text-light"><%= stats.agility || 0 %>%</span></div>
                                 <div class="stat-bar"><span class="stat-orange" style="--p:<%= stats.agility || 0 %>;"></span></div>
                             </div>
                             <div>
-                                <div class="d-flex justify-content-between mb-1"><span>Mental</span><span><%= stats.mental || 0 %>%</span></div>
+                                <div class="d-flex justify-content-between mb-1"><span class="text-light">Mental</span><span class="text-light"><%= stats.mental || 0 %>%</span></div>
                                 <div class="stat-bar"><span class="stat-purple" style="--p:<%= stats.mental || 0 %>;"></span></div>
                             </div>
                             <div>
-                                <div class="d-flex justify-content-between mb-1"><span>Work</span><span><%= stats.work || 0 %>%</span></div>
+                                <div class="d-flex justify-content-between mb-1"><span class="text-light">Work</span><span class="text-light"><%= stats.work || 0 %>%</span></div>
                                 <div class="stat-bar"><span class="stat-blue" style="--p:<%= stats.work || 0 %>;"></span></div>
                             </div>
                             <div>
-                                <div class="d-flex justify-content-between mb-1"><span>Social</span><span><%= stats.social || 0 %>%</span></div>
+                                <div class="d-flex justify-content-between mb-1"><span class="text-light">Social</span><span class="text-light"><%= stats.social || 0 %>%</span></div>
                                 <div class="stat-bar"><span class="stat-teal" style="--p:<%= stats.social || 0 %>;"></span></div>
                             </div>
                             <div>
-                                <div class="d-flex justify-content-between mb-1"><span>Financial</span><span><%= stats.financial || 0 %>%</span></div>
+                                <div class="d-flex justify-content-between mb-1"><span class="text-light">Financial</span><span class="text-light"><%= stats.financial || 0 %>%</span></div>
                                 <div class="stat-bar"><span class="stat-green" style="--p:<%= stats.financial || 0 %>;"></span></div>
                             </div>
                             <div>
-                                <div class="d-flex justify-content-between mb-1"><span>Speed</span><span><%= stats.speed || 0 %>%</span></div>
+                                <div class="d-flex justify-content-between mb-1"><span class="text-light">Speed</span><span class="text-light"><%= stats.speed || 0 %>%</span></div>
                                 <div class="stat-bar"><span class="stat-yellow" style="--p:<%= stats.speed || 0 %>;"></span></div>
                             </div>
                             <% } else { %>
-                                <p>No stats available</p>
+                                <p class="text-light-50">No stats available</p>
                                 <% } %>
                     </div>
                 </div>
             </div>
 
 
-            <div class="modal" id="task-modal">
-                <div class="modal-header">
+            <div class="modal bg-dark text-light" id="task-modal">
+                <div class="modal-header bg-dark text-light border-secondary">
                     <span class="title">Add Task</span>
                     <span class="close-button" id="close-task-modal">&times;</span>
                 </div>
-                <div class="modal-body">
-                    <input type="text" name="task" id="task-input" placeholder="Enter your task" />
-                    <select id="task-category" class="form-select">
+                <div class="modal-body bg-dark text-light">
+                    <input type="text" name="task" id="task-input" class="form-control bg-dark text-light border-secondary" placeholder="Enter your task" />
+                    <select id="task-category" class="form-select bg-dark text-light border-secondary">
                         <option value="" disabled selected>Select Category</option>
                         <option value="Strength">Strength</option>
                         <option value="Agility">Agility</option>
@@ -183,17 +182,17 @@
                         <option value="Financial">Financial</option>
                         <option value="Speed">Speed</option>
                     </select>
-                    <button id="modal-add-task">Add Task</button>
+                    <button id="modal-add-task" class="btn btn-outline-light mt-2">Add Task</button>
                 </div>
             </div>
-            <div class="modal" id="habit-modal">
-                <div class="modal-header">
+            <div class="modal bg-dark text-light" id="habit-modal">
+                <div class="modal-header bg-dark text-light border-secondary">
                     <span class="title">Add Habit</span>
                     <span class="close-button" id="close-habit-modal">&times;</span>
                 </div>
-                <div class="modal-body">
-                    <input type="text" name="habit" id="habit-input" placeholder="Enter your habit" />
-                    <select id="habit-category" class="form-select">
+                <div class="modal-body bg-dark text-light">
+                    <input type="text" name="habit" id="habit-input" class="form-control bg-dark text-light border-secondary" placeholder="Enter your habit" />
+                    <select id="habit-category" class="form-select bg-dark text-light border-secondary">
                         <option value="" disabled selected>Select Category</option>
                         <option value="Strength">Strength</option>
                         <option value="Agility">Agility</option>
@@ -203,7 +202,7 @@
                         <option value="Financial">Financial</option>
                         <option value="Speed">Speed</option>
                     </select>
-                    <button id="modal-add-habit">Add Habit</button>
+                    <button id="modal-add-habit" class="btn btn-outline-light mt-2">Add Habit</button>
                 </div>
             </div>
             <div id="overlay"></div>

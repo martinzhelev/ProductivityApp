@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
     refreshButton.addEventListener('click', function() {
         // Add loading state
         sections.forEach(section => {
-            section.innerHTML = '<div class="loading"></div>';
+                section.innerHTML = '<div class="loading bg-body-tertiary text-light border border-secondary rounded-3 p-4"></div>';
         });
 
         // Simulate data refresh

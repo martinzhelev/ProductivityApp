@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,88 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="/css/amblezio.css">
     <link rel="stylesheet" href="/css/timeoff.css">
+    <style>
+        /* Ensure full dark mode for all components, including nav-tabs */
+        body {
+            background-color: #212529 !important;
+            color: #f8f9fa !important;
+        }
+        .card {
+            background-color: #343a40 !important;
+            color: #f8f9fa !important;
+            border-color: #495057 !important;
+        }
+        .nav-tabs {
+            background-color: #343a40 !important;
+            border-bottom: 1px solid #495057 !important;
+        }
+        .nav-tabs .nav-link {
+            color: #adb5bd !important;
+            background-color: #343a40 !important;
+            border: 1px solid transparent !important;
+        }
+        .nav-tabs .nav-link:hover,
+        .nav-tabs .nav-link:focus {
+            color: #f8f9fa !important;
+            background-color: #495057 !important;
+            border-color: #495057 !important;
+        }
+        .nav-tabs .nav-link.active {
+            color: #f8f9fa !important;
+            background-color: #495057 !important;
+            border-color: #495057 #495057 #343a40 !important;
+        }
+        .form-control, .form-control:focus {
+            background-color: #343a40 !important;
+            color: #f8f9fa !important;
+            border-color: #495057 !important;
+        }
+        .form-control::placeholder {
+            color: #6c757d !important;
+        }
+        .list-group-item {
+            background-color: #495057 !important;
+            color: #f8f9fa !important;
+            border-color: #6c757d !important;
+        }
+        .btn-outline-danger {
+            color: #dc3545 !important;
+            border-color: #dc3545 !important;
+        }
+        .btn-outline-danger:hover {
+            background-color: #dc3545 !important;
+            color: #f8f9fa !important;
+        }
+        .text-muted {
+            color: #6c757d !important;
+        }
+        .offcanvas {
+            background-color: #343a40 !important;
+            color: #f8f9fa !important;
+        }
+        .offcanvas .nav-link {
+            color: #adb5bd !important;
+        }
+        .offcanvas .nav-link:hover {
+            color: #f8f9fa !important;
+            background-color: #495057 !important;
+        }
+        .header {
+            background-color: #212529 !important;
+            color: #f8f9fa !important;
+        }
+        .btn-close {
+            filter: invert(1);
+        }
+        .tab-pane {
+            background-color: #343a40 !important;
+        }
+        .form-label {
+            color: #f8f9fa !important;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-dark text-light">
     <!-- Header -->
     <header class="bg-dark text-white p-3 rounded-xl glow">
         <div class="container d-flex justify-content-between align-items-center">
@@ -27,39 +107,39 @@
     </header>
 
     <!-- Offcanvas Menu -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar">
+    <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasNavbar">
         <div class="offcanvas-header">
-            <h5 class="offcanvas-title">Menu</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+            <h5 class="offcanvas-title text-light">Menu</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
         </div>
         <div class="offcanvas-body">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="/home/<%= userId %>">🏠 Dashboard</a>
+                    <a class="nav-link text-light" href="/home/<%= userId %>">🏠 Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/profile/<%= userId %>">👤 Profile</a>
+                    <a class="nav-link text-light" href="/profile/<%= userId %>">👤 Profile</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/work/<%= userId %>">💼 Work</a>
+                    <a class="nav-link text-light" href="/work/<%= userId %>">💼 Work</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/mental/<%= userId %>">🧠 Mental</a>
+                    <a class="nav-link text-light" href="/mental/<%= userId %>">🧠 Mental</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/calorietracker/<%= userId %>">🍽️ Calorie Tracker</a>
+                    <a class="nav-link text-light" href="/calorietracker/<%= userId %>">🍽️ Calorie Tracker</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/social/<%= userId %>">👥 Social</a>
+                    <a class="nav-link text-light" href="/social/<%= userId %>">👥 Social</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/timeoff/<%= userId %>">⏰ Time Off</a>
+                    <a class="nav-link text-light" href="/timeoff/<%= userId %>">⏰ Time Off</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/body/<%= userId %>">💪 Body</a>
+                    <a class="nav-link text-light" href="/body/<%= userId %>">💪 Body</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/auth/logout">🚪 Logout</a>
+                    <a class="nav-link text-light" href="/auth/logout">🚪 Logout</a>
                 </li>
             </ul>
         </div>
@@ -70,39 +150,39 @@
 
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="card timeoff-card">
+                <div class="card timeoff-card glass bg-dark text-light border border-secondary rounded-3">
                     <ul class="nav nav-tabs" id="timeOffTab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="daily-tab" data-bs-toggle="tab" data-bs-target="#daily" type="button" role="tab" aria-controls="daily" aria-selected="true">Daily</button>
+                            <button class="nav-link active text-light" id="daily-tab" data-bs-toggle="tab" data-bs-target="#daily" type="button" role="tab" aria-controls="daily" aria-selected="true">Daily</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="weekly-tab" data-bs-toggle="tab" data-bs-target="#weekly" type="button" role="tab" aria-controls="weekly" aria-selected="false">Weekly</button>
+                            <button class="nav-link text-light" id="weekly-tab" data-bs-toggle="tab" data-bs-target="#weekly" type="button" role="tab" aria-controls="weekly" aria-selected="false">Weekly</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="monthly-tab" data-bs-toggle="tab" data-bs-target="#monthly" type="button" role="tab" aria-controls="monthly" aria-selected="false">Monthly</button>
+                            <button class="nav-link text-light" id="monthly-tab" data-bs-toggle="tab" data-bs-target="#monthly" type="button" role="tab" aria-controls="monthly" aria-selected="false">Monthly</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="yearly-tab" data-bs-toggle="tab" data-bs-target="#yearly" type="button" role="tab" aria-controls="yearly" aria-selected="false">Yearly</button>
+                            <button class="nav-link text-light" id="yearly-tab" data-bs-toggle="tab" data-bs-target="#yearly" type="button" role="tab" aria-controls="yearly" aria-selected="false">Yearly</button>
                         </li>
                     </ul>
                     <div class="tab-content" id="timeOffTabContent">
                         <!-- Daily Time Off -->
-                        <div class="tab-pane fade show active" id="daily" role="tabpanel" aria-labelledby="daily-tab">
+                        <div class="tab-pane fade show active bg-dark" id="daily" role="tabpanel" aria-labelledby="daily-tab">
                             <div class="mb-4">
                                 <h5 class="text-primary mb-3">Add Daily Time Off</h5>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <label for="dailyDate" class="form-label">Date</label>
-                                        <input type="date" id="dailyDate" class="form-control" required>
+                                        <label for="dailyDate" class="form-label text-light">Date</label>
+                                        <input type="date" id="dailyDate" class="form-control bg-dark text-light border-secondary" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="dailyTime" class="form-label">Time</label>
-                                        <input type="time" id="dailyTime" class="form-control" required>
+                                        <label for="dailyTime" class="form-label text-light">Time</label>
+                                        <input type="time" id="dailyTime" class="form-control bg-dark text-light border-secondary" required>
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="dailyDescription" class="form-label">Description (optional)</label>
-                                    <input type="text" id="dailyDescription" class="form-control" placeholder="e.g., Doctor's appointment">
+                                    <label for="dailyDescription" class="form-label text-light">Description (optional)</label>
+                                    <input type="text" id="dailyDescription" class="form-control bg-dark text-light border-secondary" placeholder="e.g., Doctor's appointment">
                                 </div>
                                 <button id="saveDailyBtn" class="btn btn-primary w-100">Save Daily</button>
                             </div>
@@ -110,13 +190,13 @@
                             <div id="dailyList" class="list-group">
                                 <% if (timeOffData.day && timeOffData.day.length > 0) { %>
                                     <% timeOffData.day.forEach(timeOff => { %>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center bg-dark text-light border border-secondary rounded-3">
                                             <div>
                                                 📅 <%= new Date(timeOff.start_date).toLocaleDateString('en-GB') %>
                                                 <% if (timeOff.start_time) { %> at <%= timeOff.start_time %> <% } %>
                                                 <% if (timeOff.description) { %> - <span class="text-muted"><%= timeOff.description %></span> <% } %>
                                             </div>
-                                            <button class="btn btn-danger delete-timeoff" data-id="<%= timeOff.id %>">Delete</button>
+                                            <button class="btn btn-sm btn-outline-danger delete-timeoff" data-id="<%= timeOff.id %>">Delete</button>
                                         </div>
                                     <% }) %>
                                 <% } else { %>
@@ -126,22 +206,22 @@
                         </div>
 
                         <!-- Weekly Time Off -->
-                        <div class="tab-pane fade" id="weekly" role="tabpanel" aria-labelledby="weekly-tab">
+                        <div class="tab-pane fade bg-dark" id="weekly" role="tabpanel" aria-labelledby="weekly-tab">
                             <div class="mb-4">
                                 <h5 class="text-primary mb-3">Add Weekly Time Off</h5>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <label for="weeklyDate" class="form-label">Date</label>
-                                        <input type="date" id="weeklyDate" class="form-control" required>
+                                        <label for="weeklyDate" class="form-label text-light">Date</label>
+                                        <input type="date" id="weeklyDate" class="form-control bg-dark text-light border-secondary" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="weeklyTime" class="form-label">Time (optional)</label>
-                                        <input type="time" id="weeklyTime" class="form-control">
+                                        <label for="weeklyTime" class="form-label text-light">Time (optional)</label>
+                                        <input type="time" id="weeklyTime" class="form-control bg-dark text-light border-secondary">
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="weeklyDescription" class="form-label">Description (optional)</label>
-                                    <input type="text" id="weeklyDescription" class="form-control" placeholder="e.g., Team meeting">
+                                    <label for="weeklyDescription" class="form-label text-light">Description (optional)</label>
+                                    <input type="text" id="weeklyDescription" class="form-control bg-dark text-light border-secondary" placeholder="e.g., Team meeting">
                                 </div>
                                 <button id="saveWeeklyBtn" class="btn btn-primary w-100">Save Weekly</button>
                             </div>
@@ -149,13 +229,13 @@
                             <div id="weeklyList" class="list-group">
                                 <% if (timeOffData.week && timeOffData.week.length > 0) { %>
                                     <% timeOffData.week.forEach(timeOff => { %>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center bg-dark text-light border border-secondary rounded-3">
                                             <div>
                                                 📅 <%= new Date(timeOff.start_date).toLocaleDateString('en-GB') %>
                                                 <% if (timeOff.start_time) { %> at <%= timeOff.start_time %> <% } %>
                                                 <% if (timeOff.description) { %> - <span class="text-muted"><%= timeOff.description %></span> <% } %>
                                             </div>
-                                            <button class="btn btn-danger delete-timeoff" data-id="<%= timeOff.id %>">Delete</button>
+                                            <button class="btn btn-sm btn-outline-danger delete-timeoff" data-id="<%= timeOff.id %>">Delete</button>
                                         </div>
                                     <% }) %>
                                 <% } else { %>
@@ -165,22 +245,22 @@
                         </div>
 
                         <!-- Monthly Time Off -->
-                        <div class="tab-pane fade" id="monthly" role="tabpanel" aria-labelledby="monthly-tab">
+                        <div class="tab-pane fade bg-dark" id="monthly" role="tabpanel" aria-labelledby="monthly-tab">
                             <div class="mb-4">
                                 <h5 class="text-primary mb-3">Add Monthly Time Off</h5>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <label for="monthlyStart" class="form-label">Start Date</label>
-                                        <input type="date" id="monthlyStart" class="form-control" required>
+                                        <label for="monthlyStart" class="form-label text-light">Start Date</label>
+                                        <input type="date" id="monthlyStart" class="form-control bg-dark text-light border-secondary" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="monthlyEnd" class="form-label">End Date</label>
-                                        <input type="date" id="monthlyEnd" class="form-control" required>
+                                        <label for="monthlyEnd" class="form-label text-light">End Date</label>
+                                        <input type="date" id="monthlyEnd" class="form-control bg-dark text-light border-secondary" required>
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="monthlyDescription" class="form-label">Description (optional)</label>
-                                    <input type="text" id="monthlyDescription" class="form-control" placeholder="e.g., Extended leave">
+                                    <label for="monthlyDescription" class="form-label text-light">Description (optional)</label>
+                                    <input type="text" id="monthlyDescription" class="form-control bg-dark text-light border-secondary" placeholder="e.g., Extended leave">
                                 </div>
                                 <button id="saveMonthlyBtn" class="btn btn-primary w-100">Save Monthly</button>
                             </div>
@@ -188,12 +268,12 @@
                             <div id="monthlyList" class="list-group">
                                 <% if (timeOffData.month && timeOffData.month.length > 0) { %>
                                     <% timeOffData.month.forEach(timeOff => { %>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center bg-dark text-light border border-secondary rounded-3">
                                             <div>
                                                 📅 <%= new Date(timeOff.start_date).toLocaleDateString('en-GB') %> - <%= new Date(timeOff.end_date).toLocaleDateString('en-GB') %>
                                                 <% if (timeOff.description) { %> - <span class="text-muted"><%= timeOff.description %></span> <% } %>
                                             </div>
-                                            <button class="btn btn-danger delete-timeoff" data-id="<%= timeOff.id %>">Delete</button>
+                                            <button class="btn btn-sm btn-outline-danger delete-timeoff" data-id="<%= timeOff.id %>">Delete</button>
                                         </div>
                                     <% }) %>
                                 <% } else { %>
@@ -203,22 +283,22 @@
                         </div>
 
                         <!-- Yearly Time Off -->
-                        <div class="tab-pane fade" id="yearly" role="tabpanel" aria-labelledby="yearly-tab">
+                        <div class="tab-pane fade bg-dark" id="yearly" role="tabpanel" aria-labelledby="yearly-tab">
                             <div class="mb-4">
                                 <h5 class="text-primary mb-3">Add Yearly Time Off</h5>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <label for="yearlyStart" class="form-label">Start Date</label>
-                                        <input type="date" id="yearlyStart" class="form-control" required>
+                                        <label for="yearlyStart" class="form-label text-light">Start Date</label>
+                                        <input type="date" id="yearlyStart" class="form-control bg-dark text-light border-secondary" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="yearlyEnd" class="form-label">End Date</label>
-                                        <input type="date" id="yearlyEnd" class="form-control" required>
+                                        <label for="yearlyEnd" class="form-label text-light">End Date</label>
+                                        <input type="date" id="yearlyEnd" class="form-control bg-dark text-light border-secondary" required>
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="yearlyDescription" class="form-label">Description (optional)</label>
-                                    <input type="text" id="yearlyDescription" class="form-control" placeholder="e.g., Sabbatical">
+                                    <label for="yearlyDescription" class="form-label text-light">Description (optional)</label>
+                                    <input type="text" id="yearlyDescription" class="form-control bg-dark text-light border-secondary" placeholder="e.g., Sabbatical">
                                 </div>
                                 <button id="saveYearlyBtn" class="btn btn-primary w-100">Save Yearly</button>
                             </div>
@@ -226,12 +306,12 @@
                             <div id="yearlyList" class="list-group">
                                 <% if (timeOffData.year && timeOffData.year.length > 0) { %>
                                     <% timeOffData.year.forEach(timeOff => { %>
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center bg-dark text-light border border-secondary rounded-3">
                                             <div>
                                                 📅 <%= new Date(timeOff.start_date).toLocaleDateString('en-GB') %> - <%= new Date(timeOff.end_date).toLocaleDateString('en-GB') %>
                                                 <% if (timeOff.description) { %> - <span class="text-muted"><%= timeOff.description %></span> <% } %>
                                             </div>
-                                            <button class="btn btn-danger delete-timeoff" data-id="<%= timeOff.id %>">Delete</button>
+                                            <button class="btn btn-sm btn-outline-danger delete-timeoff" data-id="<%= timeOff.id %>">Delete</button>
                                         </div>
                                     <% }) %>
                                 <% } else { %>
@@ -249,6 +329,6 @@
         window.userId = '<%= userId %>';
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/frontendJS/timeoffFE.js"></script>
+    <script src="/frontendJS/timeOffFE.js"></script>
 </body>
 </html>

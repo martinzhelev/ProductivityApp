@@ -33,7 +33,7 @@ router.get("/:userId", async (req, res) => {
             year: rows.filter(row => row.type === 'year')
         };
 
-        res.render("timeoff", {
+        res.render("timeOff", {
             timeOffData,
             userId,
             username: userRows[0].username
