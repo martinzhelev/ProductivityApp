@@ -8,21 +8,27 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
-    color: #333;
-    background-color: #f8f9fa;
+    color: #e6edf3;
+    background-color: #0b0f14;
 }
 
 /* Header Styles */
 .bg-dark {
-    background-color: #343a40 !important;
+    background-color: rgba(2, 6, 23, 0.8) !important;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    backdrop-filter: blur(8px);
 }
 
 /* Card Styles */
 .card {
     border: none;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     transition: transform 0.2s ease-in-out;
+    background-color: rgba(2, 6, 23, 0.8);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    backdrop-filter: blur(8px);
+    color: #e6edf3;
 }
 
 .card:hover {
@@ -85,8 +91,10 @@ body {
 /* List Group Styles */
 .list-group-item {
     border: none;
-    border-bottom: 1px solid #e9ecef;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
     padding: 12px 16px;
+    background-color: rgba(2, 6, 23, 0.6);
+    color: #e6edf3;
 }
 
 .list-group-item:last-child {
@@ -96,36 +104,46 @@ body {
 /* Form Styles */
 .form-control {
     border-radius: 8px;
-    border: 1px solid #ced4da;
+    border: 1px solid rgba(148, 163, 184, 0.3);
     padding: 10px 12px;
     transition: border-color 0.3s ease;
+    background-color: rgba(2, 6, 23, 0.6);
+    color: #e6edf3;
 }
 
 .form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    border-color: #7dd3fc;
+    box-shadow: 0 0 0 0.2rem rgba(125, 211, 252, 0.25);
+    background-color: rgba(2, 6, 23, 0.8);
+}
+
+.form-control::placeholder {
+    color: #94a3b8;
 }
 
 /* Navigation Styles */
 .nav-link {
-    color: #495057;
+    color: #cbd5e1;
     padding: 10px 15px;
     border-radius: 6px;
     transition: all 0.3s ease;
 }
 
 .nav-link:hover {
-    background-color: #e9ecef;
-    color: #007bff;
+    background-color: rgba(125, 211, 252, 0.08);
+    color: #7dd3fc;
 }
 
 /* Offcanvas Styles */
 .offcanvas {
-    background-color: #f8f9fa;
+    background-color: rgba(2, 6, 23, 0.85);
+    border-left: 1px solid rgba(148, 163, 184, 0.2);
+    backdrop-filter: blur(6px);
+    color: #e6edf3;
 }
 
 .offcanvas-header {
-    border-bottom: 1px solid #e9ecef;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 /* Utility Classes */
@@ -211,14 +229,14 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: rgba(2, 6, 23, 0.6);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #888;
+    background: rgba(148, 163, 184, 0.5);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: rgba(148, 163, 184, 0.7);
 }

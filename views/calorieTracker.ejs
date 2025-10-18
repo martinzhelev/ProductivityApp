@@ -1,196 +1,303 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calorie Tracker</title>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Calorie Tracker - Amblezio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/amblezio.css">
-    <link rel="stylesheet" href="/css/calorieTracker.css">  
-
-    <style>
-        /* Scoped dark theme */
-        .dark-theme { background: #0b0f14; color: #e6edf3; }
-        .dark-theme a { color: #7dd3fc; }
-        .dark-theme a:hover { color: #38bdf8; }
-
-        /* Glass containers */
-        .dark-theme .glass { background: rgba(2, 6, 23, 0.6); border: 1px solid rgba(148,163,184,0.2); color: #e6edf3; box-shadow: 0 6px 24px rgba(0,0,0,.4); backdrop-filter: blur(8px); }
-        .dark-theme .rounded-xl { border-radius: 16px; }
-        .dark-theme .glow { box-shadow: 0 8px 30px rgba(2,6,23,.6); }
-
-        /* Offcanvas */
-        .dark-theme .offcanvas { background: rgba(2, 6, 23, 0.85); color: #e6edf3; border-left: 1px solid rgba(148,163,184,0.2); backdrop-filter: blur(6px); }
-        .dark-theme .offcanvas-title { color: #f1f5f9; }
-        .dark-theme .btn-close { filter: invert(1) grayscale(1); opacity: .8; }
-        .dark-theme .nav-link { color: #cbd5e1; }
-        .dark-theme .nav-link:hover { color: #7dd3fc; background: rgba(125,211,252,.08); border-radius: 8px; }
-
-        /* Forms */
-        .dark-theme .form-control,
-        .dark-theme .form-select,
-        .dark-theme textarea { background: #0b1220; color: #e6edf3; border: 1px solid rgba(148,163,184,0.25); }
-        .dark-theme .form-control::placeholder,
-        .dark-theme textarea::placeholder { color: #94a3b8; }
-
-        /* Tracker card & logs */
-        .dark-theme .tracker-card { background: rgba(2, 6, 23, 0.6); border: 1px solid rgba(148,163,184,0.2); color: #e6edf3; box-shadow: 0 6px 24px rgba(0,0,0,.4); border-radius: 16px; padding: 1.5rem; }
-        .dark-theme .log-list { color: #e6edf3; }
-        .dark-theme .log-day { border: 1px solid rgba(148,163,184,0.2); border-radius: 12px; padding: 10px; margin-bottom: 12px; background: rgba(2,6,23,0.45); }
-        .dark-theme .log-day-header { color: #e6edf3; background: rgba(2,6,23,0.6); border: 1px solid rgba(148,163,184,0.25); border-radius: 10px; padding: 8px 10px; }
-        .dark-theme .log-entry { background: rgba(2,6,23,0.6); border: 1px solid rgba(148,163,184,0.2); border-radius: 10px; padding: 8px 10px; margin-top: 8px; }
-        .dark-theme .log-time { color: #94a3b8; }
-        .dark-theme .nutrient-info { color: #cbd5e1; }
-        .dark-theme .suggestion { background: rgba(2,6,23,0.6); border: 1px solid rgba(148,163,184,0.25); border-radius: 12px; padding: 12px; color: #e6edf3; }
-
-        /* Pagination */
-        .dark-theme .pagination .page-link { background: rgba(2,6,23,0.6); color: #e6edf3; border-color: rgba(148,163,184,0.25); }
-        .dark-theme .pagination .page-item.active .page-link { background: #0ea5e9; border-color: #0ea5e9; color: #0b0f14; }
-        .dark-theme .pagination .page-link:hover { background: rgba(125,211,252,.12); color: #7dd3fc; }
-
-        footer small, footer a { color: #94a3b8; }
-    </style>
+    <link rel="stylesheet" href="/css/calorieTracker.css">
 </head>
-<body class="dark-theme">
-    <!-- Header -->
-    <header class="bg-dark text-white p-3 rounded-xl glow">
-        <div class="container d-flex justify-content-between align-items-center">
-            <div class="profile d-flex align-items-center">
-                <span class="avatar me-2">M</span>
-                <span class="ms-2">
-                    <%= username %>
-                </span>
-            </div>
-            <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasNavbar">
-                ☰
+<body class="bg-dark text-light">
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
+    
+    <!-- Modern Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top glass-nav">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-3" href="/home/<%= userId %>">
+                <i class="fas fa-rocket me-2 text-primary"></i>
+                <span class="gradient-text">Amblezio</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
+                <span class="navbar-toggler-icon"></span>
             </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile/<%= userId %>">
+                            <i class="fas fa-user me-1"></i>Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/subscribe/<%= userId %>">
+                            <i class="fas fa-credit-card me-1"></i>Premium
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </header>
+    </nav>
 
     <!-- Offcanvas Menu -->
-    <div class="offcanvas offcanvas-end rounded-xl" tabindex="-1" id="offcanvasNavbar">
+    <div class="offcanvas offcanvas-end glass-nav" tabindex="-1" id="offcanvasNavbar">
         <div class="offcanvas-header">
-            <h5 class="offcanvas-title">Menu</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+            <h5 class="offcanvas-title gradient-text">Navigation</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
         </div>
         <div class="offcanvas-body">
             <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="/home/<%= userId %>">🏠 Dashboard</a>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/home/<%= userId %>">
+                        <i class="fas fa-home me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/subscribe/<%= userId %>">
+                        <i class="fas fa-credit-card me-2"></i>Payments
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/profile/<%= userId %>">
+                        <i class="fas fa-user me-2"></i>Profile
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/work/<%= userId %>">
+                        <i class="fas fa-briefcase me-2"></i>Work
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/mental/<%= userId %>">
+                        <i class="fas fa-brain me-2"></i>Mental
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link active" href="/calorietracker/<%= userId %>">
+                        <i class="fas fa-utensils me-2"></i>Calorie Tracker
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/social/<%= userId %>">
+                        <i class="fas fa-users me-2"></i>Social
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/timeoff/<%= userId %>">
+                        <i class="fas fa-clock me-2"></i>Time Off
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/body/<%= userId %>">
+                        <i class="fas fa-dumbbell me-2"></i>Body
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/subscribe/<%= userId %>">💳 Payments</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/profile/<%= userId %>">👤 Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/work/<%= userId %>">💼 Work</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/mental/<%= userId %>">🧠 Mental</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/calorietracker/<%= userId %>">🍽️ Calorie Tracker</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/social/<%= userId %>">👥 Social</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/timeoff/<%= userId %>">⏰ Time Off</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/body/<%= userId %>">💪 Body</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/auth/logout">🚪 Logout</a>
+                    <a class="nav-link modern-nav-link logout-link" href="/logout">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
                 </li>
             </ul>
         </div>
     </div>
 
-    <div class="container mt-4">
-        <h2 class="text-center mb-4 text-primary">🍽️ Calorie Tracker</h2>
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="tracker-card glass">
-                    <h5 class="text-primary mb-3">Log What You're Eating</h5>
-                    <form id="calorieForm">
-                        <div class="mb-3">
-                            <label for="foodText" class="form-label">What are you eating?</label>
-                            <textarea id="foodText" class="form-control" rows="2" placeholder="e.g., pasta carbonara or 100g chicken" required></textarea>
-                        </div>
-                        <div id="ingredientsInput" class="collapse mb-3">
-                            <label class="form-label">Ingredients (add as needed)</label>
-                            <div id="ingredientFields">
-                                <div class="ingredient-field glass rounded p-2">
-                                    <input type="text" class="form-control" name="ingredient" placeholder="e.g., 200g spaghetti">
-                                </div>
-                            </div>
-                            <button type="button" id="addIngredient" class="btn btn-outline-secondary btn-sm mt-2">Add Ingredient</button>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Log Calories</button>
-                    </form>
-
-                    <h5 class="text-success mt-4 mb-3">Your Logs</h5>
-                    <div class="log-list">
-                        <% logs.forEach(log => { %>
-                            <div class="log-day">
-                                <div class="log-day-header">
-                                    <%= new Date(log.day).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %>
-                                </div>
-                                <% log.entries.forEach(entry => { %>
-                                    <div class="log-entry">
-                                        <span><%= entry.food_text %> - <%= entry.calories %> kcal</span>
-                                        <span class="log-time ms-2">
-                                            <%= new Date(entry.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) %>
-                                        </span>
-                                        <div class="nutrient-info">
-                                            Fat: <%= entry.fat.toFixed(1) %>g, Carbs: <%= entry.carbs.toFixed(1) %>g, Protein: <%= entry.protein.toFixed(1) %>g
-                                        </div>
-                                    </div>
-                                <% }) %>
-                            </div>
-                        <% }) %>
-                        <% if (logs.length === 0) { %>
-                            <p class="text-muted">No entries yet.</p>
-                        <% } %>
+    <!-- Main Content -->
+    <main class="container-fluid px-4 py-5" style="margin-top: 80px;">
+        <!-- Page Header -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="page-header-card glass text-center py-4">
+                    <div class="page-icon mb-3">
+                        <i class="fas fa-utensils"></i>
                     </div>
-                    <% if (suggestion) { %>
-                        <div class="suggestion">
-                            <strong>Health Suggestion:</strong> <%= suggestion %>
-                        </div>
-                    <% } %>
-
-                    <!-- Pagination -->
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination">
-                            <% if (page > 1) { %>
-                                <li class="page-item"><a class="page-link" href="/calorieTracker/<%= userId %>?page=<%= page - 1 %>">Previous</a></li>
-                            <% } %>
-                            <% for (let i = 1; i <= totalPages; i++) { %>
-                                <li class="page-item <%= i === page ? 'active' : '' %>">
-                                    <a class="page-link" href="/calorieTracker/<%= userId %>?page=<%= i %>"><%= i %></a>
-                                </li>
-                            <% } %>
-                            <% if (page < totalPages) { %>
-                                <li class="page-item"><a class="page-link" href="/calorieTracker/<%= userId %>?page=<%= page + 1 %>">Next</a></li>
-                            <% } %>
-                        </ul>
-                    </nav>
+                    <h1 class="page-title mb-3">
+                        <span class="gradient-text">Calorie Tracker</span>
+                    </h1>
+                    <p class="page-subtitle">Track your nutrition and maintain a healthy lifestyle</p>
                 </div>
             </div>
         </div>
-        <footer class="text-center mt-3">
-            <small>Powered by <a href="https://developer.edamam.com/" target="_blank">Edamam</a></small>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <!-- Log Food Card -->
+                <div class="modern-card glass mb-4">
+                    <div class="card-header-modern">
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon food-icon">
+                                <i class="fas fa-plus-circle"></i>
+                            </div>
+                            <h3 class="card-title-modern mb-0">Log Your Food</h3>
+                        </div>
+                    </div>
+                    <div class="card-body-modern">
+                        <form id="calorieForm">
+                            <div class="form-group-modern mb-4">
+                                <label for="foodText" class="form-label-modern">
+                                    <i class="fas fa-utensils me-2"></i>What are you eating?
+                                </label>
+                                <textarea id="foodText" class="form-control-modern" rows="3" 
+                                    placeholder="e.g., pasta carbonara or 100g chicken breast" required></textarea>
+                            </div>
+                            
+                            <div id="ingredientsInput" class="collapse mb-4">
+                                <label class="form-label-modern">
+                                    <i class="fas fa-list me-2"></i>Ingredients (add as needed)
+                                </label>
+                                <div id="ingredientFields">
+                                    <div class="ingredient-field-modern">
+                                        <input type="text" class="form-control-modern" name="ingredient" 
+                                            placeholder="e.g., 200g spaghetti">
+                                    </div>
+                                </div>
+                                <button type="button" id="addIngredient" class="btn btn-outline-primary btn-sm mt-2 pulse-btn">
+                                    <i class="fas fa-plus me-1"></i>Add Ingredient
+                                </button>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100 pulse-btn">
+                                <i class="fas fa-save me-2"></i>Log Calories
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Food Logs Card -->
+                <div class="modern-card glass">
+                    <div class="card-header-modern">
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon logs-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <h3 class="card-title-modern mb-0">Your Food Logs</h3>
+                        </div>
+                    </div>
+                    <div class="card-body-modern">
+                        <div class="food-logs-container">
+                            <% if (logs.length > 0) { %>
+                                <% logs.forEach(log => { %>
+                                    <div class="log-day-modern">
+                                        <div class="log-day-header-modern">
+                                            <div class="day-info">
+                                                <i class="fas fa-calendar-day me-2"></i>
+                                                <%= new Date(log.day).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %>
+                                            </div>
+                                            <div class="day-calories">
+                                                <span class="calories-badge">
+                                                    <%= log.entries.reduce((sum, entry) => sum + entry.calories, 0) %> kcal
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="log-entries-modern">
+                                            <% log.entries.forEach(entry => { %>
+                                                <div class="log-entry-modern">
+                                                    <div class="entry-main">
+                                                        <div class="food-name">
+                                                            <i class="fas fa-utensils me-2"></i>
+                                                            <%= entry.food_text %>
+                                                        </div>
+                                                        <div class="entry-calories">
+                                                            <span class="calories-value"><%= entry.calories %> kcal</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="entry-time">
+                                                        <i class="fas fa-clock me-1"></i>
+                                                        <%= new Date(entry.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) %>
+                                                    </div>
+                                                    <div class="nutrient-breakdown">
+                                                        <div class="nutrient-item">
+                                                            <i class="fas fa-tint text-danger me-1"></i>
+                                                            <span>Fat: <%= entry.fat.toFixed(1) %>g</span>
+                                                        </div>
+                                                        <div class="nutrient-item">
+                                                            <i class="fas fa-bread-slice text-warning me-1"></i>
+                                                            <span>Carbs: <%= entry.carbs.toFixed(1) %>g</span>
+                                                        </div>
+                                                        <div class="nutrient-item">
+                                                            <i class="fas fa-dumbbell text-success me-1"></i>
+                                                            <span>Protein: <%= entry.protein.toFixed(1) %>g</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <% }) %>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <div class="empty-state">
+                                    <i class="fas fa-utensils"></i>
+                                    <h4>No food logs yet</h4>
+                                    <p>Start tracking your nutrition by logging your first meal!</p>
+                                </div>
+                            <% } %>
+                        </div>
+
+                        <!-- Health Suggestion -->
+                        <% if (suggestion) { %>
+                            <div class="health-suggestion-modern">
+                                <div class="suggestion-header">
+                                    <i class="fas fa-lightbulb me-2"></i>
+                                    <span>Health Suggestion</span>
+                                </div>
+                                <div class="suggestion-content">
+                                    <%= suggestion %>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <!-- Pagination -->
+                        <% if (totalPages > 1) { %>
+                            <nav aria-label="Page navigation" class="mt-4">
+                                <ul class="pagination-modern">
+                                    <% if (page > 1) { %>
+                                        <li class="page-item-modern">
+                                            <a class="page-link-modern" href="/calorietracker/<%= userId %>?page=<%= page - 1 %>">
+                                                <i class="fas fa-chevron-left"></i>
+                                                <span>Previous</span>
+                                            </a>
+                                        </li>
+                                    <% } %>
+                                    <% for (let i = 1; i <= totalPages; i++) { %>
+                                        <li class="page-item-modern <%= i === page ? 'active' : '' %>">
+                                            <a class="page-link-modern" href="/calorietracker/<%= userId %>?page=<%= i %>">
+                                                <%= i %>
+                                            </a>
+                                        </li>
+                                    <% } %>
+                                    <% if (page < totalPages) { %>
+                                        <li class="page-item-modern">
+                                            <a class="page-link-modern" href="/calorietracker/<%= userId %>?page=<%= page + 1 %>">
+                                                <span>Next</span>
+                                                <i class="fas fa-chevron-right"></i>
+                                            </a>
+                                        </li>
+                                    <% } %>
+                                </ul>
+                            </nav>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-5">
+            <div class="footer-content">
+                <small class="text-muted">
+                    Powered by <a href="https://developer.edamam.com/" target="_blank" class="text-primary">Edamam</a>
+                </small>
+            </div>
         </footer>
-    </div>
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/frontendJS/calorieTrackerFE.js"></script>
-
 </body>
 </html>

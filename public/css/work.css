@@ -1,4 +1,4 @@
-/* Modern Calorie Tracker Styles */
+/* Modern Work Page Styles */
 body {
     background-color: #0b0f14;
     color: #e6edf3;
@@ -161,13 +161,18 @@ body {
     font-size: 1.2rem;
 }
 
-.food-icon {
+.deadline-icon {
     background: linear-gradient(135deg, #4ade80, #22c55e);
     color: #ffffff;
 }
 
-.logs-icon {
+.deadlines-icon {
     background: linear-gradient(135deg, #7dd3fc, #0ea5e9);
+    color: #ffffff;
+}
+
+.tasks-icon {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
     color: #ffffff;
 }
 
@@ -217,247 +222,235 @@ body {
     color: #94a3b8;
 }
 
-/* Ingredient Fields */
-.ingredient-field-modern {
-    background: rgba(2, 6, 23, 0.4);
-    border: 1px solid rgba(148, 163, 184, 0.2);
-    border-radius: 12px;
-    padding: 0.75rem;
-    margin-bottom: 0.75rem;
-    transition: all 0.3s ease;
-}
-
-.ingredient-field-modern:hover {
-    border-color: rgba(125, 211, 252, 0.3);
-    background: rgba(2, 6, 23, 0.6);
-}
-
-/* Food Logs */
-.food-logs-container {
-    max-height: 600px;
+/* Deadlines Container */
+.deadlines-container {
+    max-height: 500px;
     overflow-y: auto;
     padding-right: 0.5rem;
 }
 
-.food-logs-container::-webkit-scrollbar {
+.deadlines-container::-webkit-scrollbar {
     width: 6px;
 }
 
-.food-logs-container::-webkit-scrollbar-track {
+.deadlines-container::-webkit-scrollbar-track {
     background: rgba(148, 163, 184, 0.1);
     border-radius: 3px;
 }
 
-.food-logs-container::-webkit-scrollbar-thumb {
+.deadlines-container::-webkit-scrollbar-thumb {
     background: rgba(125, 211, 252, 0.3);
     border-radius: 3px;
 }
 
-.food-logs-container::-webkit-scrollbar-thumb:hover {
+.deadlines-container::-webkit-scrollbar-thumb:hover {
     background: rgba(125, 211, 252, 0.5);
 }
 
-.log-day-modern {
+/* Deadline Items */
+.deadline-item-modern {
     background: rgba(2, 6, 23, 0.6);
     border: 1px solid rgba(148, 163, 184, 0.2);
     border-radius: 16px;
-    margin-bottom: 1.5rem;
-    overflow: hidden;
+    padding: 1rem;
+    margin-bottom: 1rem;
     transition: all 0.3s ease;
 }
 
-.log-day-modern:hover {
+.deadline-item-modern:hover {
     transform: translateY(-2px);
     border-color: rgba(125, 211, 252, 0.3);
     box-shadow: 0 8px 25px rgba(125, 211, 252, 0.1);
 }
 
-.log-day-header-modern {
-    background: rgba(2, 6, 23, 0.8);
-    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-    padding: 1rem 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.day-info {
-    color: #f1f5f9;
-    font-weight: 600;
-    font-size: 1.1rem;
-}
-
-.day-calories {
-    display: flex;
-    align-items: center;
-}
-
-.calories-badge {
-    background: linear-gradient(135deg, #4ade80, #22c55e);
-    color: #0b0f14;
-    padding: 0.5rem 1rem;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    box-shadow: 0 4px 15px rgba(74, 222, 128, 0.3);
-}
-
-.log-entries-modern {
-    padding: 1rem 1.5rem;
-}
-
-.log-entry-modern {
-    background: rgba(2, 6, 23, 0.4);
-    border: 1px solid rgba(148, 163, 184, 0.2);
-    border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 0.75rem;
-    transition: all 0.3s ease;
-}
-
-.log-entry-modern:hover {
-    transform: translateX(5px);
-    border-color: rgba(125, 211, 252, 0.3);
-    background: rgba(2, 6, 23, 0.6);
-}
-
-.log-entry-modern:last-child {
-    margin-bottom: 0;
-}
-
-.entry-main {
+.deadline-main {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 0.75rem;
 }
 
-.food-name {
-    color: #e6edf3;
-    font-weight: 600;
-    font-size: 1rem;
+.deadline-info {
     flex-grow: 1;
 }
 
-.entry-calories {
-    margin-left: 1rem;
+.deadline-name {
+    color: #e6edf3;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
 }
 
-.calories-value {
-    background: linear-gradient(135deg, #fca5a5, #ef4444);
-    color: #ffffff;
-    padding: 0.25rem 0.75rem;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    box-shadow: 0 2px 8px rgba(252, 165, 165, 0.3);
-}
-
-.entry-time {
-    color: #94a3b8;
-    font-size: 0.9rem;
-    margin-bottom: 0.75rem;
-    font-weight: 500;
-}
-
-.nutrient-breakdown {
+.deadline-details {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
 }
 
-.nutrient-item {
-    display: flex;
-    align-items: center;
-    color: #cbd5e1;
+.deadline-date,
+.deadline-time {
+    color: #94a3b8;
     font-size: 0.9rem;
     font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+.deadline-actions {
+    margin-left: 1rem;
+}
+
+/* Tasks Container */
+.tasks-container {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.tasks-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.tasks-container::-webkit-scrollbar-track {
+    background: rgba(148, 163, 184, 0.1);
+    border-radius: 3px;
+}
+
+.tasks-container::-webkit-scrollbar-thumb {
+    background: rgba(125, 211, 252, 0.3);
+    border-radius: 3px;
+}
+
+.tasks-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(125, 211, 252, 0.5);
+}
+
+/* Task Items */
+.task-item-modern {
     background: rgba(2, 6, 23, 0.6);
-    padding: 0.5rem 0.75rem;
-    border-radius: 8px;
     border: 1px solid rgba(148, 163, 184, 0.2);
-}
-
-.nutrient-item i {
-    font-size: 0.8rem;
-}
-
-/* Health Suggestion */
-.health-suggestion-modern {
-    background: rgba(2, 6, 23, 0.6);
-    border: 1px solid rgba(168, 85, 247, 0.3);
     border-radius: 16px;
-    padding: 1.5rem;
-    margin-top: 1.5rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.health-suggestion-modern::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #c084fc, #a855f7);
-}
-
-.suggestion-header {
-    color: #c084fc;
-    font-weight: 700;
-    font-size: 1.1rem;
+    padding: 1rem;
     margin-bottom: 0.75rem;
-    display: flex;
-    align-items: center;
-}
-
-.suggestion-content {
-    color: #e6edf3;
-    font-size: 1rem;
-    line-height: 1.6;
-}
-
-/* Pagination */
-.pagination-modern {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.page-item-modern {
-    margin: 0;
-}
-
-.page-link-modern {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
-    background: rgba(2, 6, 23, 0.6);
-    border: 1px solid rgba(148, 163, 184, 0.3);
-    border-radius: 12px;
-    color: #e6edf3;
-    text-decoration: none;
-    font-weight: 500;
     transition: all 0.3s ease;
 }
 
-.page-link-modern:hover {
-    background: rgba(125, 211, 252, 0.1);
-    border-color: rgba(125, 211, 252, 0.3);
-    color: #7dd3fc;
+.task-item-modern:hover {
     transform: translateY(-2px);
+    border-color: rgba(125, 211, 252, 0.3);
+    box-shadow: 0 8px 25px rgba(125, 211, 252, 0.1);
 }
 
-.page-item-modern.active .page-link-modern {
-    background: linear-gradient(135deg, #7dd3fc, #0ea5e9);
-    border-color: #0ea5e9;
-    color: #0b0f14;
+.task-main {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.task-checkbox {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.modern-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(148, 163, 184, 0.3);
+    border-radius: 6px;
+    background: rgba(2, 6, 23, 0.6);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none;
+    position: relative;
+}
+
+.modern-checkbox:checked {
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    border-color: #22c55e;
+}
+
+.modern-checkbox:checked + .checkmark {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.checkmark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: bold;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.checkmark::after {
+    content: '✓';
+}
+
+.task-content {
+    flex-grow: 1;
+}
+
+.task-text {
+    color: #e6edf3;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.task-text.completed {
+    text-decoration: line-through;
+    color: #94a3b8;
+    opacity: 0.7;
+}
+
+.task-actions {
+    flex-shrink: 0;
+}
+
+.task-actions-modern {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Modern Modals */
+.modern-modal {
+    background: rgba(2, 6, 23, 0.95);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modern-modal-header {
+    background: rgba(2, 6, 23, 0.8);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 20px 20px 0 0;
+    padding: 1.5rem;
+}
+
+.modern-modal-header .modal-title {
+    color: #ffffff;
     font-weight: 700;
+    font-size: 1.3rem;
+    margin: 0;
+}
+
+.modern-modal-body {
+    padding: 1.5rem;
+    color: #e6edf3;
+}
+
+.modern-modal-footer {
+    background: rgba(2, 6, 23, 0.8);
+    border-top: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 0 0 20px 20px;
+    padding: 1rem 1.5rem;
 }
 
 /* Empty State */
@@ -549,24 +542,6 @@ body {
     box-shadow: 0 8px 25px rgba(125, 211, 252, 0.4);
 }
 
-/* Footer */
-.footer-content {
-    padding: 2rem 0;
-    border-top: 1px solid rgba(148, 163, 184, 0.2);
-    margin-top: 3rem;
-}
-
-.footer-content a {
-    color: #7dd3fc;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.footer-content a:hover {
-    color: #22d3ee;
-    text-decoration: underline;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .page-title {
@@ -585,38 +560,27 @@ body {
         padding: 1rem;
     }
     
-    .log-day-header-modern {
-        padding: 0.75rem 1rem;
+    .deadline-main {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
+        gap: 1rem;
     }
     
-    .log-entries-modern {
-        padding: 0.75rem 1rem;
-    }
-    
-    .entry-main {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .entry-calories {
+    .deadline-actions {
         margin-left: 0;
-        align-self: flex-start;
+        align-self: flex-end;
     }
     
-    .nutrient-breakdown {
+    .deadline-details {
         flex-direction: column;
         gap: 0.5rem;
     }
     
-    .pagination-modern {
-        flex-wrap: wrap;
+    .task-main {
+        gap: 0.75rem;
     }
     
-    .page-link-modern span {
-        display: none;
+    .task-actions-modern {
+        gap: 0.5rem;
     }
 }
 
@@ -629,11 +593,14 @@ body {
         font-size: 1.25rem;
     }
     
-    .log-entry-modern {
+    .deadline-item-modern,
+    .task-item-modern {
         padding: 0.75rem;
     }
     
-    .health-suggestion-modern {
+    .modern-modal-header,
+    .modern-modal-body,
+    .modern-modal-footer {
         padding: 1rem;
     }
 }

@@ -1,223 +1,269 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile - ProductivityApp</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Profile - Amblezio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/amblezio.css">
     <link rel="stylesheet" href="/css/profile.css">
-    <style>
-        /* Scoped dark theme for this page */
-        .dark-theme { background: #0b0f14; color: #e6edf3; }
-        .dark-theme a { color: #7dd3fc; }
-        .dark-theme a:hover { color: #38bdf8; }
-
-        /* Sections */
-        .dark-theme .core-stats-section,
-        .dark-theme .progress-section,
-        .dark-theme .health-section,
-        .dark-theme .growth-section { color: #e6edf3; }
-        .dark-theme .core-stats-title,
-        .dark-theme .progress-title,
-        .dark-theme .health-title,
-        .dark-theme .growth-title { color: #f1f5f9; }
-
-        /* Cards / Glass containers */
-        .dark-theme .profile-card,
-        .dark-theme .progress-card,
-        .dark-theme .health-card,
-        .dark-theme .growth-card,
-        .dark-theme .glass { background: rgba(2, 6, 23, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); color: #e6edf3; box-shadow: 0 6px 24px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,0.02); backdrop-filter: blur(8px); }
-        .dark-theme .progress-header .progress-label,
-        .dark-theme .progress-header .progress-value,
-        .dark-theme .growth-value,
-        .dark-theme .health-value { color: #e6edf3; }
-        .dark-theme .progress-details span,
-        .dark-theme .growth-details,
-        .dark-theme .health-label { color: #cbd5e1; }
-        .dark-theme .health-trend { color: #86efac; }
-        .dark-theme .health-trend.negative { color: #fca5a5; }
-
-        /* Chart containers */
-        .dark-theme .core-stats-chart,
-        .dark-theme .chart-container { background: rgba(2, 6, 23, 0.6); border: 1px solid rgba(148, 163, 184, 0.16); border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.45); }
-        .dark-theme .chart-legend { color: #cbd5e1; }
-        .dark-theme .legend-item span { color: #e2e8f0; }
-
-        /* Offcanvas */
-        .dark-theme .offcanvas { background: rgba(2, 6, 23, 0.85); color: #e6edf3; border-left: 1px solid rgba(148,163,184,0.2); backdrop-filter: blur(6px); }
-        .dark-theme .offcanvas-title { color: #f1f5f9; }
-        .dark-theme .btn-close { filter: invert(1) grayscale(1); opacity: .8; }
-        .dark-theme .nav-link { color: #cbd5e1; }
-        .dark-theme .nav-link:hover { color: #7dd3fc; background: rgba(125, 211, 252, 0.08); border-radius: 8px; }
-
-        /* Header tweaks */
-        .dark-theme header.bg-dark { background-color: #0b1220 !important; border: 1px solid rgba(148, 163, 184, 0.18); }
-        .dark-theme .avatar { background: #111827; color: #e5e7eb; border: 1px solid rgba(148, 163, 184, 0.2); }
-
-        /* Radial progress */
-        .dark-theme .radial-progress svg { overflow: visible; }
-        .dark-theme .radial-progress svg .bg { stroke: rgba(255,255,255,0.12); }
-        .dark-theme .radial-progress svg .progress { stroke: #22d3ee; filter: drop-shadow(0 0 8px rgba(34,211,238,.35)); }
-        .dark-theme .radial-progress span { color: #f1f5f9; }
-
-        /* Floating refresh */
-        .dark-theme #dataRefresh { position: fixed; right: 20px; bottom: 20px; background: rgba(15, 23, 42, 0.85); color: #e6edf3; border: 1px solid rgba(148,163,184,0.25); box-shadow: 0 10px 30px rgba(0,0,0,.5); backdrop-filter: blur(8px); }
-        .dark-theme #dataRefresh:hover { background: rgba(2, 6, 23, 0.9); color: #7dd3fc; border-color: rgba(125, 211, 252, 0.35); }
-
-        /* Small utility accents */
-        .dark-theme .glow { box-shadow: 0 8px 30px rgba(2,6,23,.6); }
-        .dark-theme .rounded-xl { border-radius: 16px; }
-    </style>
 </head>
-<body class="dark-theme">
-    <!-- Header -->
-    <header class="bg-dark text-white p-3 rounded-xl glow">
-        <div class="container d-flex justify-content-between align-items-center">
-            <div class="profile d-flex align-items-center">
-                <span class="avatar me-2">M</span>
-                <span class="ms-2">
-                    <%= user.username %>
-                </span>
-            </div>
-            <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasNavbar">
-                ☰
+<body class="bg-dark text-light">
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
+    
+    <!-- Modern Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top glass-nav">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-3" href="/home/<%= userId %>">
+                <i class="fas fa-rocket me-2 text-primary"></i>
+                <span class="gradient-text">Amblezio</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
+                <span class="navbar-toggler-icon"></span>
             </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile/<%= userId %>">
+                            <i class="fas fa-user me-1"></i>Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/subscribe/<%= userId %>">
+                            <i class="fas fa-credit-card me-1"></i>Premium
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </header>
+    </nav>
 
     <!-- Offcanvas Menu -->
-    <div class="offcanvas offcanvas-end rounded-xl" tabindex="-1" id="offcanvasNavbar">
+    <div class="offcanvas offcanvas-end glass-nav" tabindex="-1" id="offcanvasNavbar">
         <div class="offcanvas-header">
-            <h5 class="offcanvas-title">Menu</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+            <h5 class="offcanvas-title gradient-text">Navigation</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
         </div>
         <div class="offcanvas-body">
             <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="/home/<%= userId %>">🏠 Dashboard</a>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/home/<%= userId %>">
+                        <i class="fas fa-home me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/subscribe/<%= userId %>">
+                        <i class="fas fa-credit-card me-2"></i>Payments
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link active" href="/profile/<%= userId %>">
+                        <i class="fas fa-user me-2"></i>Profile
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/work/<%= userId %>">
+                        <i class="fas fa-briefcase me-2"></i>Work
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/mental/<%= userId %>">
+                        <i class="fas fa-brain me-2"></i>Mental
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/calorietracker/<%= userId %>">
+                        <i class="fas fa-utensils me-2"></i>Calorie Tracker
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/social/<%= userId %>">
+                        <i class="fas fa-users me-2"></i>Social
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/timeoff/<%= userId %>">
+                        <i class="fas fa-clock me-2"></i>Time Off
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/body/<%= userId %>">
+                        <i class="fas fa-dumbbell me-2"></i>Body
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/subscribe/<%= userId %>">💳 Payments</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/profile/<%= userId %>">👤 Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/work/<%= userId %>">💼 Work</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/mental/<%= userId %>">🧠 Mental</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/calorietracker/<%= userId %>">🍽️ Calorie Tracker</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/social/<%= userId %>">👥 Social</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/timeoff/<%= userId %>">⏰ Time Off</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/body/<%= userId %>">💪 Body</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/auth/logout">🚪 Logout</a>
+                    <a class="nav-link modern-nav-link logout-link" href="/logout">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
                 </li>
             </ul>
         </div>
     </div>
 
-    <!-- Profile Content -->
-    <div class="container mt-4">
-        <!-- Core Stats Graph Section -->
-        <div class="core-stats-section section-fade-in p-4 rounded-xl glass">
-            <h2 class="core-stats-title">Core Stats</h2>
-            <div class="core-stats-chart glass p-3 rounded-xl">
-                <canvas id="coreStatsChart"></canvas>
+    <!-- Main Content -->
+    <main class="container-fluid px-4 py-5" style="margin-top: 80px;">
+        <!-- Profile Header -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="profile-header-card glass text-center py-4">
+                    <div class="profile-avatar mb-3">
+                        <div class="avatar-circle">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <h1 class="profile-title mb-3">
+                        <span class="gradient-text"><%= user.username %></span>'s Profile
+                    </h1>
+                    <p class="profile-subtitle">Track your progress and personal growth journey</p>
+                </div>
             </div>
-            <div class="chart-legend">
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #FF6B6B;"></div>
-                    <span>Strength</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #4ECDC4;"></div>
-                    <span>Speed</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #45B7D1;"></div>
-                    <span>Mental</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #96CEB4;"></div>
-                    <span>Social</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #FFEEAD;"></div>
-                    <span>Work</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #D4A5A5;"></div>
-                    <span>Agility</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #9B59B6;"></div>
-                    <span>Financial</span>
+        </div>
+
+        <!-- Core Stats Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="modern-card glass">
+                    <div class="card-header-modern">
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon stats-icon">
+                                <i class="fas fa-chart-radar"></i>
+                            </div>
+                            <h3 class="card-title-modern mb-0">Core Stats Overview</h3>
+                        </div>
+                    </div>
+                    <div class="card-body-modern">
+                        <div class="chart-container-modern">
+                            <canvas id="coreStatsChart"></canvas>
+                        </div>
+                        <div class="stats-legend-modern">
+                            <div class="legend-item-modern">
+                                <div class="legend-color strength"></div>
+                                <span>Strength</span>
+                            </div>
+                            <div class="legend-item-modern">
+                                <div class="legend-color speed"></div>
+                                <span>Speed</span>
+                            </div>
+                            <div class="legend-item-modern">
+                                <div class="legend-color mental"></div>
+                                <span>Mental</span>
+                            </div>
+                            <div class="legend-item-modern">
+                                <div class="legend-color social"></div>
+                                <span>Social</span>
+                            </div>
+                            <div class="legend-item-modern">
+                                <div class="legend-color work"></div>
+                                <span>Work</span>
+                            </div>
+                            <div class="legend-item-modern">
+                                <div class="legend-color agility"></div>
+                                <span>Agility</span>
+                            </div>
+                            <div class="legend-item-modern">
+                                <div class="legend-color financial"></div>
+                                <span>Financial</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Progress Tracking Section -->
-        <div class="progress-section section-fade-in p-4 rounded-xl glass">
-            <h2 class="progress-title">Progress Tracking</h2>
-                    <div class="row">
-                <!-- Task Completion -->
-                        <div class="col-md-6">
-                    <div class="progress-card glass">
-                        <div class="progress-header">
-                            <span class="progress-label">Task Completion</span>
-                            <span class="progress-value"><%= taskCompletion.toFixed(1) %>%</span>
-                        </div>
-                        <div class="radial-progress">
-                            <svg>
-                                <circle class="bg" cx="60" cy="60" r="52"></circle>
-                                <circle class="progress" cx="60" cy="60" r="52" 
-                                    stroke-dasharray="326" 
-                                    stroke-dashoffset="<%= 326 - (326 * taskCompletion / 100) %>">
-                                </circle>
-                            </svg>
-                            <span><%= taskCompletion.toFixed(1) %>%</span>
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="modern-card glass">
+                    <div class="card-header-modern">
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon progress-icon">
+                                <i class="fas fa-tasks"></i>
                             </div>
-                        <div class="progress-details">
-                            <span>Completed: <%= completedTasks %></span>
-                            <span>Total: <%= totalTasks %></span>
+                            <h3 class="card-title-modern mb-0">Progress Tracking</h3>
                         </div>
                     </div>
-                </div>
-                <!-- Habit Tracking -->
-                        <div class="col-md-6">
-                    <div class="progress-card glass">
-                        <div class="progress-header">
-                            <span class="progress-label">Habit Completion</span>
-                            <span class="progress-value"><%= habitCompletion.toFixed(1) %>%</span>
-                        </div>
-                            <div class="radial-progress">
-                                <svg>
-                                    <circle class="bg" cx="60" cy="60" r="52"></circle>
-                                <circle class="progress" cx="60" cy="60" r="52" 
-                                    stroke-dasharray="326" 
-                                    stroke-dashoffset="<%= 326 - (326 * habitCompletion / 100) %>">
-                                </circle>
-                                </svg>
-                            <span><%= habitCompletion.toFixed(1) %>%</span>
-                        </div>
-                        <div class="progress-details">
-                            <span>Completed: <%= completedHabits %></span>
-                            <span>Total: <%= totalHabits %></span>
+                    <div class="card-body-modern">
+                        <div class="row g-4">
+                            <!-- Task Completion -->
+                            <div class="col-lg-6">
+                                <div class="progress-card-modern">
+                                    <div class="progress-header-modern">
+                                        <div class="progress-icon-modern">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                        <div class="progress-info">
+                                            <h5 class="progress-label-modern">Task Completion</h5>
+                                            <span class="progress-value-modern"><%= taskCompletion.toFixed(1) %>%</span>
+                                        </div>
+                                    </div>
+                                    <div class="radial-progress-modern">
+                                        <svg width="120" height="120">
+                                            <circle class="bg-circle" cx="60" cy="60" r="50"></circle>
+                                            <circle class="progress-circle" cx="60" cy="60" r="50" 
+                                                stroke-dasharray="314" 
+                                                stroke-dashoffset="<%= 314 - (314 * taskCompletion / 100) %>">
+                                            </circle>
+                                        </svg>
+                                        <div class="progress-text">
+                                            <span class="progress-percentage"><%= taskCompletion.toFixed(1) %>%</span>
+                                        </div>
+                                    </div>
+                                    <div class="progress-details-modern">
+                                        <div class="detail-item">
+                                            <span class="detail-label">Completed:</span>
+                                            <span class="detail-value"><%= completedTasks %></span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Total:</span>
+                                            <span class="detail-value"><%= totalTasks %></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Habit Tracking -->
+                            <div class="col-lg-6">
+                                <div class="progress-card-modern">
+                                    <div class="progress-header-modern">
+                                        <div class="progress-icon-modern">
+                                            <i class="fas fa-repeat"></i>
+                                        </div>
+                                        <div class="progress-info">
+                                            <h5 class="progress-label-modern">Habit Completion</h5>
+                                            <span class="progress-value-modern"><%= habitCompletion.toFixed(1) %>%</span>
+                                        </div>
+                                    </div>
+                                    <div class="radial-progress-modern">
+                                        <svg width="120" height="120">
+                                            <circle class="bg-circle" cx="60" cy="60" r="50"></circle>
+                                            <circle class="progress-circle" cx="60" cy="60" r="50" 
+                                                stroke-dasharray="314" 
+                                                stroke-dashoffset="<%= 314 - (314 * habitCompletion / 100) %>">
+                                            </circle>
+                                        </svg>
+                                        <div class="progress-text">
+                                            <span class="progress-percentage"><%= habitCompletion.toFixed(1) %>%</span>
+                                        </div>
+                                    </div>
+                                    <div class="progress-details-modern">
+                                        <div class="detail-item">
+                                            <span class="detail-label">Completed:</span>
+                                            <span class="detail-value"><%= completedHabits %></span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Total:</span>
+                                            <span class="detail-value"><%= totalHabits %></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -225,37 +271,62 @@
         </div>
 
         <!-- Health Dashboard Section -->
-        <div class="health-section section-fade-in p-4 rounded-xl glass">
-            <h2 class="health-title">Health </h2>
-            <div class="row">
-                <!-- Monthly Calories -->
-                <div class="col-md-6">
-                    <div class="health-card glass">
-                        <div class="health-icon">🔥</div>
-                        <div class="health-value"><%= monthlyCalories.toLocaleString() %> kcal</div>
-                        <div class="health-label">Monthly Calories</div>
-                        <div class="health-trend <%= calorieTrend >= 0 ? '' : 'negative' %>">
-                            <%= calorieTrend >= 0 ? '↑' : '↓' %> <%= Math.abs(calorieTrend).toFixed(1) %>% vs last month
-                        </div>
-                    </div>
-                </div>
-                <!-- Monthly Workouts -->
-                <div class="col-md-6">
-                    <div class="health-card glass">
-                        <div class="health-icon">💪</div>
-                        <div class="health-value"><%= monthlyWorkouts %></div>
-                        <div class="health-label">Monthly Workouts</div>
-                        <div class="health-trend <%= workoutTrend >= 0 ? '' : 'negative' %>">
-                            <%= workoutTrend >= 0 ? '↑' : '↓' %> <%= Math.abs(workoutTrend).toFixed(1) %>% vs last month
-                        </div>
-                    </div>
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="modern-card glass">
+                    <div class="card-header-modern">
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon health-icon">
+                                <i class="fas fa-heartbeat"></i>
                             </div>
-                <!-- Nutrient Chart -->
-                <div class="col-12 mt-4">
-                    <div class="profile-card glass">
-                        <h5 class="mb-3">Today's Nutrients</h5>
-                        <div class="chart-container" style="height: 300px;">
-                            <canvas id="nutrientChart"></canvas>
+                            <h3 class="card-title-modern mb-0">Health Dashboard</h3>
+                        </div>
+                    </div>
+                    <div class="card-body-modern">
+                        <div class="row g-4">
+                            <!-- Monthly Calories -->
+                            <div class="col-lg-6">
+                                <div class="health-card-modern">
+                                    <div class="health-icon-modern">
+                                        <i class="fas fa-fire"></i>
+                                    </div>
+                                    <div class="health-content">
+                                        <h4 class="health-value-modern"><%= monthlyCalories.toLocaleString() %> kcal</h4>
+                                        <p class="health-label-modern">Monthly Calories</p>
+                                        <div class="health-trend-modern <%= calorieTrend >= 0 ? 'positive' : 'negative' %>">
+                                            <i class="fas fa-<%= calorieTrend >= 0 ? 'arrow-up' : 'arrow-down' %>"></i>
+                                            <%= Math.abs(calorieTrend).toFixed(1) %>% vs last month
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Monthly Workouts -->
+                            <div class="col-lg-6">
+                                <div class="health-card-modern">
+                                    <div class="health-icon-modern">
+                                        <i class="fas fa-dumbbell"></i>
+                                    </div>
+                                    <div class="health-content">
+                                        <h4 class="health-value-modern"><%= monthlyWorkouts %></h4>
+                                        <p class="health-label-modern">Monthly Workouts</p>
+                                        <div class="health-trend-modern <%= workoutTrend >= 0 ? 'positive' : 'negative' %>">
+                                            <i class="fas fa-<%= workoutTrend >= 0 ? 'arrow-up' : 'arrow-down' %>"></i>
+                                            <%= Math.abs(workoutTrend).toFixed(1) %>% vs last month
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Nutrient Chart -->
+                            <div class="col-12">
+                                <div class="nutrient-chart-modern">
+                                    <h5 class="chart-title-modern">
+                                        <i class="fas fa-chart-pie me-2"></i>Today's Nutrients
+                                    </h5>
+                                    <div class="chart-container-modern">
+                                        <canvas id="nutrientChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -263,47 +334,71 @@
         </div>
 
         <!-- Personal Growth Section -->
-        <div class="growth-section section-fade-in p-4 rounded-xl glass">
-            <h2 class="growth-title">Personal Growth</h2>
-            <div class="row">
-                <!-- Monthly Books -->
-                <div class="col-md-6">
-                    <div class="growth-card glass">
-                        <div class="growth-icon">📚</div>
-                        <div class="growth-value"><%= monthlySessions %></div>
-                        <div class="growth-label">Reading Sessions This Month</div>
-                        <div class="growth-trend <%= readingTrend >= 0 ? '' : 'negative' %>">
-                            <%= readingTrend >= 0 ? '↑' : '↓' %> <%= Math.abs(readingTrend).toFixed(1) %>% vs last month
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="modern-card glass">
+                    <div class="card-header-modern">
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon growth-icon">
+                                <i class="fas fa-seedling"></i>
                             </div>
-                        <div class="growth-details">
-                            <%= pagesRead %> pages read this month
+                            <h3 class="card-title-modern mb-0">Personal Growth</h3>
                         </div>
                     </div>
-                </div>
-                <!-- Monthly Meditation -->
-                <div class="col-md-6">
-                    <div class="growth-card glass">
-                        <div class="growth-icon">🧘</div>
-                        <div class="growth-value"><%= monthlyMeditation %></div>
-                        <div class="growth-label">Meditation Minutes</div>
-                        <div class="growth-trend <%= meditationTrend >= 0 ? '' : 'negative' %>">
-                            <%= meditationTrend >= 0 ? '↑' : '↓' %> <%= Math.abs(meditationTrend).toFixed(1) %>% vs last month
+                    <div class="card-body-modern">
+                        <div class="row g-4">
+                            <!-- Reading Sessions -->
+                            <div class="col-lg-6">
+                                <div class="growth-card-modern">
+                                    <div class="growth-icon-modern">
+                                        <i class="fas fa-book"></i>
+                                    </div>
+                                    <div class="growth-content">
+                                        <h4 class="growth-value-modern"><%= monthlySessions %></h4>
+                                        <p class="growth-label-modern">Reading Sessions This Month</p>
+                                        <div class="growth-trend-modern <%= readingTrend >= 0 ? 'positive' : 'negative' %>">
+                                            <i class="fas fa-<%= readingTrend >= 0 ? 'arrow-up' : 'arrow-down' %>"></i>
+                                            <%= Math.abs(readingTrend).toFixed(1) %>% vs last month
+                                        </div>
+                                        <div class="growth-details-modern">
+                                            <i class="fas fa-file-alt me-1"></i>
+                                            <%= pagesRead %> pages read this month
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        <div class="growth-details">
-                            <%= meditationSessions %> sessions this month
+                            <!-- Meditation -->
+                            <div class="col-lg-6">
+                                <div class="growth-card-modern">
+                                    <div class="growth-icon-modern">
+                                        <i class="fas fa-om"></i>
+                                    </div>
+                                    <div class="growth-content">
+                                        <h4 class="growth-value-modern"><%= monthlyMeditation %></h4>
+                                        <p class="growth-label-modern">Meditation Minutes</p>
+                                        <div class="growth-trend-modern <%= meditationTrend >= 0 ? 'positive' : 'negative' %>">
+                                            <i class="fas fa-<%= meditationTrend >= 0 ? 'arrow-up' : 'arrow-down' %>"></i>
+                                            <%= Math.abs(meditationTrend).toFixed(1) %>% vs last month
+                                        </div>
+                                        <div class="growth-details-modern">
+                                            <i class="fas fa-clock me-1"></i>
+                                            <%= meditationSessions %> sessions this month
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </main>
 
-        
-    </div>
-
-    <!-- Data Refresh Button -->
-    <div class="data-refresh" id="dataRefresh">
-        <i class="fas fa-sync-alt"></i> Refresh Data
-    </div>
+    <!-- Floating Refresh Button -->
+    <button class="floating-refresh-btn pulse-btn" id="dataRefresh">
+        <i class="fas fa-sync-alt"></i>
+        <span>Refresh Data</span>
+    </button>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

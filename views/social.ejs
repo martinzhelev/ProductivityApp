@@ -1,223 +1,402 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Socializing Tracker</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Social - Amblezio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/amblezio.css">
     <link rel="stylesheet" href="/css/social.css">
 </head>
-<style>
-    /* Scoped dark theme */
-    .dark-theme { background: #0b0f14; color: #e6edf3; }
-    .dark-theme a { color: #7dd3fc; }
-    .dark-theme a:hover { color: #38bdf8; }
-
-    /* Glass containers */
-    .dark-theme .glass,
-    .dark-theme .card { background: rgba(2,6,23,.6); border: 1px solid rgba(148,163,184,.2); color: #e6edf3; box-shadow: 0 6px 24px rgba(0,0,0,.4); backdrop-filter: blur(8px); }
-    .dark-theme .rounded-xl { border-radius: 16px; }
-    .dark-theme .glow { box-shadow: 0 8px 30px rgba(2,6,23,.6); }
-
-    /* Offcanvas */
-    .dark-theme .offcanvas { background: rgba(2,6,23,.85); color: #e6edf3; border-left: 1px solid rgba(148,163,184,.2); backdrop-filter: blur(6px); }
-    .dark-theme .offcanvas-title { color: #f1f5f9; }
-    .dark-theme .btn-close { filter: invert(1) grayscale(1); opacity: .8; }
-    .dark-theme .nav-link { color: #cbd5e1; }
-    .dark-theme .nav-link:hover { color: #7dd3fc; background: rgba(125,211,252,.08); border-radius: 8px; }
-
-    /* Lists and gifts */
-    .dark-theme .list-group-item { background: rgba(2,6,23,.6); color: #e6edf3; border-color: rgba(148,163,184,.25); }
-    .dark-theme .gift-list li { background: rgba(2,6,23,.6); border: 1px solid rgba(148,163,184,.25); border-radius: 10px; padding: 8px 10px; margin-top: 8px; color: #e6edf3; }
-    .dark-theme .text-muted { color: #94a3b8 !important; }
-
-    /* Forms */
-    .dark-theme .form-control,
-    .dark-theme .form-select { background: #0b1220; color: #e6edf3; border: 1px solid rgba(148,163,184,.25); }
-    .dark-theme .form-control::placeholder { color: #94a3b8; }
-</style>
-<body class="dark-theme">
-    <!-- Header -->
-    <header class="bg-dark text-white p-3 rounded-xl glow">
-        <div class="container d-flex justify-content-between align-items-center">
-            <div class="profile d-flex align-items-center">
-                <span class="avatar me-2">M</span>
-                <span class="ms-2">
-                    <%= username %>
-                </span>
-            </div>
-            <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasNavbar">
-                ☰
+<body class="bg-dark text-light">
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
+    
+    <!-- Modern Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top glass-nav">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-3" href="/home/<%= userId %>">
+                <i class="fas fa-rocket me-2 text-primary"></i>
+                <span class="gradient-text">Amblezio</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
+                <span class="navbar-toggler-icon"></span>
             </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile/<%= userId %>">
+                            <i class="fas fa-user me-1"></i>Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/subscribe/<%= userId %>">
+                            <i class="fas fa-credit-card me-1"></i>Premium
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </header>
+    </nav>
 
     <!-- Offcanvas Menu -->
-    <div class="offcanvas offcanvas-end rounded-xl" tabindex="-1" id="offcanvasNavbar">
+    <div class="offcanvas offcanvas-end glass-nav" tabindex="-1" id="offcanvasNavbar">
         <div class="offcanvas-header">
-            <h5 class="offcanvas-title">Menu</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+            <h5 class="offcanvas-title gradient-text">Navigation</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
         </div>
         <div class="offcanvas-body">
             <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="/home/<%= userId %>">🏠 Dashboard</a>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/home/<%= userId %>">
+                        <i class="fas fa-home me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/subscribe/<%= userId %>">
+                        <i class="fas fa-credit-card me-2"></i>Payments
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/profile/<%= userId %>">
+                        <i class="fas fa-user me-2"></i>Profile
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/work/<%= userId %>">
+                        <i class="fas fa-briefcase me-2"></i>Work
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/mental/<%= userId %>">
+                        <i class="fas fa-brain me-2"></i>Mental
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/calorietracker/<%= userId %>">
+                        <i class="fas fa-utensils me-2"></i>Calorie Tracker
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link active" href="/social/<%= userId %>">
+                        <i class="fas fa-users me-2"></i>Social
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/timeoff/<%= userId %>">
+                        <i class="fas fa-clock me-2"></i>Time Off
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/body/<%= userId %>">
+                        <i class="fas fa-dumbbell me-2"></i>Body
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/subscribe/<%= userId %>">💳 Payments</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/profile/<%= userId %>">👤 Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/work/<%= userId %>">💼 Work</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/mental/<%= userId %>">🧠 Mental</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/calorietracker/<%= userId %>">🍽️ Calorie Tracker</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/social/<%= userId %>">👥 Social</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/timeoff/<%= userId %>">⏰ Time Off</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/body/<%= userId %>">💪 Body</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/auth/logout">🚪 Logout</a>
+                    <a class="nav-link modern-nav-link logout-link" href="/logout">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
                 </li>
             </ul>
         </div>
     </div>
 
-    <div class="container mt-4">
-        <h2 class="text-center mb-4">📅 Socializing Tracker</h2>
-
-        <div class="row">
-            <!-- Socializing Tracker -->
-            <div class="col-md-6">
-                <div class="card shadow-sm p-4 mb-4 rounded-xl glass">
-                    <h4 class="text-primary mb-3">🎉 Add Social Event</h4>
-                    <div class="mb-3">
-                        <label for="eventName" class="form-label">Event Name</label>
-                        <input type="text" id="eventName" class="form-control" placeholder="Enter event name">
+    <!-- Main Content -->
+    <main class="container-fluid px-4 py-5" style="margin-top: 80px;">
+        <!-- Page Header -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="page-header-card glass text-center py-4">
+                    <div class="page-icon mb-3">
+                        <i class="fas fa-users"></i>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="eventDate" class="form-label">Date</label>
-                            <input type="date" id="eventDate" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="eventTime" class="form-label">Time</label>
-                            <input type="time" id="eventTime" class="form-control">
-                        </div>
-                    </div>
-                    <button id="saveEventBtn" class="btn btn-primary mt-3 w-100">Save Event</button>
+                    <h1 class="page-title mb-3">
+                        <span class="gradient-text">Social Hub</span>
+                    </h1>
+                    <p class="page-subtitle">Connect with people and track your social events</p>
                 </div>
+            </div>
+        </div>
 
-                <div class="card shadow-sm p-4 mb-4 rounded-xl glass">
-                    <h4 class="text-success mb-3">📝 Social Events</h4>
-                    <div id="eventList" class="list-group">
-                        <% if (socializingData.length > 0) { %>
-                            <% socializingData.forEach(event => { %>
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong class="text-primary"><%= event.event_name || 'Social Event' %></strong> <br>
-                                        📅 <%= new Date(event.date).toLocaleDateString('en-GB') %> | ⏰ <%= event.time %>
-                                    </div>
-                                    <div>
-                                        <button class="btn btn-success btn-sm complete-event" data-id="<%= event.id %>">✔ Mark as Completed</button>
-                                        <button class="btn btn-danger btn-sm delete-event" data-id="<%= event.id %>">Delete</button>
+        <div class="row g-4">
+            <!-- Social Events Section -->
+            <div class="col-lg-6">
+                <!-- Add Event Card -->
+                <div class="modern-card glass mb-4">
+                    <div class="card-header-modern">
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon event-icon">
+                                <i class="fas fa-plus-circle"></i>
+                            </div>
+                            <h3 class="card-title-modern mb-0">Add Social Event</h3>
+                        </div>
+                    </div>
+                    <div class="card-body-modern">
+                        <form id="eventForm">
+                            <div class="form-group-modern mb-3">
+                                <label for="eventName" class="form-label-modern">
+                                    <i class="fas fa-calendar-plus me-2"></i>Event Name
+                                </label>
+                                <input type="text" id="eventName" class="form-control-modern" 
+                                    placeholder="Enter event name" required>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-group-modern">
+                                        <label for="eventDate" class="form-label-modern">
+                                            <i class="fas fa-calendar me-2"></i>Date
+                                        </label>
+                                        <input type="date" id="eventDate" class="form-control-modern" required>
                                     </div>
                                 </div>
-                            <% }) %>
-                        <% } else { %>
-                            <p class="text-muted">No social events yet.</p>
-                        <% } %>
+                                <div class="col-md-6">
+                                    <div class="form-group-modern">
+                                        <label for="eventTime" class="form-label-modern">
+                                            <i class="fas fa-clock me-2"></i>Time
+                                        </label>
+                                        <input type="time" id="eventTime" class="form-control-modern" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="saveEventBtn" class="btn btn-primary w-100 mt-3 pulse-btn">
+                                <i class="fas fa-save me-2"></i>Save Event
+                            </button>
+                        </form>
                     </div>
-                    <div class="d-flex justify-content-between mt-3">
-                        <button id="prevEventPage" class="btn btn-outline-primary" <%= eventPage === 1 ? 'disabled' : '' %>>Previous</button>
-                        <span id="eventPageInfo">Page <%= eventPage %> of <%= totalEventPages %></span>
-                        <button id="nextEventPage" class="btn btn-outline-primary" <%= eventPage === totalEventPages ? 'disabled' : '' %>>Next</button>
+                </div>
+
+                <!-- Events List Card -->
+                <div class="modern-card glass">
+                    <div class="card-header-modern">
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon events-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <h3 class="card-title-modern mb-0">Social Events</h3>
+                        </div>
+                    </div>
+                    <div class="card-body-modern">
+                        <div class="events-container">
+                            <div id="eventList">
+                                <% if (socializingData.length > 0) { %>
+                                    <% socializingData.forEach(event => { %>
+                                        <div class="event-item-modern">
+                                            <div class="event-main">
+                                                <div class="event-info">
+                                                    <h5 class="event-name">
+                                                        <i class="fas fa-calendar-alt me-2"></i>
+                                                        <%= event.event_name || 'Social Event' %>
+                                                    </h5>
+                                                    <div class="event-details">
+                                                        <span class="event-date">
+                                                            <i class="fas fa-calendar me-1"></i>
+                                                            <%= new Date(event.date).toLocaleDateString('en-GB') %>
+                                                        </span>
+                                                        <span class="event-time">
+                                                            <i class="fas fa-clock me-1"></i>
+                                                            <%= event.time %>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="event-actions">
+                                                    <button class="btn btn-success btn-sm complete-event pulse-btn" data-id="<%= event.id %>">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-danger btn-sm delete-event" data-id="<%= event.id %>">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <div class="empty-state">
+                                        <i class="fas fa-calendar-plus"></i>
+                                        <h4>No social events yet</h4>
+                                        <p>Start building your social calendar by adding your first event!</p>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                        
+                        <!-- Event Pagination -->
+                        <% if (totalEventPages > 1) { %>
+                            <div class="pagination-modern mt-4">
+                                <button id="prevEventPage" class="page-link-modern" <%= eventPage === 1 ? 'disabled' : '' %>>
+                                    <i class="fas fa-chevron-left"></i>
+                                    <span>Previous</span>
+                                </button>
+                                <span class="page-info">
+                                    Page <%= eventPage %> of <%= totalEventPages %>
+                                </span>
+                                <button id="nextEventPage" class="page-link-modern" <%= eventPage === totalEventPages ? 'disabled' : '' %>>
+                                    <span>Next</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        <% } %>
                     </div>
                 </div>
             </div>
 
-            <!-- People List -->
-            <div class="col-md-6">
-                <div class="card shadow-sm p-4 mb-4 rounded-xl glass">
-                    <h4 class="text-primary mb-3">👥 Add Person</h4>
-                    <div class="mb-3">
-                        <label for="personName" class="form-label">Name</label>
-                        <input type="text" id="personName" class="form-control" placeholder="Enter name">
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="personBirthday" class="form-label">Birthday</label>
-                            <input type="date" id="personBirthday" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="personGift" class="form-label">Gift Idea</label>
-                            <input type="text" id="personGift" class="form-control" placeholder="Gift idea">
+            <!-- People Section -->
+            <div class="col-lg-6">
+                <!-- Add Person Card -->
+                <div class="modern-card glass mb-4">
+                    <div class="card-header-modern">
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon person-icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <h3 class="card-title-modern mb-0">Add Person</h3>
                         </div>
                     </div>
-                    <button id="savePersonBtn" class="btn btn-primary mt-3 w-100">Save Person</button>
-                </div>
-
-                <div class="card shadow-sm p-4 rounded-xl glass">
-                    <h4 class="text-success mb-3">👥 People</h4>
-                    <div id="peopleList" class="list-group">
-                        <% if (peopleData && peopleData.length > 0) { %>
-                            <% peopleData.forEach(person => { %>
-                                <div class="list-group-item" data-id="<%= person.id %>">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <strong class="text-primary editable" data-field="name"><%= person.name || 'Unknown' %></strong> <br>
-                                            🎂 <span class="editable" data-field="birthday"><%= person.birthday ? new Date(person.birthday).toLocaleDateString('en-GB') : 'Not set' %></span>
-                                        </div>
-                                        <button class="btn btn-danger btn-sm delete-person" data-id="<%= person.id %>">Delete</button>
-                                    </div>
-                                    <div class="mt-2">
-                                        <strong>🎁 Gifts:</strong>
-                                        <ul class="list-unstyled gift-list">
-                                            <% if (person.gifts && person.gifts.length > 0) { %>
-                                                <% person.gifts.forEach(gift => { %>
-                                                    <li class="d-flex justify-content-between align-items-center">
-                                                        <span><%= gift.gift_name %> (Added: <%= new Date(gift.added_date).toLocaleDateString('en-GB') %>)</span>
-                                                        <button class="btn btn-outline-danger btn-sm delete-gift" data-gift-id="<%= gift.id %>">Remove</button>
-                                                    </li>
-                                                <% }) %>
-                                            <% } else { %>
-                                                <li class="text-muted">No gifts yet</li>
-                                            <% } %>
-                                        </ul>
-                                        <div class="input-group input-group-sm mt-2">
-                                            <input type="text" class="form-control add-gift-input" placeholder="Add gift" data-person-id="<%= person.id %>">
-                                            <button class="btn btn-outline-primary add-gift-btn">Add</button>
-                                        </div>
+                    <div class="card-body-modern">
+                        <form id="personForm">
+                            <div class="form-group-modern mb-3">
+                                <label for="personName" class="form-label-modern">
+                                    <i class="fas fa-user me-2"></i>Name
+                                </label>
+                                <input type="text" id="personName" class="form-control-modern" 
+                                    placeholder="Enter name" required>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-group-modern">
+                                        <label for="personBirthday" class="form-label-modern">
+                                            <i class="fas fa-birthday-cake me-2"></i>Birthday
+                                        </label>
+                                        <input type="date" id="personBirthday" class="form-control-modern">
                                     </div>
                                 </div>
-                            <% }) %>
-                        <% } else { %>
-                            <p class="text-muted">No people added yet.</p>
-                        <% } %>
+                                <div class="col-md-6">
+                                    <div class="form-group-modern">
+                                        <label for="personGift" class="form-label-modern">
+                                            <i class="fas fa-gift me-2"></i>Gift Idea
+                                        </label>
+                                        <input type="text" id="personGift" class="form-control-modern" 
+                                            placeholder="Gift idea">
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="savePersonBtn" class="btn btn-primary w-100 mt-3 pulse-btn">
+                                <i class="fas fa-save me-2"></i>Save Person
+                            </button>
+                        </form>
                     </div>
-                    <div class="d-flex justify-content-between mt-3">
-                        <button id="prevPeoplePage" class="btn btn-outline-primary" <%= peoplePage === 1 ? 'disabled' : '' %>>Previous</button>
-                        <span id="peoplePageInfo">Page <%= peoplePage %> of <%= totalPeoplePages %></span>
-                        <button id="nextPeoplePage" class="btn btn-outline-primary" <%= peoplePage === totalPeoplePages ? 'disabled' : '' %>>Next</button>
+                </div>
+
+                <!-- People List Card -->
+                <div class="modern-card glass">
+                    <div class="card-header-modern">
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon people-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h3 class="card-title-modern mb-0">People</h3>
+                        </div>
+                    </div>
+                    <div class="card-body-modern">
+                        <div class="people-container">
+                            <div id="peopleList">
+                                <% if (peopleData && peopleData.length > 0) { %>
+                                    <% peopleData.forEach(person => { %>
+                                        <div class="person-item-modern" data-id="<%= person.id %>">
+                                            <div class="person-header">
+                                                <div class="person-info">
+                                                    <h5 class="person-name editable" data-field="name">
+                                                        <i class="fas fa-user me-2"></i>
+                                                        <%= person.name || 'Unknown' %>
+                                                    </h5>
+                                                    <div class="person-birthday">
+                                                        <i class="fas fa-birthday-cake me-1"></i>
+                                                        <span class="editable" data-field="birthday">
+                                                            <%= person.birthday ? new Date(person.birthday).toLocaleDateString('en-GB') : 'Not set' %>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <button class="btn btn-outline-danger btn-sm delete-person" data-id="<%= person.id %>">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                            
+                                            <div class="gifts-section">
+                                                <h6 class="gifts-title">
+                                                    <i class="fas fa-gift me-2"></i>Gift Ideas
+                                                </h6>
+                                                <div class="gifts-list">
+                                                    <% if (person.gifts && person.gifts.length > 0) { %>
+                                                        <% person.gifts.forEach(gift => { %>
+                                                            <div class="gift-item-modern">
+                                                                <div class="gift-info">
+                                                                    <span class="gift-name"><%= gift.gift_name %></span>
+                                                                    <small class="gift-date">
+                                                                        Added: <%= new Date(gift.added_date).toLocaleDateString('en-GB') %>
+                                                                    </small>
+                                                                </div>
+                                                                <button class="btn btn-outline-danger btn-sm delete-gift" data-gift-id="<%= gift.id %>">
+                                                                    <i class="fas fa-times"></i>
+                                                                </button>
+                                                            </div>
+                                                        <% }) %>
+                                                    <% } else { %>
+                                                        <div class="no-gifts">
+                                                            <i class="fas fa-gift"></i>
+                                                            <span>No gifts yet</span>
+                                                        </div>
+                                                    <% } %>
+                                                </div>
+                                                
+                                                <div class="add-gift-section">
+                                                    <div class="input-group-modern">
+                                                        <input type="text" class="form-control-modern add-gift-input" 
+                                                            placeholder="Add gift idea" data-person-id="<%= person.id %>">
+                                                        <button class="btn btn-primary add-gift-btn pulse-btn">
+                                                            <i class="fas fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <div class="empty-state">
+                                        <i class="fas fa-user-plus"></i>
+                                        <h4>No people added yet</h4>
+                                        <p>Start building your network by adding people you know!</p>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                        
+                        <!-- People Pagination -->
+                        <% if (totalPeoplePages > 1) { %>
+                            <div class="pagination-modern mt-4">
+                                <button id="prevPeoplePage" class="page-link-modern" <%= peoplePage === 1 ? 'disabled' : '' %>>
+                                    <i class="fas fa-chevron-left"></i>
+                                    <span>Previous</span>
+                                </button>
+                                <span class="page-info">
+                                    Page <%= peoplePage %> of <%= totalPeoplePages %>
+                                </span>
+                                <button id="nextPeoplePage" class="page-link-modern" <%= peoplePage === totalPeoplePages ? 'disabled' : '' %>>
+                                    <span>Next</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        <% } %>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <script>
         window.userId = '<%= userId %>';

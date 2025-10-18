@@ -1,154 +1,369 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Payments</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-  <link rel="stylesheet" href="/css/amblezio.css"/>
-  <link rel="stylesheet" href="/css/main.css"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Subscription - Amblezio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/amblezio.css">
+    <link rel="stylesheet" href="/css/subscribe.css">
 </head>
 <body class="bg-dark text-light">
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
+    
+    <!-- Modern Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top glass-nav">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-3" href="/home/<%= userId %>">
+                <i class="fas fa-rocket me-2 text-primary"></i>
+                <span class="gradient-text">Amblezio</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile/<%= userId %>">
+                            <i class="fas fa-user me-1"></i>Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/subscribe/<%= userId %>">
+                            <i class="fas fa-credit-card me-1"></i>Premium
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-  <!-- Header -->
-  <header class="bg-dark text-white p-3 rounded-xl glow">
-    <div class="container d-flex justify-content-between align-items-center">
-      <div class="profile d-flex align-items-center">
-        <span class="avatar me-2">M</span>
-        <span class="ms-2">
-          <%= username %>
-        </span>
-      </div>
-      <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
-        ☰
-      </button>
-    </div>
-  </header>
-
-  <!-- Offcanvas Menu -->
-  <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasNavbar">
-    <div class="offcanvas-header">
-      <h5 class="offcanvas-title text-light">Menu</h5>
-      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-    </div>
-    <div class="offcanvas-body">
-      <ul class="nav flex-column">
-        <li class="nav-item">
-          <a class="nav-link text-light" href="/home/<%= userId %>">🏠 Dashboard</a>
-      </li>
-      <li class="nav-item">
-          <a class="nav-link text-light" href="/subscribe/<%= userId %>">💳 Payments</a>
-      </li>
-      <li class="nav-item">
-          <a class="nav-link text-light" href="/profile/<%= userId %>">👤 Profile</a>
-      </li>
-      <li class="nav-item">
-          <a class="nav-link text-light" href="/work/<%= userId %>">💼 Work</a>
-      </li>
-      <li class="nav-item">
-          <a class="nav-link text-light" href="/mental/<%= userId %>">🧠 Mental</a>
-      </li>
-      <li class="nav-item">
-          <a class="nav-link text-light" href="/calorietracker/<%= userId %>">🍽️ Calorie Tracker</a>
-      </li>
-      <li class="nav-item">
-          <a class="nav-link text-light" href="/social/<%= userId %>">👥 Social</a>
-      </li>
-      <li class="nav-item">
-          <a class="nav-link text-light" href="/timeoff/<%= userId %>">⏰ Time Off</a>
-      </li>
-      <li class="nav-item">
-          <a class="nav-link text-light" href="/body/<%= userId %>">💪 Body</a>
-      </li>
-      <li class="nav-item">
-          <a class="nav-link text-light" href="/auth/logout">🚪 Logout</a>
-      </li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="container mt-4">
-    <h2 class="text-center mb-4">💳 Subscription Management</h2>
-
-    <!-- Payment success message removed; page always renders normally after redirect -->
-
-    <!-- Subscription Info -->
-    <div class="card shadow-sm p-4 mb-4">
-      <% if (subscriptionInfo.hasSubscription) { %>
-        <h4 class="text-success mb-3">✅ You are a Premium Member</h4>
-        <p>Thank you for supporting the app! You have access to all premium features.</p>
-        
-        <% if (subscriptionInfo.cancelAtPeriodEnd) { %>
-          <div class="alert alert-warning" role="alert">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            <strong>Subscription Cancelled:</strong> Your subscription will end on 
-            <%= new Date(subscriptionInfo.currentPeriodEnd).toLocaleDateString() %>. 
-            You can reactivate anytime before then.
-          </div>
-        <% } else if (subscriptionInfo.currentPeriodEnd) { %>
-          <p class="text-muted">Your subscription is active until: <%= new Date(subscriptionInfo.currentPeriodEnd).toLocaleDateString() %></p>
-        <% } %>
-        
-        <% if (!subscriptionInfo.cancelAtPeriodEnd) { %>
-          <button id="cancelSubscriptionBtn" class="btn btn-danger">
-            <i class="fas fa-times me-2"></i>Cancel Subscription
-          </button>
-        <% } else { %>
-          <button id="reactivateSubscriptionBtn" class="btn btn-success">
-            <i class="fas fa-play me-2"></i>Reactivate Subscription
-          </button>
-        <% } %>
-      <% } else { %>
-        <h4 class="text-primary mb-3">🔓 You are on the Free Plan</h4>
-        <p>Upgrade to premium to unlock extra features and support development.</p>
-        
-        <% if (typeof redirected !== 'undefined' && redirected) { %>
-          <div class="alert alert-info" role="alert">
-            <i class="fas fa-info-circle me-2"></i>
-            <strong>Premium Feature Required:</strong> You need a premium subscription to access this feature. 
-            Upgrade now to unlock all modules!
-          </div>
-        <% } %>
-        
-        <button id="subscribeBtn" class="btn btn-success w-100">
-          <i class="fas fa-credit-card me-2"></i>Subscribe via Stripe
-        </button>
-      <% } %>
+    <!-- Offcanvas Menu -->
+    <div class="offcanvas offcanvas-end glass-nav" tabindex="-1" id="offcanvasNavbar">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title gradient-text">Navigation</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="nav flex-column">
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/home/<%= userId %>">
+                        <i class="fas fa-home me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link active" href="/subscribe/<%= userId %>">
+                        <i class="fas fa-credit-card me-2"></i>Payments
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/profile/<%= userId %>">
+                        <i class="fas fa-user me-2"></i>Profile
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/work/<%= userId %>">
+                        <i class="fas fa-briefcase me-2"></i>Work
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/mental/<%= userId %>">
+                        <i class="fas fa-brain me-2"></i>Mental
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/calorietracker/<%= userId %>">
+                        <i class="fas fa-utensils me-2"></i>Calorie Tracker
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/social/<%= userId %>">
+                        <i class="fas fa-users me-2"></i>Social
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/timeoff/<%= userId %>">
+                        <i class="fas fa-clock me-2"></i>Time Off
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/body/<%= userId %>">
+                        <i class="fas fa-dumbbell me-2"></i>Body
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link modern-nav-link logout-link" href="/logout">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 
-    <!-- Premium Features -->
-    <div class="card shadow-sm p-4 mb-4">
-      <h4 class="text-info mb-3">🌟 Premium Features</h4>
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item">✔️ Unlimited Tracking</li>
-        <li class="list-group-item">✔️ Priority Support</li>
-        <li class="list-group-item">✔️ Early Access to New Modules</li>
-        <li class="list-group-item">✔️ Advanced Statistics and Reports</li>
-        <li class="list-group-item">✔️ Access to All App Modules</li>
-        <li class="list-group-item">✔️ Export Data</li>
-      </ul>
-    </div>
+    <!-- Main Content -->
+    <main class="container-fluid px-4 py-5" style="margin-top: 80px;">
+        <!-- Page Header -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="page-header-card glass text-center py-4">
+                    <div class="page-icon mb-3">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <h1 class="page-title mb-3">
+                        <span class="gradient-text">Premium Subscription</span>
+                    </h1>
+                    <p class="page-subtitle">Unlock your full potential with premium features</p>
+                </div>
+            </div>
+        </div>
 
-    <!-- Free Plan Limitations -->
-    <div class="card shadow-sm p-4 mb-4">
-      <h4 class="text-warning mb-3">⚠️ Free Plan Limitations</h4>
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item">❌ Access only to Home Dashboard</li>
-        <li class="list-group-item">❌ Limited tracking features</li>
-        <li class="list-group-item">❌ No advanced analytics</li>
-        <li class="list-group-item">❌ No data export</li>
-      </ul>
-    </div>
-  </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Subscription Status Card -->
+                <div class="modern-card glass mb-4">
+                    <div class="card-header-modern">
+                        <div class="card-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <h3 class="card-title-modern">Subscription Status</h3>
+                    </div>
+                    <div class="card-body-modern">
+                        <% if (subscriptionInfo.hasSubscription) { %>
+                            <!-- Premium Member Status -->
+                            <div class="subscription-status premium">
+                                <div class="status-header">
+                                    <div class="status-icon">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="status-info">
+                                        <h4 class="status-title">Premium Member</h4>
+                                        <p class="status-description">Thank you for supporting the app! You have access to all premium features.</p>
+                                    </div>
+                                </div>
+                                
+                                <% if (subscriptionInfo.cancelAtPeriodEnd) { %>
+                                    <div class="alert-modern warning">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        <div class="alert-content">
+                                            <strong>Subscription Cancelled:</strong> Your subscription will end on 
+                                            <%= new Date(subscriptionInfo.currentPeriodEnd).toLocaleDateString() %>. 
+                                            You can reactivate anytime before then.
+                                        </div>
+                                    </div>
+                                <% } else if (subscriptionInfo.currentPeriodEnd) { %>
+                                    <div class="subscription-details">
+                                        <div class="detail-item">
+                                            <i class="fas fa-calendar-alt me-2"></i>
+                                            <span>Active until: <%= new Date(subscriptionInfo.currentPeriodEnd).toLocaleDateString() %></span>
+                                        </div>
+                                    </div>
+                                <% } %>
+                                
+                                <div class="subscription-actions">
+                                    <% if (!subscriptionInfo.cancelAtPeriodEnd) { %>
+                                        <button id="cancelSubscriptionBtn" class="btn btn-outline-danger pulse-btn">
+                                            <i class="fas fa-times me-2"></i>Cancel Subscription
+                                        </button>
+                                    <% } else { %>
+                                        <button id="reactivateSubscriptionBtn" class="btn btn-success pulse-btn">
+                                            <i class="fas fa-play me-2"></i>Reactivate Subscription
+                                        </button>
+                                    <% } %>
+                                </div>
+                            </div>
+                        <% } else { %>
+                            <!-- Free Plan Status -->
+                            <div class="subscription-status free">
+                                <div class="status-header">
+                                    <div class="status-icon">
+                                        <i class="fas fa-unlock"></i>
+                                    </div>
+                                    <div class="status-info">
+                                        <h4 class="status-title">Free Plan</h4>
+                                        <p class="status-description">Upgrade to premium to unlock extra features and support development.</p>
+                                    </div>
+                                </div>
+                                
+                                <% if (typeof redirected !== 'undefined' && redirected) { %>
+                                    <div class="alert-modern info">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        <div class="alert-content">
+                                            <strong>Premium Feature Required:</strong> You need a premium subscription to access this feature. 
+                                            Upgrade now to unlock all modules!
+                                        </div>
+                                    </div>
+                                <% } %>
+                                
+                                <div class="subscription-actions">
+                                    <button id="subscribeBtn" class="btn btn-primary pulse-btn w-100">
+                                        <i class="fas fa-credit-card me-2"></i>Subscribe via Stripe
+                                    </button>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
 
-  <script id="subscription-info" type="application/json"><%- JSON.stringify(subscriptionInfo) %></script>
-  <script>
-    // Pass subscription info to frontend JavaScript
-    const subscriptionInfo = JSON.parse(document.getElementById('subscription-info').textContent);
-  </script>
-  <script src="/frontendJS/subscribeFE.js"></script>
+                <!-- Features Comparison -->
+                <div class="row g-4">
+                    <!-- Premium Features -->
+                    <div class="col-lg-6">
+                        <div class="modern-card glass h-100">
+                            <div class="card-header-modern">
+                                <div class="card-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <h3 class="card-title-modern">Premium Features</h3>
+                            </div>
+                            <div class="card-body-modern">
+                                <div class="features-list">
+                                    <div class="feature-item">
+                                        <div class="feature-icon">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <div class="feature-content">
+                                            <h5 class="feature-title">Unlimited Tracking</h5>
+                                            <p class="feature-description">Track unlimited activities across all modules</p>
+                                        </div>
+                                    </div>
+                                    <div class="feature-item">
+                                        <div class="feature-icon">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <div class="feature-content">
+                                            <h5 class="feature-title">Priority Support</h5>
+                                            <p class="feature-description">Get help faster with priority customer support</p>
+                                        </div>
+                                    </div>
+                                    <div class="feature-item">
+                                        <div class="feature-icon">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <div class="feature-content">
+                                            <h5 class="feature-title">Early Access</h5>
+                                            <p class="feature-description">Be the first to try new modules and features</p>
+                                        </div>
+                                    </div>
+                                    <div class="feature-item">
+                                        <div class="feature-icon">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <div class="feature-content">
+                                            <h5 class="feature-title">Advanced Analytics</h5>
+                                            <p class="feature-description">Detailed statistics and progress reports</p>
+                                        </div>
+                                    </div>
+                                    <div class="feature-item">
+                                        <div class="feature-icon">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <div class="feature-content">
+                                            <h5 class="feature-title">All Modules</h5>
+                                            <p class="feature-description">Access to Work, Mental, Social, Body, and more</p>
+                                        </div>
+                                    </div>
+                                    <div class="feature-item">
+                                        <div class="feature-icon">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <div class="feature-content">
+                                            <h5 class="feature-title">Data Export</h5>
+                                            <p class="feature-description">Export your data in multiple formats</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                    <!-- Free Plan Limitations -->
+                    <div class="col-lg-6">
+                        <div class="modern-card glass h-100">
+                            <div class="card-header-modern">
+                                <div class="card-icon">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <h3 class="card-title-modern">Free Plan Limitations</h3>
+                            </div>
+                            <div class="card-body-modern">
+                                <div class="features-list">
+                                    <div class="feature-item limited">
+                                        <div class="feature-icon">
+                                            <i class="fas fa-times"></i>
+                                        </div>
+                                        <div class="feature-content">
+                                            <h5 class="feature-title">Dashboard Only</h5>
+                                            <p class="feature-description">Access only to Home Dashboard</p>
+                                        </div>
+                                    </div>
+                                    <div class="feature-item limited">
+                                        <div class="feature-icon">
+                                            <i class="fas fa-times"></i>
+                                        </div>
+                                        <div class="feature-content">
+                                            <h5 class="feature-title">Limited Tracking</h5>
+                                            <p class="feature-description">Basic tracking features only</p>
+                                        </div>
+                                    </div>
+                                    <div class="feature-item limited">
+                                        <div class="feature-icon">
+                                            <i class="fas fa-times"></i>
+                                        </div>
+                                        <div class="feature-content">
+                                            <h5 class="feature-title">No Analytics</h5>
+                                            <p class="feature-description">No advanced analytics or reports</p>
+                                        </div>
+                                    </div>
+                                    <div class="feature-item limited">
+                                        <div class="feature-icon">
+                                            <i class="fas fa-times"></i>
+                                        </div>
+                                        <div class="feature-content">
+                                            <h5 class="feature-title">No Data Export</h5>
+                                            <p class="feature-description">Cannot export your data</p>
+                                        </div>
+                                    </div>
+                                    <div class="feature-item limited">
+                                        <div class="feature-icon">
+                                            <i class="fas fa-times"></i>
+                                        </div>
+                                        <div class="feature-content">
+                                            <h5 class="feature-title">No Support</h5>
+                                            <p class="feature-description">Community support only</p>
+                                        </div>
+                                    </div>
+                                    <div class="feature-item limited">
+                                        <div class="feature-icon">
+                                            <i class="fas fa-times"></i>
+                                        </div>
+                                        <div class="feature-content">
+                                            <h5 class="feature-title">No New Features</h5>
+                                            <p class="feature-description">No early access to new modules</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script id="subscription-info" type="application/json"><%- JSON.stringify(subscriptionInfo) %></script>
+    <script>
+        // Pass subscription info to frontend JavaScript
+        const subscriptionInfo = JSON.parse(document.getElementById('subscription-info').textContent);
+    </script>
+    <script src="/frontendJS/subscribeFE.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

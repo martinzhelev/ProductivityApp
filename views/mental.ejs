@@ -1,232 +1,397 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mental Tracker</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Mental Health - Amblezio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/amblezio.css">
     <link rel="stylesheet" href="/css/mental.css">
-
-    <style>
-        /* Scoped dark theme similar to home.ejs */
-        .dark-theme { background: #0b0f14; color: #e6edf3; }
-        .dark-theme a { color: #7dd3fc; }
-        .dark-theme a:hover { color: #38bdf8; }
-
-        /* Glass containers and cards */
-        .dark-theme .card,
-        .dark-theme .glass { background: rgba(2, 6, 23, 0.6); border: 1px solid rgba(148,163,184,0.2); color: #e6edf3; box-shadow: 0 6px 24px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,0.02); backdrop-filter: blur(8px); }
-        .dark-theme .rounded-xl { border-radius: 16px; }
-        .dark-theme .glow { box-shadow: 0 8px 30px rgba(2,6,23,.6); }
-
-        /* Offcanvas */
-        .dark-theme .offcanvas { background: rgba(2, 6, 23, 0.85); color: #e6edf3; border-left: 1px solid rgba(148,163,184,0.2); backdrop-filter: blur(6px); }
-        .dark-theme .offcanvas-title { color: #f1f5f9; }
-        .dark-theme .btn-close { filter: invert(1) grayscale(1); opacity: .8; }
-        .dark-theme .nav-link { color: #cbd5e1; }
-        .dark-theme .nav-link:hover { color: #7dd3fc; background: rgba(125,211,252,.08); border-radius: 8px; }
-
-        /* Forms */
-        .dark-theme .form-control,
-        .dark-theme .form-select { background: #0b1220; color: #e6edf3; border: 1px solid rgba(148,163,184,0.25); }
-        .dark-theme .form-control::placeholder { color: #94a3b8; }
-
-        /* Modals */
-        .dark-theme .modal-content { background: rgba(2,6,23,0.9); color: #e6edf3; border: 1px solid rgba(148,163,184,0.25); }
-        .dark-theme .modal-header { border-bottom-color: rgba(148,163,184,0.2); }
-
-        /* Utility */
-        .dark-theme .border { border-color: rgba(148,163,184,0.25) !important; }
-    </style>
-
-    <!-- Bootstrap JS & jQuery -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-
-<body class="dark-theme">
-    <!-- Header -->
-    <header class="bg-dark text-white p-3 rounded-xl glow">
-        <div class="container d-flex justify-content-between align-items-center">
-            <div class="profile d-flex align-items-center">
-                <span class="avatar me-2">M</span>
-                <span class="ms-2">
-                    <%= username %>
-                </span>
-            </div>
-            <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasNavbar">
-                ☰
+<body class="bg-dark text-light">
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
+    
+    <!-- Modern Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top glass-nav">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-3" href="/home/<%= userId %>">
+                <i class="fas fa-rocket me-2 text-primary"></i>
+                <span class="gradient-text">Amblezio</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
+                <span class="navbar-toggler-icon"></span>
             </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile/<%= userId %>">
+                            <i class="fas fa-user me-1"></i>Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/subscribe/<%= userId %>">
+                            <i class="fas fa-credit-card me-1"></i>Premium
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </header>
+    </nav>
 
     <!-- Offcanvas Menu -->
-    <div class="offcanvas offcanvas-end rounded-xl" tabindex="-1" id="offcanvasNavbar">
+    <div class="offcanvas offcanvas-end glass-nav" tabindex="-1" id="offcanvasNavbar">
         <div class="offcanvas-header">
-            <h5 class="offcanvas-title">Menu</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+            <h5 class="offcanvas-title gradient-text">Navigation</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
         </div>
         <div class="offcanvas-body">
             <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="/home/<%= userId %>">🏠 Dashboard</a>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/home/<%= userId %>">
+                        <i class="fas fa-home me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/subscribe/<%= userId %>">
+                        <i class="fas fa-credit-card me-2"></i>Payments
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/profile/<%= userId %>">
+                        <i class="fas fa-user me-2"></i>Profile
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/work/<%= userId %>">
+                        <i class="fas fa-briefcase me-2"></i>Work
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link active" href="/mental/<%= userId %>">
+                        <i class="fas fa-brain me-2"></i>Mental
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/calorietracker/<%= userId %>">
+                        <i class="fas fa-utensils me-2"></i>Calorie Tracker
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/social/<%= userId %>">
+                        <i class="fas fa-users me-2"></i>Social
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/timeoff/<%= userId %>">
+                        <i class="fas fa-clock me-2"></i>Time Off
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/body/<%= userId %>">
+                        <i class="fas fa-dumbbell me-2"></i>Body
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/subscribe/<%= userId %>">💳 Payments</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/profile/<%= userId %>">👤 Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/work/<%= userId %>">💼 Work</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/mental/<%= userId %>">🧠 Mental</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/calorietracker/<%= userId %>">🍽️ Calorie Tracker</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/social/<%= userId %>">👥 Social</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/timeoff/<%= userId %>">⏰ Time Off</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/body/<%= userId %>">💪 Body</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/auth/logout">🚪 Logout</a>
+                    <a class="nav-link modern-nav-link logout-link" href="/logout">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
                 </li>
             </ul>
         </div>
     </div>
 
-    <div class="container mt-4">
-        <h1 class="text-center mb-4">📖 Mental Tracker</h1>
+    <!-- Main Content -->
+    <main class="container-fluid px-4 py-5" style="margin-top: 80px;">
+        <!-- Page Header -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="page-header-card glass text-center py-4">
+                    <div class="page-icon mb-3">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h1 class="page-title mb-3">
+                        <span class="gradient-text">Mental Wellness</span>
+                    </h1>
+                    <p class="page-subtitle">Track your reading progress and meditation journey</p>
+                </div>
+            </div>
+        </div>
 
         <div class="row g-4">
-            <!-- Left Column: Books -->
-            <div class="col-md-6">
-                <div class="card p-4 rounded-xl glass">
-                    <h2>📚 Books</h2>
-        
-                    <form id="addBookForm" class="d-flex">
-                        <input type="text" id="bookTitle" class="form-control me-2" placeholder="Enter book title" required>
-                        <button type="submit" class="btn btn-success">Add</button>
-                    </form>
-        
-                    <div id="bookList" class="mt-3">
-                        <% if (books.length > 0) { %>
-                            <% books.forEach(book => { %>
-                                <div class="border rounded p-3 mb-3 glass" id="book-<%= book.book_id %>">
-                                    <h4 class="mb-2"><%= book.title %></h4>
-                
-                                    <% if (!book.completed) { %>
-                                        <input type="checkbox" class="markAsRead" data-id="<%= book.book_id %>"> Mark as Read
-                                    <% } else { %>
-                                        <button class="btn btn-info btn-sm info-btn" 
-                                            data-id="<%= book.book_id %>" 
-                                            data-title="<%= book.title %>" 
-                                            data-summary="<%= book.summary %>" 
-                                            data-review="<%= book.review %>">Info</button>
-                                    <% } %>
-                
-                                    <!-- ✅ Delete button -->
-                                    <button id="deleteBook" class="btn btn-danger btn-sm delete-book" data-id="<%= book.book_id %>">
-                                        Delete
+            <!-- Books Section -->
+            <div class="col-lg-6">
+                <div class="modern-card glass">
+                    <div class="card-header-modern">
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon books-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <h3 class="card-title-modern mb-0">Reading Library</h3>
+                        </div>
+                    </div>
+                    <div class="card-body-modern">
+                        <!-- Add Book Form -->
+                        <form id="addBookForm" class="add-book-form-modern">
+                            <div class="input-group-modern">
+                                <input type="text" id="bookTitle" class="form-control-modern" 
+                                    placeholder="Enter book title" required>
+                                <button type="submit" class="btn btn-primary pulse-btn">
+                                    <i class="fas fa-plus me-1"></i>Add
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Books List -->
+                        <div class="books-container">
+                            <div id="bookList">
+                                <% if (books.length > 0) { %>
+                                    <% books.forEach(book => { %>
+                                        <div class="book-item-modern" id="book-<%= book.book_id %>">
+                                            <div class="book-main">
+                                                <div class="book-info">
+                                                    <h5 class="book-title">
+                                                        <i class="fas fa-book me-2"></i>
+                                                        <%= book.title %>
+                                                    </h5>
+                                                    <div class="book-status">
+                                                        <% if (!book.completed) { %>
+                                                            <span class="status-reading">
+                                                                <i class="fas fa-book-open me-1"></i>Reading
+                                                            </span>
+                                                        <% } else { %>
+                                                            <span class="status-completed">
+                                                                <i class="fas fa-check-circle me-1"></i>Completed
+                                                            </span>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="book-actions">
+                                                    <% if (!book.completed) { %>
+                                                        <button class="btn btn-success btn-sm mark-as-read pulse-btn" data-id="<%= book.book_id %>">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                    <% } else { %>
+                                                        <button class="btn btn-info btn-sm info-btn pulse-btn" 
+                                                            data-id="<%= book.book_id %>" 
+                                                            data-title="<%= book.title %>" 
+                                                            data-summary="<%= book.summary %>" 
+                                                            data-review="<%= book.review %>">
+                                                            <i class="fas fa-info-circle"></i>
+                                                        </button>
+                                                    <% } %>
+                                                    <button class="btn btn-outline-danger btn-sm delete-book" data-id="<%= book.book_id %>">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <div class="empty-state">
+                                        <i class="fas fa-book"></i>
+                                        <h4>No books yet</h4>
+                                        <p>Start building your reading library by adding your first book!</p>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div id="pagination" class="pagination-modern mt-4">
+                            <!-- Pagination buttons dynamically added -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Tracking Section -->
+            <div class="col-lg-6">
+                <!-- Reading Progress Card -->
+                <div class="modern-card glass mb-4">
+                    <div class="card-header-modern">
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon reading-icon">
+                                <i class="fas fa-book-reader"></i>
+                            </div>
+                            <h3 class="card-title-modern mb-0">Reading Progress</h3>
+                        </div>
+                    </div>
+                    <div class="card-body-modern">
+                        <form class="progress-form-modern">
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="form-group-modern">
+                                        <label class="form-label-modern">
+                                            <i class="fas fa-list me-2"></i>Type
+                                        </label>
+                                        <select id="progressType" class="form-control-modern">
+                                            <option value="pages">Pages</option>
+                                            <option value="minutes">Minutes</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group-modern">
+                                        <label class="form-label-modern">
+                                            <i class="fas fa-hashtag me-2"></i>Amount
+                                        </label>
+                                        <input type="number" id="progressAmount" class="form-control-modern" 
+                                            placeholder="Amount" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="saveProgress" class="btn btn-primary w-100 pulse-btn">
+                                <i class="fas fa-save me-2"></i>Save Progress
+                            </button>
+                        </form>
+
+                        <div class="progress-stats-modern">
+                            <div class="stat-item-modern">
+                                <div class="stat-icon pages-icon">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Today's Pages</div>
+                                    <div class="stat-value" id="progressCounterPages">
+                                        <%= readingProgress.pages || 0 %> pages
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="stat-item-modern">
+                                <div class="stat-icon minutes-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Today's Minutes</div>
+                                    <div class="stat-value" id="progressCounterMinutes">
+                                        <%= readingProgress.minutes || 0 %> minutes
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Meditation Progress Card -->
+                <div class="modern-card glass">
+                    <div class="card-header-modern">
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon meditation-icon">
+                                <i class="fas fa-om"></i>
+                            </div>
+                            <h3 class="card-title-modern mb-0">Meditation Progress</h3>
+                        </div>
+                    </div>
+                    <div class="card-body-modern">
+                        <form class="meditation-form-modern">
+                            <div class="form-group-modern mb-4">
+                                <label class="form-label-modern">
+                                    <i class="fas fa-clock me-2"></i>Meditation Minutes
+                                </label>
+                                <div class="input-group-modern">
+                                    <input type="number" id="meditationProgressAmount" class="form-control-modern" 
+                                        placeholder="Minutes" required>
+                                    <button id="saveMeditationProgress" class="btn btn-primary pulse-btn">
+                                        <i class="fas fa-save me-1"></i>Save
                                     </button>
                                 </div>
-                            <% }) %>
-                        <% } else { %>
-                            <p>No books found.</p>
-                        <% } %>
-                    </div>
-        
-                    <div id="pagination" class="d-flex justify-content-center mt-3">
-                        <!-- Pagination buttons dynamically added -->
-                    </div>
-                </div>
-            </div>
-        
-            <!-- Right Column: Reading Progress & Meditation -->
-            <div class="col-md-6">
-                <!-- Reading Progress -->
-                <div class="card p-4 mb-4 rounded-xl glass">
-                    <h2>📖 Reading Progress</h2>
-                    <div class="d-flex">
-                        <select id="progressType" class="form-select me-2" style="max-width: 150px;">
-                            <option value="pages">Pages</option>
-                            <option value="minutes">Minutes</option>
-                        </select>
-                        <input type="number" id="progressAmount" class="form-control me-2" placeholder="Amount" required style="max-width: 100px;">
-                        <button id="saveProgress" class="btn btn-primary">Save</button>
-                    </div>
-                    <h4 class="mt-3">📑 Today's Pages: <span id="progressCounterPages"><%= readingProgress.pages || 0 %> pages</span></h4>
-                    <h4>⏳ Today's Minutes: <span id="progressCounterMinutes"><%= readingProgress.minutes || 0 %> minutes</span></h4>
-                </div>
-        
-                <!-- Meditation Progress (Moved Below Reading) -->
-                <div class="card p-4 rounded-xl glass">
-                    <h2>🧘‍♂️ Meditation Progress</h2>
-                    <div class="d-flex">
-                        <input type="number" id="meditationProgressAmount" class="form-control me-2" placeholder="Minutes" required style="max-width: 100px;">
-                        <button id="saveMeditationProgress" class="btn btn-primary">Save</button>
-                    </div>
-                    <h4 class="mt-3">🕰️ Today's Minutes: <span id="progressCounterMeditationMinutes"><%= meditationProgress || 0 %> minutes</span></h4>
-                </div>
-            </div>
-        </div>
-        
+                            </div>
+                        </form>
 
-        <!-- Modal for Book Info -->
-        <div class="modal fade" id="bookInfoModal" tabindex="-1" aria-labelledby="bookInfoModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">📘 Book Info</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <h4 id="modalBookTitle"></h4>
-                        <p><strong>Summary:</strong> <span id="modalBookSummary"></span></p>
-                        <p><strong>Review:</strong> <span id="modalBookReview"></span></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Review Modal -->
-        <div class="modal fade" id="bookReviewModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">📝 Enter Summary & Review</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" id="reviewBookId">
-                        <div class="mb-3">
-                            <label class="form-label">Summary</label>
-                            <textarea class="form-control" id="inputBookSummary" rows="3"></textarea>
+                        <div class="meditation-stats-modern">
+                            <div class="stat-item-modern">
+                                <div class="stat-icon meditation-stats-icon">
+                                    <i class="fas fa-spa"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Today's Meditation</div>
+                                    <div class="stat-value" id="progressCounterMeditationMinutes">
+                                        <%= meditationProgress || 0 %> minutes
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Review</label>
-                            <textarea class="form-control" id="inputBookReview" rows="3"></textarea>
-                        </div>
-                        <button class="btn btn-primary" id="saveReview">Save</button>
                     </div>
                 </div>
             </div>
         </div>
+    </main>
 
-        <!-- JS -->
-        <script src="/frontendJS/mentalFE.js"></script>
+    <!-- Book Info Modal -->
+    <div class="modal fade" id="bookInfoModal" tabindex="-1" aria-labelledby="bookInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content modern-modal">
+                <div class="modal-header modern-modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-book me-2"></i>Book Information
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body modern-modal-body">
+                    <h4 id="modalBookTitle" class="book-modal-title"></h4>
+                    <div class="book-details-modern">
+                        <div class="detail-section">
+                            <h6 class="detail-label">
+                                <i class="fas fa-align-left me-2"></i>Summary
+                            </h6>
+                            <p id="modalBookSummary" class="detail-content"></p>
+                        </div>
+                        <div class="detail-section">
+                            <h6 class="detail-label">
+                                <i class="fas fa-star me-2"></i>Review
+                            </h6>
+                            <p id="modalBookReview" class="detail-content"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Review Modal -->
+    <div class="modal fade" id="bookReviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content modern-modal">
+                <div class="modal-header modern-modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-edit me-2"></i>Enter Summary & Review
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body modern-modal-body">
+                    <input type="hidden" id="reviewBookId">
+                    <div class="form-group-modern mb-4">
+                        <label class="form-label-modern">
+                            <i class="fas fa-align-left me-2"></i>Summary
+                        </label>
+                        <textarea class="form-control-modern" id="inputBookSummary" rows="4" 
+                            placeholder="Write a brief summary of the book..."></textarea>
+                    </div>
+                    <div class="form-group-modern mb-4">
+                        <label class="form-label-modern">
+                            <i class="fas fa-star me-2"></i>Review
+                        </label>
+                        <textarea class="form-control-modern" id="inputBookReview" rows="4" 
+                            placeholder="Share your thoughts and review..."></textarea>
+                    </div>
+                    <button class="btn btn-primary w-100 pulse-btn" id="saveReview">
+                        <i class="fas fa-save me-2"></i>Save Review
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/frontendJS/mentalFE.js"></script>
 </body>
 </html>
