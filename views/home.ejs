@@ -1,219 +1,397 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard with Bootstrap</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Dashboard - Amblezio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/amblezio.css">
     <link rel="stylesheet" href="/css/home.css">
 </head>
-
 <body class="bg-dark text-light">
-
-    <header class="bg-dark text-white p-3 rounded-xl glow">
-        <div class="container d-flex justify-content-between align-items-center">
-            <div class="profile d-flex align-items-center">
-                <span class="avatar me-2">M</span>
-                <span class="ms-2">
-                    <%= username %>
-                </span>
-            </div>
-            <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasNavbar">
-                ☰
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
+    
+    <!-- Modern Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top glass-nav">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-3" href="/home/<%= userId %>">
+                <i class="fas fa-rocket me-2 text-primary"></i>
+                <span class="gradient-text">Amblezio</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
+                <span class="navbar-toggler-icon"></span>
             </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile/<%= userId %>">
+                            <i class="fas fa-user me-1"></i>Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/subscribe/<%= userId %>">
+                            <i class="fas fa-credit-card me-1"></i>Premium
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </header>
+    </nav>
 
     <!-- Offcanvas Menu -->
-    <div class="offcanvas offcanvas-end rounded-xl text-bg-dark" tabindex="-1" id="offcanvasNavbar">
+    <div class="offcanvas offcanvas-end glass-nav" tabindex="-1" id="offcanvasNavbar">
         <div class="offcanvas-header">
-            <h5 class="offcanvas-title text-light">Menu</h5>
+            <h5 class="offcanvas-title gradient-text">Navigation</h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
         </div>
         <div class="offcanvas-body">
             <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link text-light" href="/home/<%= userId %>">🏠 Dashboard</a>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link active" href="/home/<%= userId %>">
+                        <i class="fas fa-home me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/subscribe/<%= userId %>">
+                        <i class="fas fa-credit-card me-2"></i>Payments
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/profile/<%= userId %>">
+                        <i class="fas fa-user me-2"></i>Profile
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/work/<%= userId %>">
+                        <i class="fas fa-briefcase me-2"></i>Work
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/mental/<%= userId %>">
+                        <i class="fas fa-brain me-2"></i>Mental
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/calorietracker/<%= userId %>">
+                        <i class="fas fa-utensils me-2"></i>Calorie Tracker
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/social/<%= userId %>">
+                        <i class="fas fa-users me-2"></i>Social
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/timeoff/<%= userId %>">
+                        <i class="fas fa-clock me-2"></i>Time Off
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link modern-nav-link" href="/body/<%= userId %>">
+                        <i class="fas fa-dumbbell me-2"></i>Body
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-light" href="/subscribe/<%= userId %>">💳 Payments</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-light" href="/profile/<%= userId %>">👤 Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-light" href="/work/<%= userId %>">💼 Work</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-light" href="/mental/<%= userId %>">🧠 Mental</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-light" href="/calorietracker/<%= userId %>">🍽️ Calorie Tracker</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-light" href="/social/<%= userId %>">👥 Social</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-light" href="/timeoff/<%= userId %>">⏰ Time Off</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-light" href="/body/<%= userId %>">💪 Body</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-light" href="/auth/logout">🚪 Logout</a>
+                    <a class="nav-link modern-nav-link logout-link" href="/logout">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
                 </li>
             </ul>
         </div>
     </div>
 
-    <main class="container mt-4">
-        <div class="row">
-            <!-- Left Column: Tasks -->
-            <div class="col-md-4 position-relative">
-                <div class="column glass p-4 bg-dark text-light border border-secondary rounded-3">
-                    <h2 class="mb-3 text-light">Tasks</h2>
-                    <ul class="tasks list-unstyled" id="tasks-list">
-                        <% if (tasks.length> 0) { %>
-                            <% tasks.forEach(function(task) { %>
-                                <li data-task-id="<%= task.task_id %>" class="<%= task.completed ? 'completed ' : '' %>bg-body-tertiary text-light border border-secondary rounded-3 p-2 d-flex justify-content-between align-items-center mb-2">
-                                    <div class="d-flex align-items-center flex-grow-1">
-                                        <input type="checkbox" class="checkbox form-check-input me-2" <%=task.completed ? 'checked' : '' %> >
-                                        <span class="text-light"><%= task.task %></span>
-                                    </div>
-                                    <button class="btn btn-sm btn-outline-danger delete-task ms-2" data-id="<%= task.task_id %>" title="Delete"><i class="fas fa-trash"></i></button>
-                                </li>
-                            <% }); %>
-                        <% } else { %>
-                            <li class="bg-body-tertiary text-light border border-secondary rounded-3 p-2 d-flex justify-content-between align-items-center mb-2">No tasks found</li>
-                        <% } %>
-                    </ul>
-                    <button class="btn btn-danger mt-2 w-100" id="removeTask">Remove Done Tasks</button>
-                    <button class="fab btn btn-primary position-absolute end-0 bottom-0 me-3 mb-3 rounded-circle shadow" id="addTask" aria-label="Add task">+</button>
+    <!-- Main Content -->
+    <main class="container-fluid px-4 py-5" style="margin-top: 80px;">
+        <!-- Welcome Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="welcome-card glass text-center py-4">
+                    <h1 class="welcome-title mb-3">
+                        Welcome back, <span class="gradient-text"><%= username %></span>!
+                    </h1>
+                    <p class="welcome-subtitle">Ready to continue your personal growth journey?</p>
                 </div>
             </div>
+        </div>
 
-
-            <!-- Middle Column: Habits -->
-            <div class="col-md-4 position-relative">
-                <div class="column glass p-4 bg-dark text-light border border-secondary rounded-3">
-                    <h2 class="mb-3 text-light">Habits</h2>
-                    <ul class="habits list-unstyled d-grid gap-2" id="habits-list">
-                        <% if (habits.length> 0) { %>
-                            <% habits.forEach(function(habit) { %>
-                                <li data-habit-id="<%= habit.habit_id %>" class="bg-body-tertiary text-light border border-secondary rounded-3 p-2 d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center flex-grow-1">
-                                        <label class="m-0 d-flex align-items-center">
-                                            <input type="checkbox" class="checkbox form-check-input me-2" <%=habit.completed ? 'checked' : '' %> >
-                                            <span class="text-light"><%= habit.habit %></span>
-                                        </label>
-                                    </div>
-                                    <button class="btn btn-sm btn-outline-danger delete-task ms-2" data-id="<%= habit.habit_id %>" title="Delete"><i class="fas fa-trash"></i></button>
-                                </li>
-                            <% }); %>
-                        <% } else { %>
-                            <li class="bg-body-tertiary text-light border border-secondary rounded-3 p-2 d-flex justify-content-between align-items-center mb-2">No habits found</li>
-                        <% } %>
-                    </ul>
-                    <button class="btn btn-danger mt-2 w-100" id="removeHabit">Remove Habits</button>
-                    <button class="fab btn btn-primary position-absolute end-0 bottom-0 me-3 mb-3 rounded-circle shadow" id="addHabit" aria-label="Add habit">+</button>
-                </div>
-            </div>
-
-            <!-- Right Column: Stats -->
-            <div class="col-md-4">
-                <div class="column glass p-4 bg-dark text-light border border-secondary rounded-3">
-                    <h2 class="mb-3 text-light">Player Stats</h2>
-                    <div class="stats d-grid gap-3">
-                        <% if (stats) { %>
-                            <div>
-                                <div class="d-flex justify-content-between mb-1"><span class="text-light">Strength</span><span class="text-light"><%= stats.strength || 0 %>%</span></div>
-                                <div class="stat-bar"><span class="stat-red" style="--p:<%= stats.strength || 0 %>;"></span></div>
+        <div class="row g-4">
+            <!-- Tasks Column -->
+            <div class="col-lg-4 col-md-6">
+                <div class="modern-card glass">
+                    <div class="card-header-modern">
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon tasks-icon">
+                                <i class="fas fa-tasks"></i>
                             </div>
-                            <div>
-                                <div class="d-flex justify-content-between mb-1"><span class="text-light">Agility</span><span class="text-light"><%= stats.agility || 0 %>%</span></div>
-                                <div class="stat-bar"><span class="stat-orange" style="--p:<%= stats.agility || 0 %>;"></span></div>
-                            </div>
-                            <div>
-                                <div class="d-flex justify-content-between mb-1"><span class="text-light">Mental</span><span class="text-light"><%= stats.mental || 0 %>%</span></div>
-                                <div class="stat-bar"><span class="stat-purple" style="--p:<%= stats.mental || 0 %>;"></span></div>
-                            </div>
-                            <div>
-                                <div class="d-flex justify-content-between mb-1"><span class="text-light">Work</span><span class="text-light"><%= stats.work || 0 %>%</span></div>
-                                <div class="stat-bar"><span class="stat-blue" style="--p:<%= stats.work || 0 %>;"></span></div>
-                            </div>
-                            <div>
-                                <div class="d-flex justify-content-between mb-1"><span class="text-light">Social</span><span class="text-light"><%= stats.social || 0 %>%</span></div>
-                                <div class="stat-bar"><span class="stat-teal" style="--p:<%= stats.social || 0 %>;"></span></div>
-                            </div>
-                            <div>
-                                <div class="d-flex justify-content-between mb-1"><span class="text-light">Financial</span><span class="text-light"><%= stats.financial || 0 %>%</span></div>
-                                <div class="stat-bar"><span class="stat-green" style="--p:<%= stats.financial || 0 %>;"></span></div>
-                            </div>
-                            <div>
-                                <div class="d-flex justify-content-between mb-1"><span class="text-light">Speed</span><span class="text-light"><%= stats.speed || 0 %>%</span></div>
-                                <div class="stat-bar"><span class="stat-yellow" style="--p:<%= stats.speed || 0 %>;"></span></div>
-                            </div>
+                            <h3 class="card-title-modern mb-0">Tasks</h3>
+                        </div>
+                        <button class="btn btn-primary btn-sm pulse-btn" id="addTask">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="card-body-modern">
+                        <ul class="modern-list" id="tasks-list">
+                            <% if (tasks.length > 0) { %>
+                                <% tasks.forEach(function(task) { %>
+                                    <li class="modern-list-item <%= task.completed ? 'completed' : '' %>" data-task-id="<%= task.task_id %>">
+                                        <div class="list-item-content">
+                                            <div class="modern-checkbox">
+                                                <input type="checkbox" class="form-check-input" <%= task.completed ? 'checked' : '' %>>
+                                                <span class="checkmark"></span>
+                                            </div>
+                                            <span class="list-item-text"><%= task.task %></span>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-danger delete-task" data-id="<%= task.task_id %>">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </li>
+                                <% }); %>
                             <% } else { %>
-                                <p class="text-light-50">No stats available</p>
-                                <% } %>
+                                <li class="empty-state">
+                                    <i class="fas fa-clipboard-list"></i>
+                                    <p>No tasks yet</p>
+                                    <small>Add your first task to get started!</small>
+                                </li>
+                            <% } %>
+                        </ul>
+                        <div class="card-footer-modern">
+                            <button class="btn btn-outline-danger w-100" id="removeTask">
+                                <i class="fas fa-trash me-2"></i>Remove Done Tasks
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-
-            <div class="modal bg-dark text-light" id="task-modal">
-                <div class="modal-header bg-dark text-light border-secondary">
-                    <span class="title">Add Task</span>
-                    <span class="close-button" id="close-task-modal">&times;</span>
-                </div>
-                <div class="modal-body bg-dark text-light">
-                    <input type="text" name="task" id="task-input" class="form-control bg-dark text-light border-secondary" placeholder="Enter your task" />
-                    <select id="task-category" class="form-select bg-dark text-light border-secondary">
-                        <option value="" disabled selected>Select Category</option>
-                        <option value="Strength">Strength</option>
-                        <option value="Agility">Agility</option>
-                        <option value="Mental">Mental</option>
-                        <option value="Work">Work</option>
-                        <option value="Social">Social</option>
-                        <option value="Financial">Financial</option>
-                        <option value="Speed">Speed</option>
-                    </select>
-                    <button id="modal-add-task" class="btn btn-outline-light mt-2">Add Task</button>
+            <!-- Habits Column -->
+            <div class="col-lg-4 col-md-6">
+                <div class="modern-card glass">
+                    <div class="card-header-modern">
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon habits-icon">
+                                <i class="fas fa-repeat"></i>
+                            </div>
+                            <h3 class="card-title-modern mb-0">Habits</h3>
+                        </div>
+                        <button class="btn btn-primary btn-sm pulse-btn" id="addHabit">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="card-body-modern">
+                        <ul class="modern-list" id="habits-list">
+                            <% if (habits.length > 0) { %>
+                                <% habits.forEach(function(habit) { %>
+                                    <li class="modern-list-item <%= habit.completed ? 'completed' : '' %>" data-habit-id="<%= habit.habit_id %>">
+                                        <div class="list-item-content">
+                                            <div class="modern-checkbox">
+                                                <input type="checkbox" class="form-check-input" <%= habit.completed ? 'checked' : '' %>>
+                                                <span class="checkmark"></span>
+                                            </div>
+                                            <span class="list-item-text"><%= habit.habit %></span>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-danger delete-task" data-id="<%= habit.habit_id %>">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </li>
+                                <% }); %>
+                            <% } else { %>
+                                <li class="empty-state">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <p>No habits yet</p>
+                                    <small>Build positive habits for lasting change!</small>
+                                </li>
+                            <% } %>
+                        </ul>
+                        <div class="card-footer-modern">
+                            <button class="btn btn-outline-danger w-100" id="removeHabit">
+                                <i class="fas fa-trash me-2"></i>Remove Habits
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="modal bg-dark text-light" id="habit-modal">
-                <div class="modal-header bg-dark text-light border-secondary">
-                    <span class="title">Add Habit</span>
-                    <span class="close-button" id="close-habit-modal">&times;</span>
-                </div>
-                <div class="modal-body bg-dark text-light">
-                    <input type="text" name="habit" id="habit-input" class="form-control bg-dark text-light border-secondary" placeholder="Enter your habit" />
-                    <select id="habit-category" class="form-select bg-dark text-light border-secondary">
-                        <option value="" disabled selected>Select Category</option>
-                        <option value="Strength">Strength</option>
-                        <option value="Agility">Agility</option>
-                        <option value="Mental">Mental</option>
-                        <option value="Work">Work</option>
-                        <option value="Social">Social</option>
-                        <option value="Financial">Financial</option>
-                        <option value="Speed">Speed</option>
-                    </select>
-                    <button id="modal-add-habit" class="btn btn-outline-light mt-2">Add Habit</button>
+
+            <!-- Stats Column -->
+            <div class="col-lg-4 col-md-12">
+                <div class="modern-card glass">
+                    <div class="card-header-modern">
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon stats-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 class="card-title-modern mb-0">Player Stats</h3>
+                        </div>
+                    </div>
+                    <div class="card-body-modern">
+                        <div class="stats-container">
+                            <% if (stats) { %>
+                                <div class="stat-item-modern">
+                                    <div class="stat-header">
+                                        <i class="fas fa-dumbbell stat-icon strength"></i>
+                                        <span class="stat-label">Strength</span>
+                                        <span class="stat-value"><%= stats.strength || 0 %>%</span>
+                                    </div>
+                                    <div class="modern-progress-bar">
+                                        <div class="progress-fill strength" style="width: <%= stats.strength || 0 %>%"></div>
+                                    </div>
+                                </div>
+                                <div class="stat-item-modern">
+                                    <div class="stat-header">
+                                        <i class="fas fa-running stat-icon agility"></i>
+                                        <span class="stat-label">Agility</span>
+                                        <span class="stat-value"><%= stats.agility || 0 %>%</span>
+                                    </div>
+                                    <div class="modern-progress-bar">
+                                        <div class="progress-fill agility" style="width: <%= stats.agility || 0 %>%"></div>
+                                    </div>
+                                </div>
+                                <div class="stat-item-modern">
+                                    <div class="stat-header">
+                                        <i class="fas fa-brain stat-icon mental"></i>
+                                        <span class="stat-label">Mental</span>
+                                        <span class="stat-value"><%= stats.mental || 0 %>%</span>
+                                    </div>
+                                    <div class="modern-progress-bar">
+                                        <div class="progress-fill mental" style="width: <%= stats.mental || 0 %>%"></div>
+                                    </div>
+                                </div>
+                                <div class="stat-item-modern">
+                                    <div class="stat-header">
+                                        <i class="fas fa-briefcase stat-icon work"></i>
+                                        <span class="stat-label">Work</span>
+                                        <span class="stat-value"><%= stats.work || 0 %>%</span>
+                                    </div>
+                                    <div class="modern-progress-bar">
+                                        <div class="progress-fill work" style="width: <%= stats.work || 0 %>%"></div>
+                                    </div>
+                                </div>
+                                <div class="stat-item-modern">
+                                    <div class="stat-header">
+                                        <i class="fas fa-users stat-icon social"></i>
+                                        <span class="stat-label">Social</span>
+                                        <span class="stat-value"><%= stats.social || 0 %>%</span>
+                                    </div>
+                                    <div class="modern-progress-bar">
+                                        <div class="progress-fill social" style="width: <%= stats.social || 0 %>%"></div>
+                                    </div>
+                                </div>
+                                <div class="stat-item-modern">
+                                    <div class="stat-header">
+                                        <i class="fas fa-dollar-sign stat-icon financial"></i>
+                                        <span class="stat-label">Financial</span>
+                                        <span class="stat-value"><%= stats.financial || 0 %>%</span>
+                                    </div>
+                                    <div class="modern-progress-bar">
+                                        <div class="progress-fill financial" style="width: <%= stats.financial || 0 %>%"></div>
+                                    </div>
+                                </div>
+                                <div class="stat-item-modern">
+                                    <div class="stat-header">
+                                        <i class="fas fa-tachometer-alt stat-icon speed"></i>
+                                        <span class="stat-label">Speed</span>
+                                        <span class="stat-value"><%= stats.speed || 0 %>%</span>
+                                    </div>
+                                    <div class="modern-progress-bar">
+                                        <div class="progress-fill speed" style="width: <%= stats.speed || 0 %>%"></div>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <div class="empty-state">
+                                    <i class="fas fa-chart-line"></i>
+                                    <p>No stats available</p>
+                                    <small>Complete tasks and habits to see your progress!</small>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div id="overlay"></div>
-
-
+        </div>
     </main>
 
+    <!-- Modern Modals -->
+    <div class="modal fade" id="task-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content modern-modal">
+                <div class="modal-header modern-modal-header">
+                    <h5 class="modal-title gradient-text">
+                        <i class="fas fa-plus me-2"></i>Add New Task
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body modern-modal-body">
+                    <div class="form-group-modern mb-3">
+                        <label class="form-label-modern">Task Description</label>
+                        <input type="text" id="task-input" class="form-control-modern" placeholder="What do you need to accomplish?">
+                    </div>
+                    <div class="form-group-modern mb-4">
+                        <label class="form-label-modern">Category</label>
+                        <select id="task-category" class="form-control-modern">
+                            <option value="" disabled selected>Select Category</option>
+                            <option value="Strength">­Ъњф Strength</option>
+                            <option value="Agility">­ЪЈЃ Agility</option>
+                            <option value="Mental">­ЪДа Mental</option>
+                            <option value="Work">­Ъњ╝ Work</option>
+                            <option value="Social">­ЪЉЦ Social</option>
+                            <option value="Financial">­Ъњ░ Financial</option>
+                            <option value="Speed">РџА Speed</option>
+                        </select>
+                    </div>
+                    <button id="modal-add-task" class="btn btn-primary w-100 pulse-btn">
+                        <i class="fas fa-plus me-2"></i>Add Task
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="habit-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content modern-modal">
+                <div class="modal-header modern-modal-header">
+                    <h5 class="modal-title gradient-text">
+                        <i class="fas fa-repeat me-2"></i>Add New Habit
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body modern-modal-body">
+                    <div class="form-group-modern mb-3">
+                        <label class="form-label-modern">Habit Description</label>
+                        <input type="text" id="habit-input" class="form-control-modern" placeholder="What habit do you want to build?">
+                    </div>
+                    <div class="form-group-modern mb-4">
+                        <label class="form-label-modern">Category</label>
+                        <select id="habit-category" class="form-control-modern">
+                            <option value="" disabled selected>Select Category</option>
+                            <option value="Strength">­Ъњф Strength</option>
+                            <option value="Agility">­ЪЈЃ Agility</option>
+                            <option value="Mental">­ЪДа Mental</option>
+                            <option value="Work">­Ъњ╝ Work</option>
+                            <option value="Social">­ЪЉЦ Social</option>
+                            <option value="Financial">­Ъњ░ Financial</option>
+                            <option value="Speed">РџА Speed</option>
+                        </select>
+                    </div>
+                    <button id="modal-add-habit" class="btn btn-primary w-100 pulse-btn">
+                        <i class="fas fa-plus me-2"></i>Add Habit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="overlay" class="modal-overlay"></div>
     <div id="user-info" data-user-id="<%= userId %>"></div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/frontendJS/homeFE.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-664PLGPPLP"></script>
@@ -225,5 +403,5 @@
     gtag('config', 'G-664PLGPPLP');
     </script>
 </body>
-
 </html>
+    
