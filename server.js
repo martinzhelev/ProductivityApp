@@ -67,12 +67,14 @@ const financeRouter = require("./routes/finance");
 const authRouter = require("./routes/auth");
 const subscribeRouter = require("./routes/subscribe");
 const stripeRouter = require("./routes/stripe"); // Активирано
+const privacyRouter = require("./routes/privacy");
 const { requirePremium, checkSubscriptionStatus, redirectFreeUsers } = require('./middleware/subscriptionMiddleware');
 
 // Mount Routes
 app.use("/", landingRouter);
 app.use("/register", registerRouter);
 app.use("/login", loginRouter);  
+app.use("/privacy", privacyRouter); // Public privacy policy page
 app.use("/home", authMiddleware, homeRouter);
 
 // Premium routes - redirect free users to payments page
